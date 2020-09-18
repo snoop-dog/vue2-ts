@@ -1,11 +1,23 @@
 <template>
-  <el-container class="app-container"></el-container>
+  <el-container class="app-container">
+    <keep-alive>
+      <router-view :key="key"></router-view>
+    </keep-alive>
+  </el-container>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import { mapState } from 'vuex'
 export default Vue.extend({
-
+  computed: {
+    ...mapState({
+      avtiveTab: (state: any) => state.avtiveTab
+    }),
+    key () {
+      return this.$route.path
+    }
+  }
 })
 </script>
 

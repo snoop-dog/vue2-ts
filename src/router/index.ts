@@ -21,7 +21,15 @@ const routes: Array<RouteConfig> = [
   {
     path: '/layout',
     name: 'Layout',
-    component: () => import(/* webpackChunkName: "about" */ '../views/layout/index.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/layout/index.vue'),
+    redirect: '/chart',
+    children: [
+      {
+        path: '/chart',
+        name: 'Chart',
+        component: () => import('../views/charts/index.vue')
+      }
+    ]
   }
 ]
 

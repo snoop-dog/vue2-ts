@@ -588,20 +588,20 @@ export default Vue.extend({
   .comet {
     position: absolute;
     &.comet-a {
-      top: -15%;
+      top: -5%;
       left: calc(15% - 5rem);
-      animation: meteor 15s linear 0s infinite;
+      animation: meteor 12s linear 0s infinite;
     }
     &.comet-b {
       // bottom: 10%;
       right: 20%;
-      top: -15%;
-      animation: meteor1 15s linear 3s infinite;
+      top: -12%;
+      animation: meteor1 12s linear 3s infinite;
     }
     &.comet-c {
-      bottom: -10%;
+      bottom: -5%;
       right: 10%;
-      animation: meteor2 15s linear 1s infinite;
+      animation: meteor2 12s linear 1s infinite;
     }
   }
 
