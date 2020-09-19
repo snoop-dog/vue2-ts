@@ -4,6 +4,11 @@ import VueRouter, { RouteConfig } from 'vue-router'
 
 Vue.use(VueRouter)
 
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
 const routes: Array<RouteConfig> = [
   {
     path: '/',
@@ -22,12 +27,42 @@ const routes: Array<RouteConfig> = [
     path: '/layout',
     name: 'Layout',
     component: () => import(/* webpackChunkName: "about" */ '../views/layout/index.vue'),
-    redirect: '/chart',
+    redirect: '/echarts',
     children: [
       {
-        path: '/chart',
-        name: 'Chart',
-        component: () => import('../views/charts/index.vue')
+        path: '/echarts',
+        name: 'Echarts',
+        component: () => import('../views/charts/echarts.vue')
+      },
+      {
+        path: '/monoca',
+        name: 'Monoca',
+        component: () => import('../views/charts/monoca.vue')
+      },
+      {
+        path: '/table1',
+        name: 'Table1',
+        component: () => import('../views/table/table1.vue')
+      },
+      {
+        path: '/table2',
+        name: 'Table2',
+        component: () => import('../views/table/table2.vue')
+      },
+      {
+        path: '/manage1',
+        name: 'Manage1',
+        component: () => import('../views/manage/manage1.vue')
+      },
+      {
+        path: '/manage2',
+        name: 'Manage2',
+        component: () => import('../views/manage/manage2.vue')
+      },
+      {
+        path: '/setting',
+        name: 'Setting',
+        component: () => import('../views/setting/setting.vue')
       }
     ]
   }

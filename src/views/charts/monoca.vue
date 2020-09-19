@@ -1,6 +1,6 @@
 <template>
-  <el-container class="chart-container">
-    1111
+  <el-container class="monoca-container">
+    monoca
   </el-container>
 </template>
 

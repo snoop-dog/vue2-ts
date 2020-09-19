@@ -13,16 +13,16 @@
     </el-main>
 
     <el-main class="tag-tab">
-      <el-tabs class="tab-content" v-model="activeName"  @tab-click="handleClick">
+      <el-tabs class="tab-content" v-model="activeName" closable @tab-click="handleClick" @tab-remove="removeTab">
         <el-tab-pane :label="item.label" :name="item.name" :key="item.label" v-for="item in tabList">
         </el-tab-pane>
       </el-tabs>
     </el-main>
 
     <el-main class="tag-toolbox">
-      <el-avatar :size="25" src="../../../assets/logo.png">
+      <!-- <el-avatar :size="25" src="../../../assets/logo.png">
         <img src="../../../assets/logo.png"/>
-      </el-avatar>
+      </el-avatar> -->
       <el-row class="tool-logout" @click.native='logout'>
         <i class="el-icon-switch-button"></i>
       </el-row>
@@ -31,23 +31,27 @@
 </template>
 
 <script lang="ts">
+import { ElMenuItemGroup } from 'element-ui/types/menu-item-group'
 import Vue from 'vue'
+import { mapState } from 'vuex'
 export default Vue.extend({
   data () {
     return {
-      activeName: '',
-      tabList: [
-        {
-          label: '首页',
-          name: 'home',
-          value: 'home'
-        }
-      ]
+
     }
   },
   computed: {
-    Fold () {
-      return this.$store.state.isFold
+    ...mapState({
+      tabList: (state: any) => state.tabList,
+      Fold: (state: any) => state.isFold
+    }),
+    activeName: {
+      get () {
+        return this.$store.state.activeTab
+      },
+      set (val) {
+        return val
+      }
     }
   },
   methods: {
@@ -56,8 +60,24 @@ export default Vue.extend({
      * @param item tab标签实例
      * @return noen
      */
-    handleClick (item: object) {
-      console.log(item)
+    handleClick (item: any) {
+      this.$store.commit(
+        'changeActive',
+        item?.name
+      )
+      this.$router.push('/' + item.name)
+    },
+    /**
+     * @description 点击切换tab
+     * @param item tab标签实例
+     * @return noen
+     */
+    removeTab (item: string) {
+      this.$store.commit(
+        'removeTab',
+        item
+      )
+      this.$router.push('/' + this.activeName)
     },
     /**
      * @description 菜单折叠
@@ -82,6 +102,7 @@ export default Vue.extend({
         type: 'warning'
       })
         .then(() => {
+          this.$store.commit('resetState')
           this.$router.push('/')
         })
         .catch(() => {
@@ -115,6 +136,11 @@ export default Vue.extend({
             justify-content: center;
             align-items: center;
             cursor: pointer;
+            &:hover {
+              color: #37e;
+              background: rgba(18, 28, 68, 0.8);
+              transition: all 1s linear 0s;
+            }
           }
           &.tag-text {
             line-height: 3.2rem;
@@ -160,9 +186,20 @@ export default Vue.extend({
           height: 3.2rem;
           line-height: 3.2rem;
           color: #fff;
-          background: #37e;
-          min-width: 5rem;
-          max-width: 7rem;
+          font-size: 1rem;
+          background: transparent;
+          min-width: 6rem;
+          padding: 0 1rem;
+          &.is-active {
+            background: #37e;
+          }
+          &.is-top {
+            &:nth-child(2) {
+              .el-icon-close {
+                display: none;
+              }
+            }
+          }
         }
         &__active-bar {
           background: #37e;
