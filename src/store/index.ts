@@ -14,21 +14,23 @@ const initState = {
       name: 'echarts',
       value: 'echarts'
     }
-  ]
+  ],
+  echartsUnit: null
 }
 
 export default new Vuex.Store({
   state: {
-    isFold: false,
-    activeTab: 'echarts',
-    menuData: [],
-    tabList: [
+    isFold: false, // 菜单是否折叠
+    activeTab: 'echarts', // 当前激活菜单
+    menuData: [], // 菜单数据
+    tabList: [ // tab集合
       {
         label: 'echarts',
         name: 'echarts',
         value: 'echarts'
       }
-    ]
+    ],
+    echartsUnit: null // echarts单位
   },
   mutations: {
     /**
@@ -92,6 +94,14 @@ export default new Vuex.Store({
       stateArray.forEach((k) => {
         state[k] = _.cloneDeep(initState[k])
       })
+    },
+    /**
+     * @description 设置echarts单位
+     * @param state
+     * @param echartsUnit
+     */
+    setEchartsUnit (state, echartsUnit) {
+      state.echartsUnit = echartsUnit
     }
   },
   actions: {

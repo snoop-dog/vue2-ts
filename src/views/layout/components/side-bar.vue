@@ -28,6 +28,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { getMenuData } from '../../../apis/index'
+import { res } from '../../../utils/interface'
 
 @Component
 export default class Sidebar extends Vue {
@@ -53,9 +54,8 @@ export default class Sidebar extends Vue {
   /**
    * @description 点击菜单
    * @param path 菜单路径
-   * @param indexPath 菜单索引
    */
-  private addTab (path: string, indexPath: string) {
+  private addTab (path: string) {
     this.$store.commit(
       'addTabList',
       path
@@ -65,8 +65,8 @@ export default class Sidebar extends Vue {
 
   private getMenuData () {
     getMenuData({})
-      .then((res: any) => {
-        this.menuData = res?.data[0].children
+      .then((res: res) => {
+        this.menuData = res?.data[0]?.children
         this.$store.dispatch(
           'getMenuData',
           this.menuData
