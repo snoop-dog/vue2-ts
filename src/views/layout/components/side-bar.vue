@@ -4,14 +4,14 @@
       <el-menu
         :default-active="defaultActive"
         class="el-menu-vertical-demo"
-        text-color="#fff"
+        text-color="#abd"
         :collapse="isCollapse"
         :default-openeds="defaultOpen"
         router
         @select='addTab'>
         <el-submenu :index="item.name" :key="index" v-for="(item, index) in menuData">
           <template slot="title">
-            <i class="el-icon-s-home"></i>
+            <i :class="item.icon"></i>
             <span>{{item.name}}</span>
           </template>
           <el-menu-item-group v-for="(it, idx) in item.children" :key="idx">
@@ -28,6 +28,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { getMenuData } from '../../../apis/index'
+import { res } from '../../../utils/interface'
 
 @Component
 export default class Sidebar extends Vue {
@@ -38,10 +39,10 @@ export default class Sidebar extends Vue {
     return this.$store.state.activeTab
   }
 
-  get defaultOpen (): number[] {
+  get defaultOpen (): string[] {
     return this.menuData
       .reduce((prev: any, cur: any, index) => {
-        prev.push(String(index))
+        prev.push(cur.name)
         return prev
       }, [])
   }
@@ -53,17 +54,19 @@ export default class Sidebar extends Vue {
   /**
    * @description 点击菜单
    * @param path 菜单路径
-   * @param indexPath 菜单索引
    */
-  private addTab (path: string, indexPath: string) {
-    console.log(path)
-    console.log(indexPath)
+  private addTab (path: string) {
+    this.$store.commit(
+      'addTabList',
+      path
+    )
+    this.$router.push('/' + path)
   }
 
   private getMenuData () {
     getMenuData({})
-      .then((res: any) => {
-        this.menuData = res?.data[0].children
+      .then((res: res) => {
+        this.menuData = res?.data[0]?.children
         this.$store.dispatch(
           'getMenuData',
           this.menuData
@@ -127,16 +130,23 @@ export default class Sidebar extends Vue {
           &__icon-arrow {
             font-size: 1rem;
           }
+
+          [class^=el-icon-] {
+            margin-right: 0.4rem;
+            width: 2rem;
+            font-size: 1.3rem;
+          }
         }
         .el-menu-item {
+          width: 10rem;
           height: 2.5rem;
           line-height: 2.5rem;
           text-align: center;
           min-width: unset;
-          color: #abd !important;
 
           &:hover {
             background: #203060;
+            color: #37e;
           }
           &.is-active {
             color: #37e;
@@ -151,7 +161,7 @@ export default class Sidebar extends Vue {
 
         &.el-menu--collapse {
           // width: 2.66rem;
-          padding: 1rem 0;
+          padding: 0.5rem 0;
 
           /deep/.el-menu-item {
             // width: 2.66rem;
