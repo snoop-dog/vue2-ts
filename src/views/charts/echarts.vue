@@ -1,7 +1,7 @@
 <template>
   <el-container class="chart-container">
     <el-main class="chart-main">
-      <el-row id="bar-charts" class="bar-chart"></el-row>
+      <el-row id="bar-charts" ref="barChart" class="bar-chart"></el-row>
     </el-main>
   </el-container>
 </template>
@@ -17,15 +17,14 @@ export default class Chart extends Vue {
 
   // computed
   private get echartsUnit () {
-    console.log(this.$store.state.echartsUnit)
     return this.$store.state.echartsUnit
   }
 
   private initOptions (): echartsOption {
     const option = {
       timeline: {
-        data: [],
-        show: false,
+        data: [0, 1, 2, 3],
+        show: true,
         symbolSize: this.echartsUnit,
         currentIndex: 0,
         label: {
@@ -38,7 +37,7 @@ export default class Chart extends Vue {
         symbol: 'diamond',
         lineStyle: {
           color: '#ccc',
-          type: 'dashed'
+          type: ('dashed' as 'dashed')
         },
         autoPlay: true,
         playInterval: 4000,
@@ -69,9 +68,9 @@ export default class Chart extends Vue {
         {
           grid: {
             top: '8%',
-            left: '1%',
-            right: '1%',
-            bottom: '20%',
+            left: '3%',
+            right: '3%',
+            bottom: '12%',
             containLabel: true
           },
           tooltip: {
@@ -82,7 +81,7 @@ export default class Chart extends Vue {
             },
             extraCssText: '#203060',
             axisPointer: {
-              type: 'shadow',
+              type: ('shadow' as 'shadow'),
               shadowStyle: {
                 shadowOffsetX: 0
               }
@@ -90,7 +89,7 @@ export default class Chart extends Vue {
           },
           xAxis: [
             {
-              type: 'category',
+              type: ('category' as 'category'),
               axisLine: {
                 // 坐标轴轴线相关设置。数学上的x轴
                 show: true,
@@ -111,17 +110,17 @@ export default class Chart extends Vue {
               axisTick: {
                 show: false
               },
-              data: []
+              data: ['湖北', '湖南', '广东', '广西', '北京', '云南', '四川', '重庆']
             }
           ],
           dataZoom: [
             {
-              type: 'inside'
+              type: ('inside' as 'inside')
             }
           ],
           yAxis: [
             {
-              type: 'value',
+              type: ('value' as 'value'),
               min: 0,
               // max: 140,
               splitNumber: 7,
@@ -132,10 +131,13 @@ export default class Chart extends Vue {
                 }
               },
               axisLine: {
-                show: false
+                show: true,
+                lineStyle: {
+                  color: '#cccccc'
+                }
               },
               axisTick: {
-                show: false
+                show: true
               },
               axisLabel: {
                 margin: this.echartsUnit * 1.6,
@@ -148,7 +150,7 @@ export default class Chart extends Vue {
           series: [
             {
               name: '',
-              type: 'bar',
+              type: ('bar' as 'bar'),
               barMinHeight: this.echartsUnit * 0.45,
               barMaxWidth: this.echartsUnit * 8,
               // barCategoryGap: '4%',
@@ -170,7 +172,7 @@ export default class Chart extends Vue {
                   ])
                 }
               },
-              data: []
+              data: [23, 354, 678, 443, 205, 122, 330, 79]
             }
           ]
         }
@@ -180,7 +182,19 @@ export default class Chart extends Vue {
   }
 
   created () {
-    this.barChart = echarts.init(document.querySelector('#bar-chart'))
+    window.addEventListener('resize', () => {
+      this.barChart.resize()
+    })
+  }
+
+  mounted () {
+    this.$nextTick(() => {
+      this.barChart = echarts.init(document.querySelector('#bar-charts'))
+      this.barChart.setOption(this.initOptions())
+      setTimeout(() => {
+        this.barChart.resize()
+      }, 500)
+    })
   }
 }
 </script>

@@ -24,43 +24,6 @@ export default Vue.extend({
     tagViews,
     sideBar,
     appMain
-  },
-  mounted () {
-    let echartsUnit
-    const width =
-      window.innerWidth ||
-      document.documentElement.clientWidth ||
-      document.body.clientWidth
-    if (width > 768 && width <= 1800) {
-      echartsUnit = 12
-    } else if (width > 1800 && width <= 2000) {
-      echartsUnit = 15
-    } else if (width > 2000 && width <= 2560) {
-      echartsUnit = 20
-    } else if (width > 2560 && width <= 3840) {
-      echartsUnit = 30
-    } else if (width > 3840) {
-      echartsUnit = 35
-    }
-    this.$store.commit('setEchartsUnit', echartsUnit);
-    window.addEventListener('resize', () => {
-      const width =
-        window.innerWidth ||
-        document.documentElement.clientWidth ||
-        document.body.clientWidth
-      if (width > 768 && width <= 1800) {
-        echartsUnit = 12
-      } else if (width > 1800 && width <= 2000) {
-        echartsUnit = 15
-      } else if (width > 2000 && width <= 2560) {
-        echartsUnit = 20
-      } else if (width > 2560 && width <= 3840) {
-        echartsUnit = 30
-      } else if (width > 3840) {
-        echartsUnit = 35
-      }
-      this.$store.commit('setEchartsUnit', echartsUnit)
-    })
   }
 })
 </script>
