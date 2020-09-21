@@ -9,6 +9,21 @@ body {
   line-height: 2.66rem;
 }
 
+.el-menu:not(.el-menu--collapse),
+.el-submenu,
+.el-menu--popup {
+  min-width: 10rem;
+}
+
+.el-menu {
+  &.el-menu--collapse {
+    width: 5rem;
+    .el-submenu {
+      min-width: unset;
+    }
+  }
+}
+
 .el-menu {
   background: rgba(18, 28, 68, 0.8);
   color: #abd;
