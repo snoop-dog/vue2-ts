@@ -1,7 +1,14 @@
 <template>
   <el-container class="chart-container">
     <el-main class="chart-main">
-      <el-row id="bar-charts" ref="barChart" class="bar-chart"></el-row>
+      <el-container class="top-chart">
+        <el-row id="bar-charts" ref="barChart" class="bar-chart"></el-row>
+        <el-row id="pie-charts" ref="pieChart" class="pie-chart"></el-row>
+      </el-container>
+      <el-container class="bottom-chart">
+        <el-row id="line-charts" ref="lineChart" class="line-chart"></el-row>
+        <el-row id="ring-charts" ref="ringChart" class="ring-chart"></el-row>
+      </el-container>
     </el-main>
   </el-container>
 </template>
@@ -14,6 +21,9 @@ import echarts from 'echarts'
 @Component
 export default class Chart extends Vue {
   private barChart = null
+  private pieChart = null
+  private lineChart = null
+  private ringChart = null
 
   // computed
   private get echartsUnit () {
@@ -70,7 +80,7 @@ export default class Chart extends Vue {
             top: '8%',
             left: '3%',
             right: '3%',
-            bottom: '12%',
+            bottom: '15%',
             containLabel: true
           },
           tooltip: {
@@ -152,7 +162,7 @@ export default class Chart extends Vue {
               name: '',
               type: ('bar' as 'bar'),
               barMinHeight: this.echartsUnit * 0.45,
-              barMaxWidth: this.echartsUnit * 8,
+              barMaxWidth: this.echartsUnit * 3,
               // barCategoryGap: '4%',
               label: {
                 normal: {
@@ -184,15 +194,27 @@ export default class Chart extends Vue {
   created () {
     window.addEventListener('resize', () => {
       this.barChart.resize()
+      this.pieChart.resize()
+      this.lineChart.resize()
+      this.ringChart.resize()
     })
   }
 
   mounted () {
     this.$nextTick(() => {
       this.barChart = echarts.init(document.querySelector('#bar-charts'))
+      this.pieChart = echarts.init(document.querySelector('#pie-charts'))
+      this.lineChart = echarts.init(document.querySelector('#line-charts'))
+      this.ringChart = echarts.init(document.querySelector('#ring-charts'))
       this.barChart.setOption(this.initOptions())
+      this.pieChart.setOption(this.initOptions())
+      this.lineChart.setOption(this.initOptions())
+      this.ringChart.setOption(this.initOptions())
       setTimeout(() => {
         this.barChart.resize()
+        this.pieChart.resize()
+        this.lineChart.resize()
+        this.ringChart.resize()
       }, 500)
     })
   }
@@ -210,8 +232,17 @@ export default class Chart extends Vue {
     flex: 1;
     display: flex;
     flex-direction: column;
-    .bar-chart {
-      flex: 1;
+    flex-wrap: wrap;
+    align-content: stretch;
+    overflow-y: hidden;
+    .el-container {
+      display: flex;
+      width: 100%;
+      height: 50%;
+      .el-row {
+        flex: 1;
+        // padding: 1rem;
+      }
     }
   }
 }
