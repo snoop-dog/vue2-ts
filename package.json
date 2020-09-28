@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@types/axios": "^0.14.0",
     "@types/echarts": "^4.6.5",
     "@types/lodash": "^4.14.161",
     "axios": "^0.20.0",
@@ -15,6 +16,7 @@
     "echarts": "^4.9.0",
     "element-ui": "^2.13.2",
     "lodash": "^4.17.20",
+    "monaco-editor": "^0.21.2",
     "qs": "^6.9.4",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
