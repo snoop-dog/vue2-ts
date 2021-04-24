@@ -527,11 +527,14 @@
 <script lang="ts">
 import Vue from 'vue'
 import { doLogin } from '../apis/index'
+import md5 from 'js-md5'
+import { setToken } from '../utils/auth'
+import { token } from '../utils/interface'
 export default Vue.extend({
   data () {
     return {
       username: 'admin',
-      password: '123456',
+      password: '123',
       loading: false
     }
   },
@@ -552,10 +555,23 @@ export default Vue.extend({
       }
 
       this.loading = true
-      setTimeout(() => {
+      // setTimeout(() => {
+      //   this.loading = false
+      //   this.$router.push('/layout')
+      // }, 2000)
+
+      const params = {
+        username: this.username,
+        password: md5(this.password)
+      }
+
+      doLogin(params).then((res: token) => {
+        setToken(res.access_token, res.expires_in)
         this.loading = false
         this.$router.push('/layout')
-      }, 2000)
+      }).catch(error => {
+        console.log(error)
+      })
     }
   }
 })

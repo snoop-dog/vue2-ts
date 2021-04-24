@@ -6,10 +6,9 @@
         class="el-menu-vertical-demo"
         text-color="#abd"
         :collapse="isCollapse"
-        :default-openeds="defaultOpen"
         router
         @select='addTab'>
-        <el-submenu :index="item.name" :key="index" v-for="(item, index) in menuData">
+        <!-- <el-submenu :index="item.name" :key="index" v-for="(item, index) in menuData">
           <template slot="title">
             <i :class="item.icon"></i>
             <span>{{item.name}}</span>
@@ -19,7 +18,11 @@
               <span slot="title">{{it.name}}</span>
             </el-menu-item>
           </el-menu-item-group>
-        </el-submenu>
+        </el-submenu> -->
+        <el-menu-item v-for="item in menuData" :key="item.url" :index="item.url">
+          <i :class="['iconfont', item.icon_name]"></i>
+          <span slot="title">{{item.name}}</span>
+        </el-menu-item>
       </el-menu>
     </el-main>
   </el-container>
@@ -53,20 +56,21 @@ export default class Sidebar extends Vue {
 
   /**
    * @description 点击菜单
-   * @param path 菜单路径
+   * @param url 菜单路径
    */
-  private addTab (path: string) {
+  private addTab (url: string) {
     this.$store.commit(
       'addTabList',
-      path
+      url
     )
-    this.$router.push('/' + path)
+    this.$router.push(url)
   }
 
   private getMenuData () {
     getMenuData({})
       .then((res: res) => {
-        this.menuData = res?.data[0]?.children
+        this.menuData = res?.data
+        console.log(this.menuData)
         this.$store.dispatch(
           'getMenuData',
           this.menuData
@@ -138,18 +142,29 @@ export default class Sidebar extends Vue {
           }
         }
         .el-menu-item {
-          width: 10rem;
-          height: 2.5rem;
-          line-height: 2.5rem;
+          width: 12rem;
+          height: 3.2rem;
+          line-height: 3.2rem;
           text-align: center;
           min-width: unset;
 
           &:hover {
             background: #203060;
-            color: #37e;
+            color: #37e !important;
+            i {
+              color: #37e;
+            }
           }
           &.is-active {
-            color: #37e;
+            color: #37e !important;
+          }
+          [class^=el-icon-] {
+            font-size: 1.2rem;
+          }
+
+          [class^=iconfont] {
+            color: #abd;
+            margin-right: 0.6rem;
           }
         }
 
@@ -163,14 +178,17 @@ export default class Sidebar extends Vue {
           // width: 2.66rem;
           padding: 0.5rem 0;
 
-          /deep/.el-menu-item {
+          .el-menu-item {
             // width: 2.66rem;
-            height: 2.66rem;
-            line-height: 2.66rem;
+            width: 5rem;
+            height: 3.2rem;
+            line-height: 3.2rem;
             padding: 0 !important;
+            color: #abd;
 
             &.is-active {
-              background: #ecf5ff;
+              background: #203060;
+              color: #37e;
 
               .el-tooltip {
                 i {
@@ -186,10 +204,11 @@ export default class Sidebar extends Vue {
 
               i {
                 font-size: 1.2rem;
-                color: #37e;
+                color: #abd;
+                margin-right: 0;
 
                 &:hover {
-                  color: #203060;
+                  color: #37e;
                 }
               }
             }

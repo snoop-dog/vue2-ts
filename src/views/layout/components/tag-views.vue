@@ -14,7 +14,7 @@
 
     <el-main class="tag-tab">
       <el-tabs class="tab-content" v-model="activeName" closable @tab-click="handleClick" @tab-remove="removeTab">
-        <el-tab-pane :label="item.label" :name="item.name" :key="item.label" v-for="item in tabList">
+        <el-tab-pane :label="item.name" :name="item.url" :key="item.name" v-for="item in tabList">
         </el-tab-pane>
       </el-tabs>
     </el-main>
@@ -54,6 +54,12 @@ export default Vue.extend({
       }
     }
   },
+  watch: {
+    tabList (newval, oldVal) {
+      console.log(newval)
+      console.log(oldVal)
+    }
+  },
   methods: {
     /**
      * @description 点击切换tab
@@ -65,7 +71,7 @@ export default Vue.extend({
         'changeActive',
         item?.name
       )
-      this.$router.push('/' + item.name)
+      this.$router.push(item.name)
     },
     /**
      * @description 点击切换tab
@@ -77,7 +83,7 @@ export default Vue.extend({
         'removeTab',
         item
       )
-      this.$router.push('/' + this.activeName)
+      this.$router.push(this.activeName)
     },
     /**
      * @description 菜单折叠

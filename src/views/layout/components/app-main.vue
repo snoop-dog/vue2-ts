@@ -1,3 +1,11 @@
+<!--
+ * @Description: write something
+ * @Author: snoop-dog
+ * @Date: 2020-09-21 20:26:17
+ * @LastEditors: snoop-dog
+ * @LastEditTime: 2021-04-24 19:36:09
+ * @FilePath: \vue2-ts\src\views\layout\components\app-main.vue
+-->
 <template>
   <el-container class="app-container">
     <keep-alive>
@@ -12,7 +20,7 @@ import { mapState } from 'vuex'
 export default Vue.extend({
   computed: {
     ...mapState({
-      avtiveTab: (state: any) => state.avtiveTab
+      activeTab: (state: any) => state.activeTab
     }),
     key () {
       return this.$route.path

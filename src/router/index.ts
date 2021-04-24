@@ -1,3 +1,11 @@
+/*
+ * @Description: write something
+ * @Author: snoop-dog
+ * @Date: 2020-09-21 20:26:17
+ * @LastEditors: snoop-dog
+ * @LastEditTime: 2021-04-24 21:21:20
+ * @FilePath: \vue2-ts\src\router\index.ts
+ */
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 // import Home from '../views/Home.vue'
@@ -27,42 +35,42 @@ const routes: Array<RouteConfig> = [
     path: '/layout',
     name: 'Layout',
     component: () => import(/* webpackChunkName: "about" */ '../views/layout/index.vue'),
-    redirect: '/echarts',
+    redirect: '/rent/datasearch',
     children: [
       {
-        path: '/echarts',
-        name: 'Echarts',
-        component: () => import('../views/charts/echarts.vue')
+        path: '/rent/datasearch',
+        name: 'Dataserach',
+        component: () => import('../views/rent/datasearch.vue')
       },
       {
-        path: '/monoca',
-        name: 'Monoca',
-        component: () => import('../views/charts/monoca.vue')
+        path: '/rent/register',
+        name: 'Register',
+        component: () => import('../views/rent/register.vue')
       },
       {
-        path: '/table1',
-        name: 'Table1',
-        component: () => import('../views/table/table1.vue')
+        path: '/system/role',
+        name: 'Systemrole',
+        component: () => import('../views/system/role.vue')
       },
       {
-        path: '/table2',
-        name: 'Table2',
-        component: () => import('../views/table/table2.vue')
+        path: '/system/user',
+        name: 'Systemuser',
+        component: () => import('../views/system/user.vue')
       },
       {
-        path: '/manage1',
-        name: 'Manage1',
-        component: () => import('../views/manage/manage1.vue')
+        path: '/system/region',
+        name: 'Systemregion',
+        component: () => import('../views/system/region.vue')
       },
       {
-        path: '/manage2',
-        name: 'Manage2',
-        component: () => import('../views/manage/manage2.vue')
+        path: '/system/position',
+        name: 'Systemposition',
+        component: () => import('../views/system/position.vue')
       },
       {
-        path: '/setting',
-        name: 'Setting',
-        component: () => import('../views/setting/setting.vue')
+        path: '/system/log',
+        name: 'Systemlog',
+        component: () => import('../views/system/log.vue')
       }
     ]
   }

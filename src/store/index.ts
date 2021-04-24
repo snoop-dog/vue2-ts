@@ -6,31 +6,31 @@ Vue.use(Vuex)
 
 const initState = {
   isFold: false,
-  activeTab: 'echarts',
+  activeTab: '/rent/datasearch',
   menuData: [],
   tabList: [
     {
-      label: 'echarts',
-      name: 'echarts',
-      value: 'echarts'
+      name: '数据检索',
+      url: '/rent/datasearch'
     }
   ],
-  echartsUnit: null
+  echartsUnit: null,
+  renovate: false
 }
 
 export default new Vuex.Store({
   state: {
     isFold: false, // 菜单是否折叠
-    activeTab: 'echarts', // 当前激活菜单
+    activeTab: '/rent/datasearch', // 当前激活菜单
     menuData: [], // 菜单数据
     tabList: [ // tab集合
       {
-        label: 'echarts',
-        name: 'echarts',
-        value: 'echarts'
+        name: '数据检索',
+        url: '/rent/datasearch'
       }
     ],
-    echartsUnit: null // echarts单位
+    echartsUnit: null, // echarts单位
+    renovate: false
   },
   mutations: {
     /**
@@ -40,6 +40,9 @@ export default new Vuex.Store({
      */
     foldSideBar (state, fold) {
       state.isFold = fold
+    },
+    renovate: (state, renovate) => {
+      state.renovate = renovate
     },
     /**
      * @description 获取菜单数据
@@ -52,38 +55,38 @@ export default new Vuex.Store({
     /**
      * @description add tablist
      * @param state
-     * @param path
+     * @param url
      */
-    addTabList (state, path) {
-      const samePath = state.tabList.filter(item => item.value === path)
+    addTabList (state, url: string) {
+      const samePath = state.tabList.filter(x => x.url === url)
       if (samePath.length) {
-        state.activeTab = samePath[0].name
+        state.activeTab = samePath[0].url
       } else {
+        const curMenu: any = state.menuData.filter(x => x.url === url)
         state.tabList.push({
-          label: path,
-          name: path,
-          value: path
+          name: curMenu[0].name,
+          url: curMenu[0].url
         })
-        state.activeTab = path
+        state.activeTab = url
       }
     },
     /**
      * @description 改变当前active
      * @param state
-     * @param tabName
+     * @param url
      */
-    changeActive (state, tabName) {
-      state.activeTab = tabName
+    changeActive (state, url) {
+      state.activeTab = url
     },
     /**
      * @description delete tablist
      * @param state
-     * @param tabName
+     * @param url
      */
-    removeTab (state, tabName) {
-      const idx: number = state.tabList.findIndex(item => item.name === tabName)
+    removeTab (state, url) {
+      const idx: number = state.tabList.findIndex(item => item.url === url)
       state.tabList.splice(idx, 1)
-      state.activeTab = state.tabList[state.tabList.length - 1].name
+      state.activeTab = state.tabList[state.tabList.length - 1].url
     },
     /**
      * @description reset state
@@ -112,6 +115,9 @@ export default new Vuex.Store({
      */
     getMenuData ({ commit }, menu) {
       commit('getMenu', menu)
+    },
+    setRenovate ({ commit }, param) {
+      commit('renovate', param)
     }
   },
   modules: {

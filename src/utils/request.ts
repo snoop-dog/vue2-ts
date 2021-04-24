@@ -1,9 +1,11 @@
 import axios from 'axios'
 import qs from 'qs'
+import router from '../router/index'
+import { getToken } from '../utils/auth'
 
 const request = axios.create({
   timeout: 60000,
-  baseURL: 'http://172.16.3.225:9527'
+  baseURL: 'http://113.57.168.50:17880/'
   // withCredentials: true,
 })
 
@@ -20,13 +22,15 @@ const removePending = (ever: any) => {
 
 request.interceptors.request.use(
   (config: any) => {
-    if (config.method.toUpperCase() === 'GET') {
+    if (['GET', 'DELETE'].includes(config.method.toUpperCase())) {
       config.params = { ...config.data }
-    } else if (config.method.toUpperCase() === 'POST') {
-      config.headers['content-type'] = 'appliaction/x-www-form-urlencoded'
-      config.data = qs.stringify(config.data)
+    } else if (['POST', 'PUT'].includes(config.method.toUpperCase())) {
+      config.headers['content-type'] = 'appliaction/json'
+      // config.data = qs.stringify(config.data)
     }
-
+    if (getToken()) {
+      config.headers.Authorization = 'Bearer ' + getToken()
+    }
     removePending(config) // 在一个ajax发送前执行一下取消操作
     config.cancelToken = new CancelToken((c) => {
       pending.push({ u: config.url + '&' + config.method, f: c })
@@ -42,8 +46,12 @@ request.interceptors.request.use(
 request.interceptors.response.use(
   (res: any) => {
     removePending(res.config)
-    if (res.statusText === 'OK') {
+    if (res.status === 200) {
       return res.data
+    } else if (res.status === 401) {
+      router.replace({
+        path: '/'
+      })
     }
   },
   (err: object) => {

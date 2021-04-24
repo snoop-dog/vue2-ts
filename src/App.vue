@@ -1,3 +1,11 @@
+<!--
+ * @Description: write something
+ * @Author: snoop-dog
+ * @Date: 2020-09-21 20:26:17
+ * @LastEditors: snoop-dog
+ * @LastEditTime: 2021-04-24 21:35:13
+ * @FilePath: \vue2-ts\src\App.vue
+-->
 <template>
   <div id="app">
     <!-- <div id="nav">
@@ -47,6 +55,11 @@ export default Vue.extend({
       }
       this.$store.commit('setEchartsUnit', echartsUnit)
     })
+
+    window.addEventListener('beforeunload', () => {
+      debugger
+      this.$store.commit('resetState')
+    }, false)
   }
 })
 </script>

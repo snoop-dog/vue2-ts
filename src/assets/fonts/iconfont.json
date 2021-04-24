@@ -1,0 +1,58 @@
+{
+  "id": "2509183",
+  "name": "rent",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "392126",
+      "name": "地区",
+      "font_class": "region-manage",
+      "unicode": "e687",
+      "unicode_decimal": 59015
+    },
+    {
+      "icon_id": "4488852",
+      "name": "期望职位",
+      "font_class": "position-manage",
+      "unicode": "e62e",
+      "unicode_decimal": 58926
+    },
+    {
+      "icon_id": "4511910",
+      "name": "用户管理",
+      "font_class": "user-manage",
+      "unicode": "e642",
+      "unicode_decimal": 58946
+    },
+    {
+      "icon_id": "8156891",
+      "name": "日志",
+      "font_class": "log-manage",
+      "unicode": "e63e",
+      "unicode_decimal": 58942
+    },
+    {
+      "icon_id": "8263875",
+      "name": "登记处",
+      "font_class": "rent-register",
+      "unicode": "e6b6",
+      "unicode_decimal": 59062
+    },
+    {
+      "icon_id": "21214056",
+      "name": "角色管理",
+      "font_class": "role-manage",
+      "unicode": "e72d",
+      "unicode_decimal": 59181
+    },
+    {
+      "icon_id": "1374298",
+      "name": "icon-data-search",
+      "font_class": "data-search",
+      "unicode": "e61e",
+      "unicode_decimal": 58910
+    }
+  ]
+}
