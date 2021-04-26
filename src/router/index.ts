@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2020-09-21 20:26:17
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-04-24 21:21:20
+ * @LastEditTime: 2021-04-27 01:10:01
  * @FilePath: \vue2-ts\src\router\index.ts
  */
 import Vue from 'vue'
@@ -77,7 +77,7 @@ const routes: Array<RouteConfig> = [
 ]
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: 'hash',
   base: process.env.BASE_URL,
   routes
 })
