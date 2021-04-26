@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:00:59
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-04-25 02:37:58
+ * @LastEditTime: 2021-04-26 23:48:27
  * @FilePath: \vue2-ts\src\views\system\role.vue
 -->
 <template>
@@ -24,13 +24,13 @@
         :oprate="oprate"
       >
         <div slot="name" slot-scope="props">
-          <span>{{props.value}}</span>
+          <my-tooltip width="100%" :value="props.value"></my-tooltip>
         </div>
         <div slot="describe" slot-scope="props">
-          <span>{{props.value}}</span>
+          <my-tooltip width="100%" :value="props.value"></my-tooltip>
         </div>
         <div slot="is_enabled" slot-scope="props">
-          <span>{{props.value | enableFilter}}</span>
+          <my-tooltip width="100%" :value="props.value | enableFilter"></my-tooltip>
         </div>
         <div slot="oprate" slot-scope="props">
           <el-button @click.stop="updateRole(props.value)" class="btnPrimary">修改</el-button>
@@ -46,10 +46,18 @@
       modal
       :visible.sync="showDialog"
       title="新增角色"
+      @submit="confirmUpdate"
     >
       <el-form label-width="8rem" label-position="left" class="alarm-form required-form">
         <el-form-item label="角色编号：" class="required">
-          <el-input clearable v-model.trim="ruleForm.id" placeholder="请输入角色编号"></el-input>
+          <el-input 
+            clearable 
+            v-model.trim="ruleForm.id" 
+            placeholder="请输入角色编号"
+            @input="ruleForm.id=ruleForm.id.replace(/[^\d]/g,'')"
+            @blur="ruleForm.id=ruleForm.id.replace(/[^\d]/g,'')"
+          >
+          </el-input>
         </el-form-item>
         <el-form-item label="角色名称：" class="required">
           <el-input clearable v-model.trim="ruleForm.name" placeholder="请输入角色名称"></el-input>
@@ -74,7 +82,7 @@
         </el-form-item>
         <el-form-item label="角色描述：">
           <el-input 
-            v-model.trim="ruleForm.remark" 
+            v-model.trim="ruleForm.describe" 
             type="textarea" 
             resize='none' 
             :rows="4" 
@@ -104,6 +112,7 @@ import {
 import layoutSearch from '../../components/common/layout/layout-search.vue'
 import layoutTable from '../../components/common/layout/layout-table.vue'
 import myDialog from '@/components/common/layout/layout-dialog.vue'
+import myTooltip from '@/components/common/layout/layout-tooltip.vue'
 export default {
   name: 'system-role',
   data () {
@@ -122,7 +131,7 @@ export default {
       endingLoad: true,
       pagination: { // 分页参数
         totalCount: 0,
-        pageCount: 0,
+        pageCount: 1,
         pageIndex: 1
       },
       tableHead: [ // 表头
@@ -152,7 +161,7 @@ export default {
         width: 400
       },
       tableTitle: { // 表格title
-        name: '出租登记',
+        name: '角色列表',
         button: [
           {
             label: '新增',
@@ -169,10 +178,12 @@ export default {
         is_enabled: 1
       },
       showDialog: false, // 是否显示修改新增弹框
-      size: 20 // 每页条数
+      size: 20, // 每页条数
+      isEdit: false // 是否是编辑标识
     }
   },
   components: {
+    myTooltip,
     myDialog,
     layoutSearch,
     layoutTable
@@ -205,6 +216,14 @@ export default {
         this.pagination.pageCount = data.data.totalPage
         this.pagination.totalCount = data.data.totalCount
         this.pagination.pageIndex = data.data.pageIndex
+      }).catch(error => {
+        cosnole.log(error)
+        this.dataList = []
+        this.queryLoading = false
+        this.endingLoad = false
+        this.pagination.pageCount = 1
+        this.pagination.totalCount = 0
+        this.pagination.pageIndex = 1
       })
     },
     /**
@@ -224,6 +243,7 @@ export default {
      */
     updateRole (item) {
       this.showDialog = true
+      this.isEdit = true
       for (const k in this.ruleForm) {
         this.$set(this.ruleForm, k, item[k])
       }
@@ -260,6 +280,62 @@ export default {
         this.showMessageBox(data.message, 'success')
         this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
       })
+    },
+    /**
+     * @description: 角色新增或修改
+     * @param {*} none
+     * @returns {*} void
+     */
+    confirmUpdate () {
+      if (!this.validParam()) return
+      const params = {
+        id: this.ruleForm.id,
+        name: this.ruleForm.name,
+        sort: this.ruleForm.sort,
+        describe: this.ruleForm.describe,
+        is_enabled: this.ruleForm.is_enabled
+      }
+
+      if (this.isEdit) {
+        updateRole(params).then(data => {
+          console.log(data)
+          this.showDialog = false
+          this.showMessageBox(data.message, 'success')
+          this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+        }).catch(err => {
+          console.log(err)
+          this.showMessageBox(err.message, 'error')
+        })
+      } else {
+        addRole(params).then(data => {
+          console.log(data)
+          this.showDialog = false
+          this.showMessageBox(data.message, 'success')
+          this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+        }).catch(err => {
+          console.log(err)
+          this.showMessageBox(err.message, 'error')
+        })
+      }
+    },
+    /**
+     * @description: 参数验证
+     * @param {*} none
+     * @returns {*} void
+     */
+    validParam () {
+      if (this.ruleForm.id === '') {
+        this.showMessageBox('角色编号不能为空！', 'warning')
+        return false
+      } else if (!this.ruleForm.name) {
+        this.showMessageBox('角色名称不能为空！', 'warning')
+        return false
+      } else if (!this.ruleForm.sort) {
+        this.showMessageBox('角色排序不能为空！', 'warning')
+        return false
+      } else {
+        return true
+      }
     }
   },
   filters: {

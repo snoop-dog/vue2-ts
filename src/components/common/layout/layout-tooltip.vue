@@ -26,6 +26,7 @@
   </div>
 </template>
 <script>
+import $ from 'jquery'
 export default {
   data () {
     return {
@@ -46,8 +47,8 @@ export default {
     })
   },
   methods: {
-   checkChinese (val) {
-      var reg = new RegExp('[\\u4E00-\\u9FFF]+', 'g')
+    checkChinese (val) {
+      const reg = new RegExp('[\\u4E00-\\u9FFF]+', 'g')
       if (reg.test(val)) {
         return true
       } else if (String(val).length < 9) {
@@ -57,9 +58,9 @@ export default {
       }
     },
     visibilityChange (event) {
-      let ev = event.target
-      let thisWidth = ev.offsetWidth // 元素的宽度
-      let wordWidth = $(ev)
+      const ev = event.target
+      const thisWidth = ev.offsetWidth // 元素的宽度
+      const wordWidth = $(ev)
         .prev('.kt-tooltip-input__hidden')
         .width() // 文本内容的宽度
       if (wordWidth / thisWidth > this.rows) {
@@ -67,9 +68,6 @@ export default {
       }
     }
   },
-  // activated() {
-  //   this.flag = true
-  // },
   watch: {
     value (val) {
       if (this.isSplit) {

@@ -840,7 +840,7 @@ textarea {
 .pagination-text {
   flex: 1;
   display: flex;
-  padding-left: 2rem;
+  padding-left: 10px;
   .pagination-size {
     width: 8rem;
     margin-right: 1rem;
@@ -848,7 +848,7 @@ textarea {
 }
 
 .pagination-btns-box {
-  /* margin-right: 10px; */
+  margin-right: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;

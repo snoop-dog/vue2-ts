@@ -147,3 +147,117 @@ export function getRoleSimple (params: any) {
   })
 }
 // 用户角色相关 API end
+
+// 用户相关 API start
+/**
+ * @api {post} /user/add 用户添加
+ * @param {Object} params 用户添加参数
+ */
+export function addUser (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/user/add', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {delete} /user/delete 用户删除
+ * @param {Object} params 用户删除参数
+ */
+export function deleteUser (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('delete', '/user/delete', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /user/post 用户启用状态修改
+ * @param {Object} params 用户启用状态修改参数
+ */
+export function updateUserStatus (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('delete', '/user/enabled', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /user/getUserPage 获取用户列表
+ * @param {Object} params 获取用户列表参数
+ */
+export function getUserList (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/user/getUserPage', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /user/info 获取当前用户信息详情
+ * @param {Object} params 获取当前用户信息详情参数
+ */
+export function getUserDetail (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/user/info', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /user/password 用户修改密码
+ * @param {Object} params 用户修改密码参数
+ */
+export function updatePassword (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/user/password', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /user/update (用户管理)用户信息修改
+ * @param {Object} params (用户管理)用户信息修改参数
+ */
+export function updateUserInfo (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/user/update', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 用户相关 API end

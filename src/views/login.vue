@@ -571,6 +571,8 @@ export default Vue.extend({
         this.$router.push('/layout')
       }).catch(error => {
         console.log(error)
+        this.showMessageBox(error.message, 'error')
+        this.loading = false
       })
     }
   }
@@ -670,7 +672,7 @@ export default Vue.extend({
         justify-content: center;
         align-items: center;
         .el-button {
-          width: 80%;
+          width: 100%;
           padding: 0;
           height: 2.66rem;
           line-height: 2.66rem;

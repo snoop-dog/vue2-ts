@@ -1,3 +1,11 @@
+/*
+ * @Description: write something
+ * @Author: snoop-dog
+ * @Date: 2021-04-24 14:03:25
+ * @LastEditors: snoop-dog
+ * @LastEditTime: 2021-04-26 23:19:20
+ * @FilePath: \vue2-ts\src\utils\request.ts
+ */
 import axios from 'axios'
 import qs from 'qs'
 import router from '../router/index'
@@ -23,7 +31,7 @@ const removePending = (ever: any) => {
 request.interceptors.request.use(
   (config: any) => {
     if (['GET', 'DELETE'].includes(config.method.toUpperCase())) {
-      config.params = { ...config.data }
+      // config.params = qs.stringify(config.params)
     } else if (['POST', 'PUT'].includes(config.method.toUpperCase())) {
       config.headers['content-type'] = 'appliaction/json'
       // config.data = qs.stringify(config.data)
@@ -60,11 +68,11 @@ request.interceptors.response.use(
 )
 
 export default (method: string, url: string, data = {}) => {
-  if (method.toUpperCase() === 'GET') {
-    return request.get(url, {
+  if (['GET', 'DELETE'].includes(method.toUpperCase())) {
+    return request[method](url, {
       params: data
     })
-  } else if (method.toUpperCase() === 'POST') {
-    return request.post(url, data)
+  } else if (['POST', 'PUT'].includes(method.toUpperCase())) {
+    return request[method](url, data)
   }
 }

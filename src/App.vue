@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2020-09-21 20:26:17
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-04-24 21:35:13
+ * @LastEditTime: 2021-04-27 00:53:52
  * @FilePath: \vue2-ts\src\App.vue
 -->
 <template>
@@ -21,6 +21,7 @@ import Vue from 'vue'
 export default Vue.extend({
   mounted () {
     let echartsUnit
+    const _self = this
     const width =
       window.innerWidth ||
       document.documentElement.clientWidth ||
@@ -56,10 +57,11 @@ export default Vue.extend({
       this.$store.commit('setEchartsUnit', echartsUnit)
     })
 
-    window.addEventListener('beforeunload', () => {
-      debugger
-      this.$store.commit('resetState')
-    }, false)
+    window.onload = () => {
+      _self.$router.replace({
+        path: _self.$store.state.activeTab
+      })
+    }
   }
 })
 </script>
