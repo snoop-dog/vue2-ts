@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2020-09-21 20:26:17
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-04-27 00:53:52
+ * @LastEditTime: 2021-04-27 01:02:35
  * @FilePath: \vue2-ts\src\App.vue
 -->
 <template>
@@ -58,9 +58,11 @@ export default Vue.extend({
     })
 
     window.onload = () => {
-      _self.$router.replace({
-        path: _self.$store.state.activeTab
-      })
+      if (_self.$route.path !== '/') {
+        _self.$router.replace({
+          path: _self.$store.state.activeTab
+        })
+      }
     }
   }
 })

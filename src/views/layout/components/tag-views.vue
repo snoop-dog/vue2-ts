@@ -34,6 +34,7 @@
 import { ElMenuItemGroup } from 'element-ui/types/menu-item-group'
 import Vue from 'vue'
 import { mapState } from 'vuex'
+import { removeToken } from '../../../utils/auth'
 export default Vue.extend({
   data () {
     return {
@@ -108,6 +109,7 @@ export default Vue.extend({
         type: 'warning'
       })
         .then(() => {
+          removeToken()
           this.$store.commit('resetState')
           this.$router.push('/')
         })
