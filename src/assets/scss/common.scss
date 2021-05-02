@@ -75,16 +75,16 @@ textarea {
   border-radius: 4px;
 
   &:hover {
-    border-color: #346;
+    border-color: #78e;
   }
 
   &:focus {
-    border-color: #346;
-    box-shadow: 0 0 5px 0 #346;
+    border-color: #78e;
+    box-shadow: 0 0 5px 0 #78e;
   }
 
   &::-webkit-input-placeholder {
-    color: #556479 !important;
+    color: #999 !important;
     font-size: 0.9rem;
   }
 
@@ -299,7 +299,7 @@ textarea {
 
   html,
   body {
-    font-size: 13px;
+    font-size: 14px;
   }
 }
 
@@ -307,7 +307,7 @@ textarea {
 
   html,
   body {
-    font-size: 15px;
+    font-size: 16px;
   }
 }
 
@@ -526,6 +526,10 @@ textarea {
           
           .el-select, .el-checkbox {
             line-height: 2rem;
+          }
+
+          .el-select {
+            width: 100%;
           }
 
           .label-text {
@@ -877,6 +881,9 @@ textarea {
   color: #fff;
   background-color: #78e;
   // box-shadow: 1px 1px rgba(0, 0, 0, 0.3);
+  &.disabled {
+    background-color: #adadad !important;
+  }
 }
 
 .pagination-btns-box {

@@ -1,7 +1,7 @@
 <template>
   <el-container class="login-container">
     <el-main class="login-main">
-      <el-row class="login-title">后台管理系统</el-row>
+      <el-row class="login-title">安邦源</el-row>
       <el-row class="login-content">
         <el-input
           v-model.trim="username"

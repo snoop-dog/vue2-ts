@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:05:30
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-04-27 00:14:02
+ * @LastEditTime: 2021-05-01 17:45:06
  * @FilePath: \vue2-ts\src\views\system\user.vue
 -->
 
@@ -16,6 +16,7 @@
     <el-row class="tableModel">
       <layout-table
         fixed
+        border
         :pagination="pagination"
         :ending-load="endingLoad"
         :data-list="dataList"
@@ -114,14 +115,14 @@ export default {
           prop: 'username',
           value: 'username',
           fixed: true,
-          width: 80
+          width: 100
         },
         {
           name: '用户姓名',
           prop: 'name',
           value: 'name',
           fixed: true,
-          width: 80
+          width: 100
         },
         {
           name: '手机号',

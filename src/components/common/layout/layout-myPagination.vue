@@ -155,7 +155,7 @@ export default {
     // 设置按钮切换
     setCanClick () {
       this.canClick = false
-      setTimeout(function () {
+      setTimeout(() => {
         this.canClick = true
       }, this.DURATION)
     },

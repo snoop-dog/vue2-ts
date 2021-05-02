@@ -762,7 +762,7 @@ export default {
 
       /deep/.input-item {
         display: flex;
-        min-width: 19.33rem;
+        min-width: 18.33rem;
         float: left;
         position: relative;
         margin-bottom: 0;

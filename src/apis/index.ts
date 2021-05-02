@@ -261,3 +261,619 @@ export function updateUserInfo (params: any) {
   })
 }
 // 用户相关 API end
+
+// 常用2级字典相关 API start
+/**
+ * @api {post} /data/add 新增字典
+ * @param {Object} params 新增字典参数
+ */
+export function addDictionary (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/data/add', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {delete} /data/delete 字典删除
+ * @param {Object} params 字典删除参数
+ */
+export function delDictionary (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('delete', '/data/delete', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /data/getDataList 获取字典列表
+ * @param {Object} params 获取字典列表参数
+ */
+export function getDicList (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/data/getDataList', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /data/getNationList 民族字典列表
+ * @param {Object} params 民族字典列表参数
+ */
+export function getNationDic (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/data/getNationList', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /data/update 字典修改
+ * @param {Object} params 字典修改参数
+ */
+export function updateDictionary (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/data/update', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 常用2级字典相关 API start
+
+// 省、市、区、街道、社区、小区管理 API start
+/**
+ * @api {post} /area/add 新增区划信息
+ * @param {Object} params 新增区划信息参数
+ */
+export function addArea (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/area/add', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {delete} /area/delete 区划信息删除
+ * @param {Object} params 区划信息删除参数
+ */
+export function deleteArea (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('delete', '/area/delete', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /area/getAreaDim 获取省-市-区-街道-社区(精简)
+ * @param {Object} params 获取省-市-区-街道-社区(精简)参数
+ */
+export function getAreaDim (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/area/getAreaDim', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /area/getAreaList 获取省、市、区、街道、社区列表
+ * @param {Object} params 获取省、市、区、街道、社区列表参数
+ */
+export function getAreaList (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/area/getAreaList', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /area/update 
+ * @param {Object} params 新增区划信息参数
+ */
+export function updateArea (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/area/update', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 省、市、区、街道、社区、小区管理 API end
+
+// 角色单位职位相关 API start
+/**
+ * @api {post} /jobunit/addPosition 职位新增
+ * @param {Object} params 职位新增参数
+ */
+export function addPosition (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/jobunit/addPosition', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /jobunit/addUnit 单位新增
+ * @param {Object} params 单位新增参数
+ */
+export function addDepartment (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/jobunit/addUnit', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {delete} /jobunit/deletePosition 删除职位
+ * @param {Object} params 删除职位参数
+ */
+export function deletePosition (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('delete', '/jobunit/deletePosition', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {delete} /jobunit/deleteUnit 删除单位
+ * @param {Object} params 删除单位参数
+ */
+export function deleteDepartment (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('delete', '/jobunit/deleteUnit', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /jobunit/getAreaByUnitId 根据单位ID该单位的省市区信息
+ * @param {Object} params 根据单位ID该单位的省市区信息参数
+ */
+export function getAreaByUid (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/jobunit/getAreaByUnitId', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /jobunit/getJobUnitList 获取职位单位列表
+ * @param {Object} params 获取职位单位列表参数
+ */
+export function getJobUnitList (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/jobunit/getJobUnitList', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /jobunit/getJobUnitSimple 获取职位(精简)
+ * @param {Object} params 获取职位(精简)参数
+ */
+export function getJobUnitSimple (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/jobunit/getJobUnitSimple', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /jobunit/getPositionTree 
+ * @param {Object} params 获取单位所属职位树参数
+ */
+export function getPositionTree (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/jobunit/getPositionTree', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /jobunit/getUnitTree  获取单位树
+ * @param {Object} params 获取单位树参数
+ */
+export function getUnitTree (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/jobunit/getUnitTree', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /jobunit/updatePosition  职位修改
+ * @param {Object} params 职位修改参数
+ */
+export function updatePosition (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/jobunit/updatePosition', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /jobunit/updateUnit  
+ * @param {Object} params 职位单位修改参数
+ */
+export function updateUnit (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/jobunit/updateUnit', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 角色单位职位相关 API end
+
+// 房屋入住登记相关中介公司信息 API start
+/**
+ * @api {post} /rr/addDataAll  租户新增(一起添加)
+ * @param {Object} params 租户新增(一起添加)参数
+ */
+export function addTenant (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/rr/addDataAll', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /rr/addHomeowner  户主/公司新增
+ * @param {Object} params 户主/公司新增参数
+ */
+export function addHouseowner (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/rr/addHomeowner', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /rr/addHouses  登记房屋新增
+ * @param {Object} params 登记房屋新增参数
+ */
+export function addHouseInfo (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/rr/addHouses', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /rr/addRegistrar  新增登记人中介公司
+ * @param {Object} params 新增登记人中介公司参数
+ */
+export function addRegistrar (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/rr/addRegistrar', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /rr/addTenants  批量-租户新增
+ * @param {Object} params 批量-租户新增参数
+ */
+export function addTenants (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/rr/addTenants', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /rr/getHomeownerByHouse  根据房屋id查询房主信息
+ * @param {Object} params 根据房屋id查询房主信息参数
+ */
+export function getHouseownerById (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/rr/getHomeownerByHouse', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /rr/getHomeownerList  获取当前用户可看户主/公司列表(名称+电话)
+ * @param {Object} params 获取当前用户可看户主/公司列表(名称+电话)参数
+ */
+export function getHomeownerList (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/rr/getHomeownerList', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /rr/getHomeownerPage  获取户主/公司数据列表
+ * @param {Object} params 获取户主/公司数据列表参数
+ */
+export function getHomeownerPage (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/rr/getHomeownerPage', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /rr/getHousesList  获取当前用户可看房屋列表(地址)
+ * @param {Object} params 获取当前用户可看房屋列表(地址)参数
+ */
+export function getHousesList (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/rr/getHousesList', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /rr/getHousesPage  获取登记数据列表
+ * @param {Object} params 获取登记数据列表参数
+ */
+export function getHousesPage (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/rr/getHousesPage', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /rr/getRegistrarByHouse  根据房屋id获取登记人信息
+ * @param {Object} params 根据房屋id获取登记人信息参数
+ */
+export function getRegistrarByHouse (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/rr/getRegistrarByHouse', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /rr/getRegistrarByLogin  获取当前用户登记人信息
+ * @param {Object} params 获取当前用户登记人信息参数
+ */
+export function getRegistrarByLogin (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/rr/getRegistrarByLogin', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /rr/getTenantPage  获取租户列表
+ * @param {Object} params 获取租户列表参数
+ */
+export function getTenantPage (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/rr/getTenantPage', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /rr/updateHomeowner  户主/公司修改
+ * @param {Object} params 户主/公司修改参数
+ */
+export function updateHomeowner (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/rr/updateHomeowner', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /rr/updateHouses  登记房屋修改
+ * @param {Object} params 登记房屋修改参数
+ */
+export function updateHouses (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/rr/updateHouses', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /rr/updateRegistrar  修改登记人中介公司
+ * @param {Object} params 修改登记人中介公司参数
+ */
+export function updateRegistrar (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/rr/updateRegistrar', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /rr/updateTenant  租户修改
+ * @param {Object} params 租户修改参数
+ */
+export function updateTenant (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/rr/updateTenant', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 房屋入住登记相关中介公司信息 API end

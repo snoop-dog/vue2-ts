@@ -6,8 +6,8 @@
           <i :class="Fold ? 'el-icon-s-unfold' : 'el-icon-s-fold'" @click.stop="foldSideBar"></i>
         </el-col>
         <el-col :span="20" class="tag-text">
-          <span>后台管理系统</span>
-          <span>后台管理系统</span>
+          <span>安邦源</span>
+          <span>安邦源</span>
         </el-col>
       </el-row>
     </el-main>
@@ -23,6 +23,9 @@
       <!-- <el-avatar :size="25" src="../../../assets/logo.png">
         <img src="../../../assets/logo.png"/>
       </el-avatar> -->
+      <el-row class="tool-logout" @click.native='reload'>
+        <i class="el-icon-refresh"></i>
+      </el-row>
       <el-row class="tool-logout" @click.native='logout'>
         <i class="el-icon-switch-button"></i>
       </el-row>
@@ -35,6 +38,7 @@ import { ElMenuItemGroup } from 'element-ui/types/menu-item-group'
 import Vue from 'vue'
 import { mapState } from 'vuex'
 import { removeToken } from '../../../utils/auth'
+import eventBus from '../../../components/event-bus.js'
 export default Vue.extend({
   data () {
     return {
@@ -87,6 +91,14 @@ export default Vue.extend({
       this.$router.push(this.activeName)
     },
     /**
+     * @description: 刷新页面
+     * @param {*} none
+     * @returns {*} void
+     */
+    reload () {
+      eventBus.$emit('reload-page')
+    },
+    /**
      * @description 菜单折叠
      * @param none
      * @return none
@@ -131,7 +143,7 @@ export default Vue.extend({
     height: 100%;
     display: flex;
     .tag-title {
-      flex: 0 0 25rem;
+      flex: 0 0 20rem;
       height: 100%;
       .tag-content {
         height: 100%;

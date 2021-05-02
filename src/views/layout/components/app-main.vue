@@ -3,13 +3,13 @@
  * @Author: snoop-dog
  * @Date: 2020-09-21 20:26:17
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-04-27 00:45:31
+ * @LastEditTime: 2021-05-02 14:07:06
  * @FilePath: \vue2-ts\src\views\layout\components\app-main.vue
 -->
 <template>
   <el-container class="app-container">
     <keep-alive>
-      <router-view :key="key"></router-view>
+      <router-view :key="key" v-if='isRouterShow'></router-view>
     </keep-alive>
   </el-container>
 </template>
@@ -17,6 +17,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { mapState } from 'vuex'
+import eventBus from '../../../components/event-bus.js'
 export default Vue.extend({
   computed: {
     ...mapState({
@@ -24,6 +25,26 @@ export default Vue.extend({
     }),
     key () {
       return this.$route.path
+    }
+  },
+  data () {
+    return {
+      isRouterShow: true
+    }
+  },
+  mounted () {
+    this.reload()
+  },
+  methods: {
+    reload () {
+      eventBus.$on('reload-page', () => {
+        console.log(1)
+        this.isRouterShow = false
+        this.$nextTick()
+        setTimeout(() => {
+          this.isRouterShow = true
+        }, 500)
+      })
     }
   }
 })
