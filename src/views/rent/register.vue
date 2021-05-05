@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:00:07
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-04-25 01:06:28
+ * @LastEditTime: 2021-05-05 22:28:15
  * @FilePath: \vue2-ts\src\views\rent\register.vue
 -->
 <template>
@@ -14,6 +14,7 @@
 
     <el-row class="tableModel">
       <layout-table
+        fixed
         :pagination="pagination"
         :ending-load="endingLoad"
         :data-list="dataList"
@@ -22,8 +23,47 @@
         @title-click="handleClick"
         ref="multipleTable"
         >
-        <div slot="id" slot-scope="props">
-          <span>{{props.value}}</span>
+        <div slot="homeowner" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="ownername" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value.homeownerInfo.name | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="nation" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value.homeownerInfo.nation | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="idcard" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value.homeownerInfo.idcard | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="provinceStr" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="cityStr" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="areaStr" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="streetStr" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="communityStr" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="address" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="housingNatureStr" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="planningPurposesStr" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="constructionArea" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="premisesPermitNo" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
         </div>
       </layout-table>
     </el-row>
@@ -31,9 +71,10 @@
 </template>
 
 <script>
-import { getHousePage } from '../../apis/index'
+import { getHousePage } from '@/apis/index'
 import layoutSearch from '../../components/common/layout/layout-search.vue'
 import layoutTable from '../../components/common/layout/layout-table.vue'
+import myTooltip from '@/components/common/layout/layout-tooltip.vue'
 export default {
   name: 'register',
   data () {
@@ -97,83 +138,111 @@ export default {
       },
       tableHead: [ // 表头
         {
-          name: '对象ID',
-          prop: 'id',
-          value: 'id'
+          name: '户主id',
+          prop: 'homeowner',
+          value: 'homeowner',
+          fixed: true,
+          width: 60
         },
         {
-          name: '对象姓名',
-          prop: 'object_name',
-          value: 'object_name',
-          width: 110
+          name: '户主姓名',
+          prop: 'ownername',
+          value: 'ownername',
+          showRow: true,
+          fixed: true,
+          width: 80
         },
         {
-          name: '手机号',
-          prop: 'phonenum',
-          value: 'phonenum',
-          width: 110
+          name: '民族',
+          prop: 'nation',
+          value: 'nation',
+          showRow: true,
+          fixed: true,
+          width: 60
         },
         {
-          name: '运营商',
-          prop: 'operator_str',
-          value: 'operator_str',
+          name: '身份证',
+          prop: 'idcard',
+          value: 'idcard',
+          showRow: true,
+          fixed: true
+        },
+        {
+          name: '省',
+          prop: 'provinceStr',
+          value: 'provinceStr'
+        },
+        {
+          name: '市',
+          prop: 'cityStr',
+          value: 'cityStr'
+        },
+        {
+          name: '区/县',
+          prop: 'areaStr',
+          value: 'areaStr'
+        },
+        {
+          name: '街道',
+          prop: 'streetStr',
+          value: 'streetStr'
+        },
+        {
+          name: '社区',
+          prop: 'communityStr',
+          value: 'communityStr'
+        },
+        {
+          name: '详细地址',
+          prop: 'address',
+          value: 'address',
+          width: 120
+        },
+        {
+          name: '房屋性质',
+          prop: 'housingNatureStr',
+          value: 'housingNatureStr'
+        },
+        {
+          name: '规划用途',
+          prop: 'planningPurposesStr',
+          value: 'planningPurposesStr',
           width: 100
         },
         {
-          name: '归属地',
-          prop: 'city_name',
-          value: 'city_name',
+          name: '房屋面积',
+          prop: 'constructionArea',
+          value: 'constructionArea',
           width: 100
         },
         {
-          name: 'IMSI',
-          prop: 'imsi',
-          value: 'imsi'
-        },
-        {
-          name: 'IMEI',
-          prop: 'imei',
-          value: 'imei'
-        },
-        {
-          name: '证件号',
-          prop: 'idcard_num',
-          value: 'idcard_num',
-          width: 110
-        },
-        {
-          name: '采集设备',
-          prop: 'device_num',
-          value: 'device_num',
-          width: 110
-        },
-        {
-          name: '手动对象',
-          prop: 'is_debug',
-          value: 'is_debug',
-          width: 110
+          name: '房产证编号',
+          prop: 'premisesPermitNo',
+          value: 'premisesPermitNo',
+          width: 100
         }
       ],
       tableTitle: { // 表格title
-        name: '出租登记',
-        button: [
-          {
-            label: '创建',
-            value: 'addObject'
-          },
-          {
-            label: '全部导出',
-            value: 'allDownload',
-            iconfont: 'el-icon-download'
-          }
-        ]
+        name: '出租登记'
+        // button: [
+        //   {
+        //     label: '创建',
+        //     value: 'addObject'
+        //   },
+        //   {
+        //     label: '全部导出',
+        //     value: 'allDownload',
+        //     iconfont: 'el-icon-download'
+        //   }
+        // ]
       },
       propsParams: {} // 初始参数
     }
   },
   components: {
     layoutSearch,
-    layoutTable
+    layoutTable,
+    myTooltip
   },
   created () {
     // this.searchList()
@@ -187,6 +256,7 @@ export default {
     searchList (param, val, size) {
       this.propsParams = _.cloneDeep(param)
       const params = {
+        keyword: param.keyword,
         pageIndex: val,
         pageSize: size
       }
@@ -196,12 +266,20 @@ export default {
 
       getHousePage(params).then(data => {
         const res = data.data
-        // this.dataList = _.cloneDeep(res.data)
+        this.dataList = _.cloneDeep(res.data)
         this.queryLoading = false
         this.endingLoad = false
         this.pagination.pageCount = data.data.totalPage
         this.pagination.totalCount = data.data.totalCount
         this.pagination.pageIndex = data.data.pageIndex
+      }).catch(error => {
+        console.log(error)
+        this.dataList = []
+        this.queryLoading = false
+        this.endingLoad = false
+        this.pagination.pageCount = 1
+        this.pagination.totalCount = 0
+        this.pagination.pageIndex = 1
       })
     },
     /**
@@ -211,6 +289,11 @@ export default {
      */
     handleClick (val) {
       console.log(val)
+    }
+  },
+  filters: {
+    nullTextFilter (val) {
+      return val || '--'
     }
   }
 }

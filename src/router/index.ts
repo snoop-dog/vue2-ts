@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2020-09-21 20:26:17
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-04-27 01:10:01
+ * @LastEditTime: 2021-05-03 10:15:25
  * @FilePath: \vue2-ts\src\router\index.ts
  */
 import Vue from 'vue'
@@ -66,6 +66,11 @@ const routes: Array<RouteConfig> = [
         path: '/system/position',
         name: 'Systemposition',
         component: () => import('../views/system/position.vue')
+      },
+      {
+        path: '/system/unit',
+        name: 'Systemunit',
+        component: () => import('../views/system/unit.vue')
       },
       {
         path: '/system/log',

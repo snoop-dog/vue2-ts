@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2020-09-21 20:26:17
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-04-27 00:34:22
+ * @LastEditTime: 2021-05-05 19:34:09
  * @FilePath: \vue2-ts\src\main.ts
  */
 import Vue from 'vue'
@@ -14,14 +14,17 @@ import _ from 'lodash'
 import VueCookies from 'vue-cookies'
 import { getToken, removeToken } from './utils/auth'
 import Element, { Message, MessageBox } from 'element-ui'
+import iView from 'iview'
 
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/scss/common.scss'
 import './assets/fonts/iconfont.css'
+import 'iview/dist/styles/iview.css'
 
 Vue.config.productionTip = false
 
 Vue.use(Element)
+Vue.use(iView)
 Vue.use(_)
 Vue.use(VueCookies)
 

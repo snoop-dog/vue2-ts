@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:03:47
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-03 00:10:59
+ * @LastEditTime: 2021-05-03 10:10:53
  * @FilePath: \vue2-ts\src\views\system\region.vue
 -->
 
@@ -47,7 +47,7 @@
         </div>
         <div slot="oprate" slot-scope="props">
           <el-button @click.stop="updateRegion(props.value)" class="btnPrimary">修改</el-button>
-          <el-button @click.stop="deleteRegion(props.value.id)" class="btnPrimary">删除</el-button>
+          <el-button @click.stop="deleteRegion(props.value)" class="btnPrimary">删除</el-button>
         </div>
       </layout-table>
     </el-row>
@@ -180,6 +180,15 @@
             v-model.trim="ruleForm.latitude"
             placeholder="请输入纬度">
           >
+          </el-input>
+        </el-form-item>
+        <el-form-item label="排序：">
+          <el-input
+            clearable
+            v-model.trim="ruleForm.sort"
+            @input="ruleForm.sort=ruleForm.sort.replace(/[^\d]/g,'')"
+            @blur="ruleForm.sort=ruleForm.sort.replace(/[^\d]/g,'')"
+            placeholder="请输入数字">
           </el-input>
         </el-form-item>
       </el-form>
@@ -334,7 +343,8 @@ export default {
         shortname: '',
         longitude: '',
         latitude: '',
-        level: ''
+        level: '',
+        sort: ''
       },
       showDialog: false, // 是否展示弹框
       isEdit: false, // 是否为编辑状态
@@ -409,6 +419,17 @@ export default {
      * @returns {*}
      */
     changeParam (param) {
+      if (this.propsParams.provice !== param.provice) {
+        this.$set(this.searchParam[1], 'city', '')
+        this.$set(this.searchParam[2], 'country', '')
+        this.$set(this.searchParam[3], 'street', '')
+      } else if (this.propsParams.city !== param.city) {
+        this.$set(this.searchParam[2], 'country', '')
+        this.$set(this.searchParam[3], 'street', '')
+      } else if (this.propsParams.country !== param.country) {
+        this.$set(this.searchParam[3], 'street', '')
+      }
+      
       this.propsParams = _.cloneDeep(param)
       this.getRegionSimple()
     },
@@ -630,7 +651,8 @@ export default {
             shortname: this.ruleForm.shortname,
             longitude: this.ruleForm.longitude,
             latitude: this.ruleForm.latitude,
-            level: level
+            level: level,
+            sort: this.ruleForm.sort
           }
 
           addArea(params).then(data => {
@@ -652,7 +674,8 @@ export default {
             shortname: this.ruleForm.shortname,
             longitude: this.ruleForm.longitude,
             latitude: this.ruleForm.latitude,
-            level: this.ruleForm.level
+            level: this.ruleForm.level,
+            sort: this.ruleForm.sort
           }
 
           updateArea(params).then(data => {
@@ -699,7 +722,7 @@ export default {
         type: 'warning',
         dangerouslyUseHTMLString: true
       }).then(() => {
-        this.confirmDelete(item.id)
+        this.confirmDelete(item.id, item.level)
       }).catch(err => {
         console.log(err)
         this.showMessageBox('已取消！')
@@ -710,9 +733,10 @@ export default {
      * @param {String} id id
      * @returns {*} void
      */
-    confirmDelete (id) {
+    confirmDelete (id, level) {
       const params = {
-        ids: id
+        ids: id,
+        level: level
       }
 
       deleteArea(params).then(data => {

@@ -120,14 +120,14 @@
                   :options="item.disableddate"
                   :type="item.dateType ? item.dateType : 'datetime'"
                   placeholder="开始时间"
-                  format="yyyy-MM-dd"
+                  format="yyyy-MM-dd HH:mm:ss"
                   :clearable="!item.clearable"
                   style="margin-right: 10px">
                 </date-picker>
                 <date-picker
                   v-model="formModel[item.property][1]"
                   :options="item.disableddate"
-                  format="yyyy-MM-dd"
+                  format="yyyy-MM-dd HH:mm:ss"
                   :clearable="!item.clearable"
                   :type="item.dateType ? item.dateType : 'datetime'"
                   placeholder="结束时间">
@@ -752,10 +752,20 @@ export default {
         height: auto;
 
         .time {
-          width: 33.33rem;
+          width: 32.33rem;
 
-          .timeBox {
-            margin-top: 0.25rem;
+          /deep/.timeBox {
+            margin-top: 0;
+            .ivu-date-picker {
+              .ivu-input {
+                height: 2.66rem;
+                line-height: 2.66rem;
+              }
+              .ivu-input-suffix {
+                height: 2.66rem;
+                line-height: 2.66rem;
+              }
+            }
           }
         }
       }
@@ -766,6 +776,9 @@ export default {
         float: left;
         position: relative;
         margin-bottom: 0;
+        .el-form-item__label {
+          width: 6rem;
+        }
 
         &.custom-time {
           width: auto;

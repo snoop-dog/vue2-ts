@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2020-09-21 20:26:17
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-04-27 00:39:52
+ * @LastEditTime: 2021-05-05 23:00:52
  * @FilePath: \vue2-ts\.eslintrc.js
  */
 module.exports = {
@@ -27,6 +27,9 @@ module.exports = {
     'vue/no-use-v-if-with-v-for': 'off',
     'no-trailing-spaces': 'off',
     'vue/no-unused-vars': 'off',
-    '@typescript-eslint/no-this-alias': 'off'
+    '@typescript-eslint/no-this-alias': 'off',
+    'prefer-rest-params': 'off',
+    'no-tabs': 'off',
+    'indent': 'off'
   }
 }

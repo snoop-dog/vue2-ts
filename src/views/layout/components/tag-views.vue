@@ -7,7 +7,7 @@
         </el-col>
         <el-col :span="20" class="tag-text">
           <span>安邦源</span>
-          <span>安邦源</span>
+          <!-- <span>安邦源</span> -->
         </el-col>
       </el-row>
     </el-main>
@@ -178,8 +178,8 @@ export default Vue.extend({
               color: #fff;
               transform: translate(-50%, -50%);
               &:nth-child(1) {
-                color: transparent;
-                -webkit-text-stroke: 0.1px #37e;
+                color: #37e;
+                // -webkit-text-stroke: 0.1px #37e;
               }
               &:nth-child(2) {
                 color: #37e;

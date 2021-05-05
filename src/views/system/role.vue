@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:00:59
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-04-26 23:48:27
+ * @LastEditTime: 2021-05-05 21:03:52
  * @FilePath: \vue2-ts\src\views\system\role.vue
 -->
 <template>
@@ -35,8 +35,8 @@
         <div slot="oprate" slot-scope="props">
           <el-button @click.stop="updateRole(props.value)" class="btnPrimary">修改</el-button>
           <el-button @click.stop="deleteRole(props.value.id)" class="btnPrimary">删除</el-button>
-          <el-button class="btnPrimary" v-if="!props.value.is_enabled">启用</el-button>
-          <el-button class="btnPrimary" v-else>关闭</el-button>
+          <el-button class="btnPrimary" v-if="props.value.is_enabled" @click.native="enableRole(props.value.id, 0)">启用</el-button>
+          <el-button class="btnPrimary" v-else @click.native="enableRole(props.value.id, 1)">关闭</el-button>
         </div>
       </layout-table>
     </el-row>
@@ -282,6 +282,24 @@ export default {
       })
     },
     /**
+     * @description: 修改角色状态
+     * @param {String} id 角色id
+     * @param {Number} status 角色状态
+     * @returns {*}
+     */
+    enableRole (id, status) {
+      const params = {
+        id: id,
+        isEnabled: status
+      }
+
+      enableRole(params).then(data => {
+        console.log(data)
+        this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+        this.showMessageBox('操作成功!', 'success')
+      })
+    },
+    /**
      * @description: 角色新增或修改
      * @param {*} none
      * @returns {*} void
@@ -340,7 +358,7 @@ export default {
   },
   filters: {
     enableFilter (val) {
-      return val ? '启用' : '关闭'
+      return !val ? '启用' : '关闭'
     }
   }
 }

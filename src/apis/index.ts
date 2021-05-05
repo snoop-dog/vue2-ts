@@ -187,7 +187,7 @@ export function deleteUser (params: any) {
  */
 export function updateUserStatus (params: any) {
   return new Promise((resolve, reject) => {
-    httpRequest('delete', '/user/enabled', params)
+    httpRequest('post', '/user/enabled', params)
       .then(res => {
         resolve(res)
       })
@@ -877,3 +877,37 @@ export function updateTenant (params: any) {
   })
 }
 // 房屋入住登记相关中介公司信息 API end
+
+// 日志管理 API start
+/**
+ * @api {post} /log/log-insert  日志添加
+ * @param {Object} params 日志添加参数
+ */
+export function insertLog (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/log/log-insert', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /log/log-page  日志查询
+ * @param {Object} params 日志查询参数
+ */
+export function getLogList (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/log/log-page', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 日志管理 API end
