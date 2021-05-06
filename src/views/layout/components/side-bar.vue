@@ -19,10 +19,12 @@
             </el-menu-item>
           </el-menu-item-group>
         </el-submenu> -->
-        <el-menu-item v-for="item in menuData" :key="item.url" :index="item.url">
-          <i :class="['iconfont', item.icon_name]"></i>
-          <span slot="title">{{item.name}}</span>
-        </el-menu-item>
+        <template>
+          <el-menu-item v-for="item in menuData" :index="item.url"  v-if="!item.is_show" :key="item.url">
+            <i :class="['iconfont', item.icon_name]"></i>
+            <span slot="title">{{item.name}}</span>
+          </el-menu-item>
+        </template>
       </el-menu>
     </el-main>
   </el-container>
@@ -61,7 +63,10 @@ export default class Sidebar extends Vue {
   private addTab (url: string) {
     this.$store.commit(
       'addTabList',
-      url
+      {
+        url: url,
+        param: {}
+      }
     )
     this.$router.push(url)
   }

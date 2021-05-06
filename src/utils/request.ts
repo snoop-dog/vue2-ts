@@ -3,13 +3,13 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 14:03:25
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-04-26 23:19:20
+ * @LastEditTime: 2021-05-06 23:37:30
  * @FilePath: \vue2-ts\src\utils\request.ts
  */
 import axios from 'axios'
 import qs from 'qs'
 import router from '../router/index'
-import { getToken } from '../utils/auth'
+import { getToken, removeToken } from '../utils/auth'
 
 const request = axios.create({
   timeout: 60000,
@@ -18,9 +18,11 @@ const request = axios.create({
 })
 
 const pending: Array<any> = [] // 声明一个数组用于存储每个ajax请求的取消函数和ajax标识
+const whiteListUrl = ['/area/getAreaDim']
 const CancelToken = axios.CancelToken
 const removePending = (ever: any) => {
   pending.map((item, idx) => {
+    if (whiteListUrl.includes(ever.url)) return
     if (item.u === ever.url + '&' + ever.method) { // 当当前请求在数组中存在时执行函数体
       item.f() // 执行取消操作
       pending.splice(idx, 1) // 把这条记录从数组中移除
@@ -57,12 +59,19 @@ request.interceptors.response.use(
     if (res.status === 200) {
       return res.data
     } else if (res.status === 401) {
+      removeToken()
       router.replace({
         path: '/'
       })
     }
   },
   (err: object) => {
+    if (JSON.stringify(err).includes('401')) {
+      removeToken()
+      router.replace({
+        path: '/'
+      })
+    }
     Promise.reject(err)
   }
 )

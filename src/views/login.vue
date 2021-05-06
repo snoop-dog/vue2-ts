@@ -23,7 +23,7 @@
         <el-button :loading="loading" @click.stop="loginSubmit">登录</el-button>
       </el-row>
     </el-main>
-    <svg class="stars" height="100%" preserveAspectRatio="none" width="100%">
+    <!-- <svg class="stars" height="100%" preserveAspectRatio="none" width="100%">
       <circle class="star" cx="7.06%" cy="21.12%" r=".6"></circle>
       <circle class="star" cx="0.54%" cy="97.36%" r=".5"></circle>
       <circle class="star" cx="65.09%" cy="34.45%" r="1"></circle>
@@ -520,7 +520,7 @@
         </radialGradient>
       </defs>
       <ellipse cx="100%" cy="50%" fill="url(#comet-gradient)" rx="150" ry="3"></ellipse>
-    </svg>
+    </svg> -->
   </el-container>
 </template>
 
@@ -581,7 +581,8 @@ export default Vue.extend({
 
 <style lang="scss">
 .login-container {
-  background: #000;
+  background: url('../assets/images/img_login.jpg') 0 0 no-repeat;
+  background-size: 100% 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -627,7 +628,7 @@ export default Vue.extend({
     padding: 0;
     width: 35rem;
     flex: 0 0 25rem;
-    background: rgba(18, 28, 68, 0.8);
+    background: #121c44;
     border-radius: 0.5rem;
     display: flex;
     flex-direction: column;

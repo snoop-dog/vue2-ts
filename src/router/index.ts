@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2020-09-21 20:26:17
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-03 10:15:25
+ * @LastEditTime: 2021-05-06 21:39:33
  * @FilePath: \vue2-ts\src\router\index.ts
  */
 import Vue from 'vue'
@@ -41,6 +41,11 @@ const routes: Array<RouteConfig> = [
         path: '/rent/datasearch',
         name: 'Dataserach',
         component: () => import('../views/rent/datasearch.vue')
+      },
+      {
+        path: '/rent/searchResult:keyword?',
+        name: 'Rearchresult',
+        component: () => import('../views/rent/searchResult.vue')
       },
       {
         path: '/rent/register',

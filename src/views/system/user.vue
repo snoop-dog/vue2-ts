@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:05:30
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-05 22:37:48
+ * @LastEditTime: 2021-05-06 23:16:25
  * @FilePath: \vue2-ts\src\views\system\user.vue
 -->
 
@@ -71,7 +71,7 @@
     </el-row>
 
     <my-dialog
-      size="extra-small"
+      size="small"
       modal
       :visible.sync="showDialog"
       title="新增用户"
@@ -95,17 +95,24 @@
           </el-input>
         </el-form-item>
         <el-form-item label="角色：" class="required">
-          <el-input 
-            clearable 
-            type="password"
-            v-model.trim="ruleForm.role_id" 
-            placeholder="请输入角色"
+          <el-select
+            clearable
+            :multiple="false"
+            placeholder="请选择角色"
+            v-model="ruleForm.role_id"
           >
-          </el-input>
+            <el-option
+              v-for="item in roleList"
+              :label="item.name"
+              :value="item.id"
+              :key="item.id"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="密码：" class="required">
+        <el-form-item v-if="!isEdit" label="密码：" class="required">
           <el-input 
-            clearable 
+            show-password
             type="password"
             v-model.trim="ruleForm.password" 
             placeholder="请输入密码"
@@ -136,11 +143,11 @@
               <el-select
                 clearable
                 :multiple="false"
-                v-model="ruleForm.provice"
+                v-model="ruleForm.province"
                 @change="changeProvice"
               >
                 <el-option
-                  v-for="item in provice.data"
+                  v-for="item in province.data"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id"
@@ -155,7 +162,7 @@
             <el-form-item label="市：">
               <el-select
                 clearable
-                :disabled="!ruleForm.provice"
+                :disabled="!ruleForm.province"
                 :multiple="false"
                 v-model="ruleForm.city"
                 @change="changeCity"
@@ -182,7 +189,7 @@
                 @change="changeCountry"
               >
                 <el-option
-                  v-for="item in country.data"
+                  v-for="item in area.data"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id"
@@ -235,7 +242,7 @@
         </transition>
         <transition name="el-zoom-in-center">
           <template>
-            <el-form-item label="小区：" class="required">
+            <el-form-item label="小区：">
               <el-input 
                 clearable 
                 v-model.trim="ruleForm.plot" 
@@ -245,7 +252,7 @@
             </el-form-item>
           </template>
         </transition>
-        <el-form-item label="区划简称：">
+        <el-form-item label="楼栋：">
           <el-input clearable v-model.trim="ruleForm.building" placeholder="请输入楼栋"></el-input>
         </el-form-item>
         <el-form-item label="详细地址：">
@@ -256,12 +263,20 @@
           </el-input>
         </el-form-item>
         <el-form-item label="职位：">
-          <el-input 
+          <el-select
             clearable
-            v-model.trim="ruleForm.position_id"
-            placeholder="请输入职位">
+            :multiple="false"
+            placeholder="请选择职位"
+            v-model="ruleForm.position_id"
           >
-          </el-input>
+            <el-option
+              v-for="item in positionList"
+              :label="item.name"
+              :value="item.id"
+              :key="item.id"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
       </el-form>
     </my-dialog>
@@ -278,8 +293,13 @@ import {
   updateUserStatus,
   deleteUser,
   addUser,
-  getAreaDim
+  getAreaDim,
+  getRoleSimple,
+  getJobUnitSimple
 } from '../../apis/index'
+
+// utils
+import md5 from 'js-md5'
 
 // components
 import layoutSearch from '../../components/common/layout/layout-search.vue'
@@ -426,7 +446,7 @@ export default {
         data: [],
         value: ''
       },
-      country: { // 弹框区县数据
+      area: { // 弹框区县数据
         data: [],
         value: ''
       },
@@ -434,13 +454,19 @@ export default {
         data: [],
         value: ''
       },
-      provice: { // 弹框省数据
+      province: { // 弹框省数据
         data: [],
         value: ''
       },
       community: {
         data: [],
         value: ''
+      },
+      roleList: [], // 角色集合
+      positionList: [], // 职位集合
+      updateParam: { // 修改用户参数
+        id: '',
+        creater: ''
       }
     }
   },
@@ -449,6 +475,11 @@ export default {
     myTooltip,
     layoutSearch,
     layoutTable
+  },
+  created () {
+    this.getRoleListSimple() // 获取角色列表
+    this.getJobUnitSimple() // 获取职位列表
+    this.getProviceData() // 获取省级数据
   },
   methods: {
     /**
@@ -489,6 +520,30 @@ export default {
       })
     },
     /**
+     * @description: 获取角色列表
+     * @param {*} none
+     * @returns {*} void
+     */
+    getJobUnitSimple () {
+      const params = {}
+
+      getJobUnitSimple(params).then(data => {
+        this.positionList = data.data || []
+      })
+    },
+    /**
+     * @description: 获取角色列表
+     * @param {*} none
+     * @returns {*} void
+     */
+    getRoleListSimple () {
+      const params = {}
+
+      getRoleSimple(params).then(data => {
+        this.roleList = data.data || []
+      })
+    },
+    /**
      * @description: 获取省级数据
      * @param {*} none
      * @returns {*} void
@@ -501,10 +556,10 @@ export default {
       }
 
       getAreaDim(params).then(data => {
-        this.provice.data = data.data
+        this.province.data = data.data
       }).catch(err => {
         console.log(err)
-        this.provice.data = []
+        this.province.data = []
       })
     },
     /**
@@ -516,8 +571,8 @@ export default {
       if (!val) {
         this.city.data = []
         this.ruleForm.city = ''
-        this.country.data = []
-        this.ruleForm.country = ''
+        this.area.data = []
+        this.ruleForm.area = ''
         this.street.data = []
         this.ruleForm.street = ''
         this.community.data = []
@@ -543,8 +598,8 @@ export default {
      */
     changeCity (val) {
       if (!val) {
-        this.country.data = []
-        this.ruleForm.country = ''
+        this.area.data = []
+        this.ruleForm.area = ''
         this.street.data = []
         this.ruleForm.street = ''
         this.community.data = []
@@ -557,10 +612,10 @@ export default {
       }
 
       getAreaDim(params).then(data => {
-        this.country.data = data.data
+        this.area.data = data.data
       }).catch(err => {
         console.log(err)
-        this.country.data = []
+        this.area.data = []
       })
     },
     /**
@@ -612,12 +667,106 @@ export default {
       })
     },
     /**
+     * @description: 修改用户
+     * @param {Object} item 用户
+     * @returns {*} void
+     */
+    updateRole (item) {
+      this.isEdit = true
+      this.showDialog = true
+      for (const key in this.ruleForm) {
+        this.$set(this.ruleForm, key, item[key])
+      }
+      if (this.ruleForm.province) {
+        this.changeProvice(this.ruleForm.province)
+      }
+
+      if (this.ruleForm.city) {
+        this.changeCity(this.ruleForm.city)
+      }
+
+      if (this.ruleForm.area) {
+        this.changeCountry(this.ruleForm.area)
+      }
+
+      if (this.ruleForm.street) {
+        this.changeStreet(this.ruleForm.street)
+      }
+      
+      this.$set(this.updateParam, 'id', item.id)
+      this.$set(this.updateParam, 'creater', item.creater)
+    },
+    /**
      * @description: 修改新增用户
      * @param {*} none
      * @returns {*} void
      */
     confirmUpdate () {
-      console.log(1)
+      if (!this.validParam()) return
+
+      const params = {
+        username: this.ruleForm.username,
+        name: this.ruleForm.name,
+        role_id: this.ruleForm.role_id,
+        password: md5(this.ruleForm.password),
+        phonenumber: this.ruleForm.phonenumber,
+        idcard: this.ruleForm.idcard,
+        province: this.ruleForm.province,
+        city: this.ruleForm.city,
+        area: this.ruleForm.area,
+        street: this.ruleForm.street,
+        community: this.ruleForm.community,
+        plot: this.ruleForm.plot,
+        building: this.ruleForm.building,
+        address: this.ruleForm.address,
+        position_id: this.ruleForm.position_id
+      }
+      if (!this.isEdit) {
+        addUser(params).then(data => {
+          this.showDialog = false
+          this.showMessageBox(data.message, 'success')
+          for (const key in this.ruleForm) {
+            this.$set(this.ruleForm, key, '')
+          }
+          this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+        }) 
+      } else {
+        updateUserInfo({ ...params, ...this.updateParam })
+          .then(data => {
+            this.showDialog = false
+            this.showMessageBox(data.message, 'success')
+            for (const key in this.ruleForm) {
+              this.$set(this.ruleForm, key, '')
+            }
+
+            for (const key in this.updateParam) {
+              this.$set(this.updateParam, key, '')
+            }
+            this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+          })
+      }
+    },
+    /**
+     * @description: 新增修改用户参数验证
+     * @param {*} none
+     * @returns {Boolean} 验证是否通过
+     */
+    validParam () {
+      if (!this.ruleForm.username) {
+        this.showMessageBox('请填写用户名！', 'warning')
+        return false
+      } else if (!this.ruleForm.name) {
+        this.showMessageBox('请填写姓名！', 'warning')
+        return false
+      } else if (!this.ruleForm.role_id) {
+        this.showMessageBox('请选择角色！', 'warning')
+        return false
+      } else if (!this.ruleForm.password && !this.isEdit) {
+        this.showMessageBox('请填写密码！', 'warning')
+        return false
+      } else {
+        return true
+      }
     },
     /**
      * @description: 修改角色状态
@@ -653,11 +802,11 @@ export default {
         type: 'warning',
         dangerouslyUseHTMLString: true
       }).then(() => {
-        // deleteUser(params).then(data => {
-        //   console.log(data)
-        //   this.showMessageBox('删除成功！', 'success')
-        //   this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
-        // })
+        deleteUser(params).then(data => {
+          console.log(data)
+          this.showMessageBox('删除成功！', 'success')
+          this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+        })
       }).catch(err => {
         console.log(err)
         this.showMessageBox('已取消！')
@@ -670,7 +819,7 @@ export default {
      */
     handleClick () {
       this.showDialog = true
-      this.getProviceData()
+      this.isEdit = false
     }
   },
   filters: {
@@ -688,14 +837,14 @@ export default {
           this.ruleForm[key] = ''
         }
 
-        this.provice.data =
+        this.province.data =
         this.city.data =
-        this.country.data =
+        this.area.data =
         this.street.data = []
 
-        this.provice.value =
+        this.province.value =
         this.city.value =
-        this.country.value =
+        this.area.value =
         this.street.value = ''
       }
     }

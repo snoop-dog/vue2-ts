@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:00:07
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-05 22:28:15
+ * @LastEditTime: 2021-05-07 01:12:18
  * @FilePath: \vue2-ts\src\views\rent\register.vue
 -->
 <template>
@@ -79,47 +79,7 @@ export default {
   name: 'register',
   data () {
     return {
-      dataList: [
-        {
-          id: 'iii'
-        },
-        {
-          id: 'iii'
-        },
-        {
-          id: 'iii'
-        },
-        {
-          id: 'iii'
-        },
-        {
-          id: 'iii'
-        },
-        {
-          id: 'iii'
-        },
-        {
-          id: 'iii'
-        },
-        {
-          id: 'iii'
-        },
-        {
-          id: 'iii'
-        },
-        {
-          id: 'iii'
-        },
-        {
-          id: 'iii'
-        },
-        {
-          id: 'iii'
-        },
-        {
-          id: 'iii'
-        }
-      ], // 列表数据
+      dataList: [], // 列表数据
       queryLoading: false, // 查询loading
       searchParam: [ // 查询参数
         {
@@ -142,7 +102,7 @@ export default {
           prop: 'homeowner',
           value: 'homeowner',
           fixed: true,
-          width: 60
+          width: 50
         },
         {
           name: '户主姓名',
@@ -150,7 +110,7 @@ export default {
           value: 'ownername',
           showRow: true,
           fixed: true,
-          width: 80
+          width: 70
         },
         {
           name: '民族',
@@ -158,13 +118,14 @@ export default {
           value: 'nation',
           showRow: true,
           fixed: true,
-          width: 60
+          width: 50
         },
         {
           name: '身份证',
           prop: 'idcard',
           value: 'idcard',
           showRow: true,
+          width: 120,
           fixed: true
         },
         {

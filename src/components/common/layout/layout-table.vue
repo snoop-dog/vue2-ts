@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 22:12:47
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-04-25 01:09:21
+ * @LastEditTime: 2021-05-06 21:37:05
  * @FilePath: \vue2-ts\src\components\common\layout\layout-table.vue
 -->
 <template>
@@ -75,7 +75,7 @@
            </template>
         </el-table-column>
         <el-table-column v-if="hasSelect" :fixed="fixed" class-name="tableSelect" :selectable="isCheck" width="35" type="selection"></el-table-column>
-        <el-table-column v-if="hasIndex && tableHead.length" :fixed="fixed" class-name="tableIndex" label="序号" type="index">
+        <el-table-column v-if="hasIndex && tableHead.length" :fixed="fixed" class-name="tableIndex" label="序号" width="60" type="index">
         </el-table-column>
         <el-table-column
           v-for="item in tableHead"

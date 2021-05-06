@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2020-09-21 20:26:17
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-02 14:07:06
+ * @LastEditTime: 2021-05-06 23:56:21
  * @FilePath: \vue2-ts\src\views\layout\components\app-main.vue
 -->
 <template>
@@ -58,6 +58,6 @@ export default Vue.extend({
     right: 1.2rem;
     bottom: 1.2rem;
     border-radius: 0.5rem;
-    background: #fff;
+    // background: #fff;
   }
 </style>

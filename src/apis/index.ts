@@ -911,3 +911,21 @@ export function getLogList (params: any) {
   })
 }
 // 日志管理 API end
+
+// 数据检索 API start
+/**
+ * @api {get} /dr/getDataPage  数据检索
+ * @param {Object} params 数据检索参数
+ */
+export function dataSearch (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/dr/getDataPage', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 数据检索 API end

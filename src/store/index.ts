@@ -1,6 +1,8 @@
+// @ts-nocheck
 import Vue from 'vue'
 import Vuex from 'vuex'
 import _ from 'lodash'
+import qs from 'qs'
 
 Vue.use(Vuex)
 
@@ -55,19 +57,31 @@ export default new Vuex.Store({
     /**
      * @description add tablist
      * @param state
-     * @param url
+     * @param object
      */
-    addTabList (state, url: string) {
-      const samePath = state.tabList.filter(x => x.url === url)
+    addTabList (state, object) {
+      const samePath = state.tabList.filter(x => object.url.indexOf(x.url) > -1)
       if (samePath.length) {
-        state.activeTab = samePath[0].url
+        if (Object.keys(object.param).length) {
+          state.activeTab = samePath[0].url + '?' + qs.stringify(object.param)
+        } else {
+          state.activeTab = samePath[0].url
+        }
       } else {
-        const curMenu: any = state.menuData.filter(x => x.url === url)
-        state.tabList.push({
-          name: curMenu[0].name,
-          url: curMenu[0].url
-        })
-        state.activeTab = url
+        const curMenu: any = state.menuData.filter(x => x.url === object.url)
+        if (!Object.keys(object.param).length) {
+          state.tabList.push({
+            name: curMenu[0].name,
+            url: curMenu[0].url
+          })
+          state.activeTab = object.url
+        } else {
+          state.tabList.push({
+            name: curMenu[0].name,
+            url: curMenu[0].url + '?' + qs.stringify(object.param)
+          })
+          state.activeTab = object.url + '?' + qs.stringify(object.param)
+        } 
       }
     },
     /**
