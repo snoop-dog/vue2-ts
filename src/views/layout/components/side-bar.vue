@@ -152,6 +152,7 @@ export default class Sidebar extends Vue {
           line-height: 3.2rem;
           text-align: center;
           min-width: unset;
+          font-size: 1.2rem;
 
           &:hover {
             background: #203060;

@@ -2,6 +2,7 @@
   <el-container class="login-container">
     <el-main class="login-main">
       <el-row class="login-title">安邦源</el-row>
+      <el-row class="login-text">流动人口信息共享平台</el-row>
       <el-row class="login-content">
         <el-input
           v-model.trim="username"
@@ -628,7 +629,7 @@ export default Vue.extend({
     padding: 0;
     width: 35rem;
     flex: 0 0 25rem;
-    background: #121c44;
+    background: #000;
     border-radius: 0.5rem;
     display: flex;
     flex-direction: column;
@@ -641,12 +642,16 @@ export default Vue.extend({
       &.login-title {
         flex: 0 0 5rem;
         line-height: 5rem;
-        font-size: 1.5rem;
-        color: #abd;
+        font-size: 1.8rem;
+        color: #fff;
+      }
+      &.login-text {
+        font-size: 1rem;
+        color: #fff;
       }
       &.login-content {
         flex: 1;
-        padding: 2rem 0;
+        padding: 1rem 0;
         .el-input {
           margin: 1rem 0;
           &__inner {

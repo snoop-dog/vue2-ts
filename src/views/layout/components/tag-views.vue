@@ -206,7 +206,7 @@ export default Vue.extend({
           height: 3.2rem;
           line-height: 3.2rem;
           color: #fff;
-          font-size: 1rem;
+          font-size: 1.2rem;
           background: transparent;
           min-width: 6rem;
           padding: 0 1rem;
