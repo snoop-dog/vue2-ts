@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "15313227",
+      "name": "banner",
+      "font_class": "banner-manage",
+      "unicode": "e61a",
+      "unicode_decimal": 58906
+    },
+    {
+      "icon_id": "21591331",
+      "name": "字典管理",
+      "font_class": "dic-manage",
+      "unicode": "e72e",
+      "unicode_decimal": 59182
+    },
+    {
       "icon_id": "392126",
       "name": "地区",
       "font_class": "region-manage",
