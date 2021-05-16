@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2020-09-21 20:26:17
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-13 23:18:34
+ * @LastEditTime: 2021-05-17 01:12:34
  * @FilePath: \vue2-ts\src\router\index.ts
  */
 import Vue from 'vue'
@@ -91,6 +91,11 @@ const routes: Array<RouteConfig> = [
         path: '/system/dictionary',
         name: 'Systemdictionary',
         component: () => import('../views/system/dictionary.vue')
+      },
+      {
+        path: '/system/tenant',
+        name: 'Systemtenant',
+        component: () => import('../views/system/tenant.vue')
       }
     ]
   }

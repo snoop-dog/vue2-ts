@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "5582339",
+      "name": "租",
+      "font_class": "tenant-info",
+      "unicode": "e660",
+      "unicode_decimal": 58976
+    },
+    {
       "icon_id": "15313227",
       "name": "banner",
       "font_class": "banner-manage",

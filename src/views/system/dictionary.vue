@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-05-13 23:15:22
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-14 01:52:42
+ * @LastEditTime: 2021-05-16 15:36:24
  * @FilePath: \vue2-ts\src\views\system\dictionary.vue
 -->
 <template>
@@ -181,7 +181,7 @@ export default {
         id: '',
         pid: '',
         name: '',
-        value: '',
+        code: '',
         sort: 1
       },
       showDialog: false,
@@ -314,9 +314,9 @@ export default {
      */
     confirmUpdate () {
       const params = {
-        pid: this.ruleForm.pid,
+        pid: this.ruleForm.pid || 0,
         name: this.ruleForm.name,
-        value: this.ruleForm.value,
+        code: this.ruleForm.code,
         sort: this.ruleForm.sort
       }
 

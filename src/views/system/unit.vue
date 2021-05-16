@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-05-03 10:13:47
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-03 22:42:28
+ * @LastEditTime: 2021-05-17 01:45:32
  * @FilePath: \vue2-ts\src\views\system\unit.vue
 -->
 <template>
@@ -22,7 +22,25 @@ export default {
   name: 'unit',
   data () {
     return {
-
+      unitTree: []
+    }
+  },
+  created () {
+    this.getUnitTree() // 获取单位树
+  },
+  methods: {
+    /**
+     * @description: 获取单位树
+     * @param {*} none
+     * @returns {*} void
+     */
+    getUnitTree () {
+      getUnitTree().then(data => {
+        this.getUnitTree = data.data
+      }).catch(err => {
+        console.log(err)
+        this.unitTree = []
+      })
     }
   }
 }
