@@ -227,7 +227,7 @@ export default Vue.extend({
       }
     }
     .tag-toolbox {
-      flex: 0 0 25rem;
+      flex: 0 0 16rem;
       display: flex;
       padding-right: 0.5rem;
       align-items: center;
