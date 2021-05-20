@@ -1,6 +1,6 @@
 <!--树形select框组件 - 单选-->
 <template>
-    <div class="sitebox selectTreeSingle form-sitebox" v-clickoutside="handleClose">
+    <div class="sitebox selectTreeSingle form-sitebox">
             <div class="Collection_site el-select" @click.stop="showTreeData">
                 <div v-if="siteTreeName " class="el-select__tags">
                     <span class="el-tag el-tag--primary">
@@ -8,7 +8,7 @@
                         <i class="el-tag__close el-icon-close" @click.stop="deleteItem"></i>
                     </span>
                 </div>
-                <input v-else style="min-width:20px;right:0px;" autocomplete="off" :placeholder="'输入关键字'"  class="el-select__input is-undefined"
+                <input v-else style="min-width:20px;right:0px" autocomplete="off" :placeholder="'输入关键字'"  class="el-select__input is-undefined"
                     debounce="0" v-model="filterText">
             </div>
 
@@ -30,8 +30,18 @@
 
 <script>
     import clickoutside from './clickoutside.js'
+    function getArray (data, id, propsId, propsLabel, propsChildren) {
+        for (const i in data) {
+            if (data[i][propsId] === id) {
+                strName = data[i][propsLabel]
+                break
+            } else {
+                getArray(data[i][propsChildren], id, propsId, propsLabel, propsChildren)
+            }
+        }
+    }
     export default {
-        name: "select-tree-single",
+        name: 'select-tree-single',
         props: {
             siteTreeData: Array,
             defaultProps: Object,
@@ -43,36 +53,25 @@
             event: 'input'
         },
         computed: {
-            siteTreeName() {
+            siteTreeName () {
                 if (this.siteTreeData.length > 0 && this.siteTreeCodes && this.defaultProps) {
-                    let strName = '';
-                    getArray(this.siteTreeData, this.siteTreeCodes, this.defaultProps.id, this.defaultProps.label, this.defaultProps.children);
+                    const strName = ''
+                    getArray(this.siteTreeData, this.siteTreeCodes, this.defaultProps.id, this.defaultProps.label, this.defaultProps.children)
 
-                    function getArray(data, id, propsId, propsLabel, propsChildren) {
-                        for (var i in data) {
-                            if (data[i][propsId] == id) {
-                                strName = data[i][propsLabel];
-                                break;
-                            } else {
-                                getArray(data[i][propsChildren], id, propsId, propsLabel, propsChildren);
-                            }
-                        }
-                    }
-
-                    return strName ? strName : this.siteName;
+                    return strName || this.siteName
                 } else {
-                    return '';
+                    return ''
                 }
             },
-            siteTreeCodeCheckDefault() {
-                return this.siteTreeCodes || this.siteTreeCodes === 0 ? [this.siteTreeCodes] : [];
+            siteTreeCodeCheckDefault () {
+                return this.siteTreeCodes || this.siteTreeCodes === 0 ? [this.siteTreeCodes] : []
             }
         },
-        data() {
+        data () {
             return {
                 filterText: '',
-                showTreeFlag: false
-            };
+                showTreeFlag: true
+            }
         },
         directives: {
             clickoutside
@@ -81,91 +80,89 @@
             /**
              * @desc 隐藏下拉框
              */
-            handleClose() {
-                this.showTreeFlag = false;
-                this.filterText = '';
+            handleClose () {
+                this.showTreeFlag = false
+                this.filterText = ''
             },
             /**
              * @desc 删除某一项
              * @param {*} item
              * @param {*} index
              */
-            deleteItem(item, index) {
-                this.$emit('input', '');
-                this.$emit('change', '');
+            deleteItem () {
+                this.$emit('input', '')
+                this.$emit('change', '')
             },
             /**
              * @desc 节点树控件的节点过滤方法
              */
             filterNode: function (value, data, node) {
-                if (!value) return true;
-                var parent = node.parent;
+                if (!value) return true
+                const parent = node.parent
                 if (node.level !== 1 && parent && parent.visible) {
-                    return true;
+                    return true
                 }
-                return data[this.defaultProps.label].indexOf(value) !== -1;
+                return data[this.defaultProps.label].indexOf(value) !== -1
             },
             /**
              * @desc 节点树控件的change事件
              * @param {obj} node
              * @param {obj} checkStatus 树目前的选中状态对象
              */
-            handleCheckChange(node, checkStatus) {
-                var tt = checkStatus.checkedNodes; //this.$refs.tree3.getCheckedNodes();
-                let id = node[this.defaultProps.id];
-                if (tt.length == 1) {
-                    this.$emit('input', id);
-                    this.$emit('change', id, node);
+            handleCheckChange (node, checkStatus) {
+                const tt = checkStatus.checkedNodes
+                const id = node[this.defaultProps.id]
+                if (tt.length === 1) {
+                    this.$emit('input', id)
+                    this.$emit('change', id, node)
                 } else if (tt.length > 1) {
-                    this.$emit('change', id, node);
-                    this.$emit('input', id, node);
-                    this.$refs.tree3.setCheckedKeys([id]);
-                } else if (tt.length == 0) {
-                    this.$emit('change', '');
-                    this.$emit('input', '');
+                    this.$emit('change', id, node)
+                    this.$emit('input', id, node)
+                    this.$refs.tree3.setCheckedKeys([id])
+                } else if (tt.length === 0) {
+                    this.$emit('change', '')
+                    this.$emit('input', '')
                 }
             },
             /**
              * @desc 设置选中区域
              * @param {*} val
              */
-            setCheckedKeys(val) {
-                this.$refs.tree3.setCheckedKeys(val);
-                this.$emit('input', val.join(','));
+            setCheckedKeys (val) {
+                this.$refs.tree3.setCheckedKeys(val)
+                this.$emit('input', val.join(','))
             },
             /**
              * @desc 点击采集地点输入框时
              */
             showTreeData: function () {
-                this.showTreeFlag = true;
+                this.showTreeFlag = true
             },
             /**
              * @desc 清空输入框的值
              */
-            clearFilterText() {
-                this.filterText = '';
+            clearFilterText () {
+                this.filterText = ''
             }
-        },
-        mounted: function () {
         },
         watch: {
             /**
              * @desc 监听采集地点输入框的值的变化
              * @param {*} val
              */
-            filterText(val) {
-                if (this.$refs.tree3 == undefined) {
+            filterText (val) {
+                if (this.$refs.tree3 === undefined) {
                 } else {
-                    this.$refs.tree3.filter(val);
+                    this.$refs.tree3.filter(val)
                 }
             },
             /**
              * @desc 监听选中的采集地点的变化
              * @param {*} val
              */
-            siteTreeCodes(val) {
+            siteTreeCodes (val) {
                 if (!val) {
-                    this.filterText = '';
+                    this.filterText = ''
                 }
             }
         }

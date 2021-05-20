@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:05:30
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-06 23:16:25
+ * @LastEditTime: 2021-05-21 01:54:29
  * @FilePath: \vue2-ts\src\views\system\user.vue
 -->
 
@@ -708,7 +708,7 @@ export default {
         username: this.ruleForm.username,
         name: this.ruleForm.name,
         role_id: this.ruleForm.role_id,
-        password: md5(this.ruleForm.password),
+        password: this.ruleForm.password ? md5(this.ruleForm.password) : '',
         phonenumber: this.ruleForm.phonenumber,
         idcard: this.ruleForm.idcard,
         province: this.ruleForm.province,
