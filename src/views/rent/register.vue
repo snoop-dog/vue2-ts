@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:00:07
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-07 01:12:18
+ * @LastEditTime: 2021-05-24 00:32:49
  * @FilePath: \vue2-ts\src\views\rent\register.vue
 -->
 <template>
@@ -101,32 +101,28 @@ export default {
           name: '户主id',
           prop: 'homeowner',
           value: 'homeowner',
-          fixed: true,
-          width: 50
+          width: 40
         },
         {
           name: '户主姓名',
           prop: 'ownername',
           value: 'ownername',
           showRow: true,
-          fixed: true,
-          width: 70
+          width: 60
         },
         {
           name: '民族',
           prop: 'nation',
           value: 'nation',
           showRow: true,
-          fixed: true,
-          width: 50
+          width: 40
         },
         {
           name: '身份证',
           prop: 'idcard',
           value: 'idcard',
           showRow: true,
-          width: 120,
-          fixed: true
+          width: 150
         },
         {
           name: '省',

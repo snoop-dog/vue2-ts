@@ -56,11 +56,11 @@
 </template>
 
 <script>
-import clickoutside from "./clickoutside"; 
+import clickoutside from './clickoutside' 
 // import {siteTreePageSize} from '../../../../config/index' // 页数
-import { getSiteTreePage, getSiteListPage } from "@/apis/common-api/index"; // 获取场所
+import { getSiteTreePage, getSiteListPage } from '@/apis/common-api/index' // 获取场所
 export default {
-  name: "SiteSelectTree",
+  name: 'SiteSelectTree',
   props: {
     value: {
       type: Array
@@ -78,48 +78,48 @@ export default {
     // data: Array,
     props: {
       type: Object,
-      default() {
+      default () {
         return {
-          label: "name",
-          isLeaf: "leaf"
-        };
+          label: 'name',
+          isLeaf: 'leaf'
+        }
       }
     },
     placeholder: {
       type: String,
-      default: "请输入场所名称"
+      default: '请输入场所名称'
     },
     sites: {
       type: Array,
-      default() {
-        return [];
+      default () {
+        return []
       }
     },
     authTempType: {
       // 临时权限标识符(1:包含临时权限,2:不包含临时权限)
       type: [String, Number],
-      default: "1"
+      default: '1'
     }
   },
   computed: {
     // 默认树展开以便加载
-    defaultExpandedKeys() {
-      let arr = [];
+    defaultExpandedKeys () {
+      const arr = []
       this.siteTree.forEach(item => {
-        arr.push(item.id);
+        arr.push(item.id)
         item.children.forEach(itemChild => {
-          arr.push(itemChild.id);
-        });
-      });
-      return arr;
+          arr.push(itemChild.id)
+        })
+      })
+      return arr
     }
   },
-  data() {
+  data () {
     return {
       siteTree: [],
       siteTreeAreaCode: [], // 区县级编号，用于增加叶子标识符
-      keyword: "", // 树过滤
-      cacheKeyword: "", // 树过滤缓存用，查询更多时应该用缓存key
+      keyword: '', // 树过滤
+      cacheKeyword: '', // 树过滤缓存用，查询更多时应该用缓存key
       treeBoxVisible: false,
       inputFocus: false,
       pageSize: config.siteTreePageSize,
@@ -127,164 +127,164 @@ export default {
       checkSitesInput: [], // 输入框中展示的节点 区下全部选择时展示区级名称，否则仅有场所名称
       treeLoading: true, // 下拉树加载
       loadResolve: null
-    };
+    }
   },
   directives: {
     clickoutside
   },
-  mounted() {
+  mounted () {
     this.checkSitesInput = this.sites.map(item => {
-      !item.name && (item.name = item.sitename);
-      !item.id && (item.id = item.sitecode);
-      return item;
-    });
+      !item.name && (item.name = item.sitename)
+      !item.id && (item.id = item.sitecode)
+      return item
+    })
     this.getSiteTree().then(data => {
       this.$nextTick(() => {
         // this.getCheckSitesInput()
-      });
-    });
+      })
+    })
   },
   methods: {
     /**
      * 获取案发地点关联场所列表
      */
-    getSiteTree() {
+    getSiteTree () {
       return new Promise(resolve => {
-        this.treeLoading = true;
-        this.siteTreeAreaCode = [];
-        var params = {
+        this.treeLoading = true
+        this.siteTreeAreaCode = []
+        const params = {
           keyword: this.keyword,
-          flag: this.mapFlag ,
-          deviceTypes: this.deviceTypes || "",
-          sitetypes: this.siteTypes || "",
+          flag: this.mapFlag,
+          deviceTypes: this.deviceTypes || '',
+          sitetypes: this.siteTypes || '',
           authTempType: this.authTempType 
-        };
-        var logParams = {
-          operatecode: "006",
-          url: "/basicservice/getSiteTreePage",
-          menucode: "查询场所设置树",
+        }
+        const logParams = {
+          operatecode: '006',
+          url: '/basicservice/getSiteTreePage',
+          menucode: '查询场所设置树',
           paramstr: JSON.stringify(params)
-        };
-        getSiteTreePage(params,logParams, res => {
-          let data = res.data;
-          this.treeLoading = false;
-          if(data && data.length > 0) {
-            this.siteTree = this.handleTreeData(data);
-            let refTree = this.$refs.tree;
+        }
+        getSiteTreePage(params, logParams, res => {
+          const data = res.data
+          this.treeLoading = false
+          if (data && data.length > 0) {
+            this.siteTree = this.handleTreeData(data)
+            const refTree = this.$refs.tree
             this.$nextTick(() => {
               this.siteTreeAreaCode.map(item => {
-                refTree.getNode(item).isLeaf = this.noSite;
-              });
-            });
-            resolve(data);
-            addLogData(logParams);
+                refTree.getNode(item).isLeaf = this.noSite
+              })
+            })
+            resolve(data)
+            addLogData(logParams)
           }
-        },fail=>{
-          resolve([]);
-          addLogData(logParams);
+        }, fail => {
+          resolve([])
+          addLogData(logParams)
         })
-      });
+      })
     },
     /**
      * 处理树数据，叶子节点无 children 字段处理
      * @param {*} data
      */
-    handleTreeData(data) {
+    handleTreeData (data) {
       data.map(item => {
-        item.disabled = this.single; // 单选时父级不可选
+        item.disabled = this.single // 单选时父级不可选
          if (this.noSite && this.single) {
           item.disabled = false
         }
         if (item.children) {
-          this.handleTreeData(item.children);
+          this.handleTreeData(item.children)
         } else {
-          item.children = [];
-          this.siteTreeAreaCode.push(item.id);
+          item.children = []
+          this.siteTreeAreaCode.push(item.id)
         }
-      });
-      return data;
+      })
+      return data
     },
     /**
      * 获取案发地点关联场所列表
      * @param {*} pageIndex
      * @param {*} city_code
      */
-    getSiteList(pageIndex, city_code) {
+    getSiteList (pageIndex, city_code) {
       return new Promise((resolve, reject) => {
-        var params = {
+        const params = {
           keyword: this.cacheKeyword,
           pageIndex,
           pageSize: this.pageSize,
           flag: this.mapFlag,
           city_code,
-          deviceTypes: this.deviceTypes || "",
-          sitetypes: this.siteTypes || "",
+          deviceTypes: this.deviceTypes || '',
+          sitetypes: this.siteTypes || '',
           authTempType: this.authTempType
-        };
-        var logParams = {
-          operatecode: "006",
-          url: "/basicservice/getSiteListPage",
-          menucode: "查询场所设置树",
+        }
+        const logParams = {
+          operatecode: '006',
+          url: '/basicservice/getSiteListPage',
+          menucode: '查询场所设置树',
           paramstr: JSON.stringify(params)
-        };
-        getSiteListPage(params, logParams,res=>{
-           resolve(res.data.data);
-        },fail=>{
+        }
+        getSiteListPage(params, logParams, res => {
+           resolve(res.data.data)
+        }, fail => {
 
         })
-      });
+      })
     },
     /**
      * 加载子树数据的方法 (废弃，不再用懒加载，采用动态添加的方法)
      * @param {*} item
      * @param {*} index
      */
-    loadChildren(node, resolve) {
+    loadChildren (node, resolve) {
       if (node.level === 0) {
-        this.loadResolve = resolve;
+        this.loadResolve = resolve
         this.getSiteTree().then(data => {
-          return resolve(data);
-        });
+          return resolve(data)
+        })
 
         // } else if (node.data.children && node.data.children instanceof Array) {
-      } else if (node.data.type === "province" || node.data.type === "city") {
+      } else if (node.data.type === 'province' || node.data.type === 'city') {
         // 省市级
-        return resolve(node.data.children);
-      } else if (node.data.type === "area") {
+        return resolve(node.data.children)
+      } else if (node.data.type === 'area') {
         // 区县级
-        console.log(node);
-        node.data.children = [];
+        console.log(node)
+        node.data.children = []
 
-        let pageCount = Math.ceil(node.data.childnum / this.pageSize);
-        node.data.pageCount = pageCount;
-        let pageIndex = 1;
-        let city_code = node.data.id;
+        const pageCount = Math.ceil(node.data.childnum / this.pageSize)
+        node.data.pageCount = pageCount
+        const pageIndex = 1
+        const city_code = node.data.id
 
-        let showMoreNode = {
-          name: "更多...",
-          id: city_code + "more",
+        const showMoreNode = {
+          name: '更多...',
+          id: city_code + 'more',
           leaf: true,
-          type: "more",
+          type: 'more',
           pageIndex: pageIndex,
           pageCount: pageCount,
           parentid: city_code
-        };
+        }
         this.getSiteList(pageIndex, city_code).then(data => {
           data.map(item => {
-            item.name = item.sitename;
-            item.id = item.sitecode;
-            item.leaf = true;
-            item.type = "site";
-            item.parentid = city_code;
-            return item;
-          });
-          data.push(showMoreNode);
-          node.data.children = data;
-          resolve(node.data.children);
+            item.name = item.sitename
+            item.id = item.sitecode
+            item.leaf = true
+            item.type = 'site'
+            item.parentid = city_code
+            return item
+          })
+          data.push(showMoreNode)
+          node.data.children = data
+          resolve(node.data.children)
           // return resolve([...node.data.list, showMoreNode]);
-        });
+        })
       } else {
-        return resolve([]);
+        return resolve([])
       }
     },
     /**
@@ -293,238 +293,238 @@ export default {
      * @param {*} node
      * @param {*} VueComponent
      */
-    handleNodeClick(data, node, VueComponent) {
+    handleNodeClick (data, node, VueComponent) {
       if (this.noSite) {
-        return false;
+        return false
       }
-      console.log(data, node);
-      if (data.type === "area" && !data.isFirstExpanded) {
-        node.loading = true;
-        data.isFirstExpanded = true; // 点击一次后
-        let pageCount = Math.ceil(data.childnum / this.pageSize);
-        data.pageCount = pageCount;
-        data.hasMore = pageCount > 1; // 是否有更多按钮
-        let pageIndex = 1;
-        let city_code = data.id;
+      console.log(data, node)
+      if (data.type === 'area' && !data.isFirstExpanded) {
+        node.loading = true
+        data.isFirstExpanded = true // 点击一次后
+        const pageCount = Math.ceil(data.childnum / this.pageSize)
+        data.pageCount = pageCount
+        data.hasMore = pageCount > 1 // 是否有更多按钮
+        const pageIndex = 1
+        const city_code = data.id
 
         // 更多按钮节点
-        let showMoreNode = {
-          name: "更多...",
-          id: city_code + "more",
+        const showMoreNode = {
+          name: '更多...',
+          id: city_code + 'more',
           leaf: true,
           disabled: true,
-          type: "more",
+          type: 'more',
           pageIndex: pageIndex,
           pageCount: pageCount,
           parentid: city_code
-        };
+        }
         this.getSiteList(pageIndex, city_code).then(res => {
           res.map(item => {
-            item.name = item.sitename;
-            item.id = item.sitecode;
-            item.leaf = true;
-            item.type = "site";
-            item.parentid = city_code;
-            return item;
-          });
+            item.name = item.sitename
+            item.id = item.sitecode
+            item.leaf = true
+            item.type = 'site'
+            item.parentid = city_code
+            return item
+          })
 
-          data.children = pageCount > 1 ? [...res, showMoreNode] : [...res];
+          data.children = pageCount > 1 ? [...res, showMoreNode] : [...res]
           // return resolve([...node.data.list, showMoreNode]);
-          node.expanded = true;
-          node.loading = false;
+          node.expanded = true
+          node.loading = false
           this.$nextTick(() => {
             if (node.checked) {
               // 如果父节点是选中状态则所有子节点也为选中状态
-              this.$refs.tree.setChecked(data, true, true);
+              this.$refs.tree.setChecked(data, true, true)
               pageCount > 1 &&
-                this.$refs.tree.setChecked(data.id + "more", true, true);
+                this.$refs.tree.setChecked(data.id + 'more', true, true)
             } else {
-              this.$refs.tree.setCheckedKeys(this.value);
+              this.$refs.tree.setCheckedKeys(this.value)
             }
-          });
-        });
-      } else if (data.type === "more") {
-        node.loading = true;
-        data.name = "加载中";
-        let pageIndex = data.pageIndex + 1;
-        let city_code = data.parentid;
+          })
+        })
+      } else if (data.type === 'more') {
+        node.loading = true
+        data.name = '加载中'
+        const pageIndex = data.pageIndex + 1
+        const city_code = data.parentid
         this.getSiteList(pageIndex, city_code).then(res => {
           res.map(item => {
-            item.name = item.sitename;
-            item.id = item.sitecode;
-            item.leaf = true;
-            item.type = "site";
-            item.parentid = city_code;
+            item.name = item.sitename
+            item.id = item.sitecode
+            item.leaf = true
+            item.type = 'site'
+            item.parentid = city_code
             // node.parent.data.children.push(item);
-            this.$refs.tree.insertBefore(item, node);
-            return item;
-          });
+            this.$refs.tree.insertBefore(item, node)
+            return item
+          })
           if (pageIndex >= data.pageCount) {
             // 全部加载完，删除更多
-            this.$refs.tree.remove(node);
-            node.parent.data.hasMore = false;
+            this.$refs.tree.remove(node)
+            node.parent.data.hasMore = false
           } else {
             // 更新pageIndex
-            data.pageIndex = pageIndex;
-            node.loading = false;
-            data.name = "更多...";
+            data.pageIndex = pageIndex
+            node.loading = false
+            data.name = '更多...'
           }
           this.$nextTick(() => {
             if (node.parent.checked) {
-              this.$refs.tree.setChecked(node.parent.data, true, true);
+              this.$refs.tree.setChecked(node.parent.data, true, true)
             } else {
-              this.$refs.tree.setCheckedKeys(this.value);
+              this.$refs.tree.setCheckedKeys(this.value)
             }
-          });
-        });
+          })
+        })
       }
     },
     /**
      * 手动更新树节点数据
      * @param {*} data
      */
-    updateCheckedNodes(data) {
+    updateCheckedNodes (data) {
       this.checkSitesInput = data.map(item => {
-        !item.name && (item.name = item.sitename);
-        !item.id && (item.id = item.sitecode);
-        return item;
-      });
+        !item.name && (item.name = item.sitename)
+        !item.id && (item.id = item.sitecode)
+        return item
+      })
     },
     /**
      * @desc 删除某一项
      * @param {*} item
      * @param {*} index
      */
-    deleteItem(item, index) {
-      this.checkSitesInput.splice(index, 1);
-      this.$refs.tree.setChecked(item.id, false, true);
-      this.$refs.tree.setChecked(item.id + "more", false);
+    deleteItem (item, index) {
+      this.checkSitesInput.splice(index, 1)
+      this.$refs.tree.setChecked(item.id, false, true)
+      this.$refs.tree.setChecked(item.id + 'more', false)
       // this.$refs.tree.setCheckedKeys(this.value);
     },
     /**
      * @desc 节点树控件的change事件
      * 当点击的是分页时自动展开当前页
      */
-    handleCheck(data, indeterminate) {
-      let node = this.$refs.tree.getNode(data);
+    handleCheck (data, indeterminate) {
+      const node = this.$refs.tree.getNode(data)
       if (this.single) {
-        this.getCheckSitesInputSingle(data, node);
+        this.getCheckSitesInputSingle(data, node)
       } else if (this.leaf || this.cacheKeyword) {
         // 单选模式下或有输入过滤条件时
-        this.handleBtnMoreCheck(node); // 非单选模式下需处理更多按钮的选中状态
-        this.getCheckSitesInputLeaf(); // 获取 checkSitesInput 过滤子节点
+        this.handleBtnMoreCheck(node) // 非单选模式下需处理更多按钮的选中状态
+        this.getCheckSitesInputLeaf() // 获取 checkSitesInput 过滤子节点
       } else {
-        this.handleBtnMoreCheck(node); // 非单选模式下需处理更多按钮的选中状态
-        this.getCheckSitesInput(); // 获取 checkSitesInput 过滤子节点
+        this.handleBtnMoreCheck(node) // 非单选模式下需处理更多按钮的选中状态
+        this.getCheckSitesInput() // 获取 checkSitesInput 过滤子节点
       }
     },
     /**
      * 处理点击节点下的更多按钮的选中状态
      * @param {*} node
      */
-    handleBtnMoreCheck(node) {
+    handleBtnMoreCheck (node) {
       if (!node.isLeaf) {
-        if (node.data.type !== "area") {
+        if (node.data.type !== 'area') {
           node.childNodes.map(node => {
-            this.handleBtnMoreCheck(node);
-          });
+            this.handleBtnMoreCheck(node)
+          })
         } else if (node.data.hasMore) {
           // 判断子节点是否全选
-          let flag = !node.childNodes.some(childNode => {
-            return !childNode.checked && childNode.data.type === "site";
-          });
-          this.$refs.tree.setChecked(node.data.id + "more", flag);
+          const flag = !node.childNodes.some(childNode => {
+            return !childNode.checked && childNode.data.type === 'site'
+          })
+          this.$refs.tree.setChecked(node.data.id + 'more', flag)
         }
-      } else if (node.data.type === "site" && node.parent.data.hasMore) {
+      } else if (node.data.type === 'site' && node.parent.data.hasMore) {
         // 点击场所节点，判断更多节点是否选中
         // 判断子节点是否全选
-        let flag = !node.parent.childNodes.some(childNode => {
-          return !childNode.checked && childNode.data.type === "site";
-        });
-        this.$refs.tree.setChecked(node.parent.data.id + "more", flag);
+        const flag = !node.parent.childNodes.some(childNode => {
+          return !childNode.checked && childNode.data.type === 'site'
+        })
+        this.$refs.tree.setChecked(node.parent.data.id + 'more', flag)
       }
     },
     /**
      * 输入框中展示的节点 区下全部选择时展示区级名称，否则仅有场所名称
      */
-    getCheckSitesInput() {
-      let nodes = (this.checkedNodes = this.$refs.tree.getCheckedNodes());
-      console.log(nodes);
+    getCheckSitesInput () {
+      const nodes = (this.checkedNodes = this.$refs.tree.getCheckedNodes())
+      console.log(nodes)
 
-      let areaArr = [];
-      let checkedFilter = nodes.filter(item => {
-        if (item.type === "area") {
-          areaArr.push(item);
-          return true;
+      const areaArr = []
+      const checkedFilter = nodes.filter(item => {
+        if (item.type === 'area') {
+          areaArr.push(item)
+          return true
         } else if (
-          item.type === "site" &&
+          item.type === 'site' &&
           !areaArr.map(itemArea => itemArea.id).includes(item.parentid)
         ) {
-          return true;
+          return true
         }
-        return false;
-      });
-      this.checkSitesInput = checkedFilter;
+        return false
+      })
+      this.checkSitesInput = checkedFilter
     },
     /**
      * 输入框中展示的节点 区下全部选择时仅展示场所 不选中 区级及以上
      */
-    getCheckSitesInputLeaf() {
-      let nodes = (this.checkedNodes = this.$refs.tree.getCheckedNodes());
+    getCheckSitesInputLeaf () {
+      const nodes = (this.checkedNodes = this.$refs.tree.getCheckedNodes())
 
-      let checkedFilter = nodes.filter(item => item.type === "site");
-      this.checkSitesInput = checkedFilter;
+      const checkedFilter = nodes.filter(item => item.type === 'site')
+      this.checkSitesInput = checkedFilter
     },
     /**
      * 单选模式下需只选中一个节点
      * @param {*} data 节点数据
      * @param {*} node 节点node对象
      */
-    getCheckSitesInputSingle(data, node) {
-      this.$refs.tree.setCheckedNodes([node]);
-      this.checkSitesInput = [data];
+    getCheckSitesInputSingle (data, node) {
+      this.$refs.tree.setCheckedNodes([node])
+      this.checkSitesInput = [data]
     },
     /**
      * @desc 节点树控件的节点过滤方法
      */
-    handleFilterNode() {
+    handleFilterNode () {
       if (this.treeLoading) {
-        return false;
+        return false
       }
-      this.cacheKeyword = this.keyword;
-      this.siteTree = [];
-      this.checkSitesInput = [];
-      this.getSiteTree();
+      this.cacheKeyword = this.keyword
+      this.siteTree = []
+      this.checkSitesInput = []
+      this.getSiteTree()
     },
     /**
      * @desc 点击采集地点输入框时
      */
-    showTree() {
-      this.treeBoxVisible = true;
-      this.inputFocus = true;
+    showTree () {
+      this.treeBoxVisible = true
+      this.inputFocus = true
       this.$nextTick(() => {
-        this.$refs.refInput.focus();
-      });
+        this.$refs.refInput.focus()
+      })
     },
     /**
      * @desc 重置
      */
-    reset() {
-      this.treeBoxVisible = false;
-      this.inputFocus = false;
-      this.keyword = "";
-      this.siteTree = [];
-      this.checkSitesInput = [];
-      this.cacheKeyword = "";
-      this.getSiteTree();
+    reset () {
+      this.treeBoxVisible = false
+      this.inputFocus = false
+      this.keyword = ''
+      this.siteTree = []
+      this.checkSitesInput = []
+      this.cacheKeyword = ''
+      this.getSiteTree()
     },
     /**
      * @desc 隐藏下拉框
      */
-    handleClose() {
-      this.treeBoxVisible = false;
+    handleClose () {
+      this.treeBoxVisible = false
       // this.keyword = '';
-      this.inputFocus = false;
+      this.inputFocus = false
     }
   },
   watch: {
@@ -532,46 +532,46 @@ export default {
      * 监听选中值的变化，触发 input 事件
      */
     checkSitesInput: {
-      handler(val, oldValue) {
+      handler (val, oldValue) {
         if (val.length === 0 && this.value.length === 0) {
-          return false;
+          return false
         }
 
-        let value = val.map(item => item["id"]);
-        this.$emit("input", value);
-        this.$emit("change", val);
+        const value = val.map(item => item.id)
+        this.$emit('input', value)
+        this.$emit('change', val)
       },
       deep: true
     },
     /**
      * 监听 value 变化
      */
-    value(val, oldValue) {
+    value (val, oldValue) {
       if (val.length === 0) {
         // 重置时
         if (oldValue.length > 0) {
-          this.checkSitesInput = [];
-          this.$refs.tree.setCheckedKeys([]);
+          this.checkSitesInput = []
+          this.$refs.tree.setCheckedKeys([])
         } else {
           // 避免死循环
-          return false;
+          return false
         }
       } else {
         val.map(item => {
-          this.$refs.tree.setChecked(item, true, true);
-        });
+          this.$refs.tree.setChecked(item, true, true)
+        })
 
         // this.$refs.tree.setCheckedKeys(val);
       }
     },
     // 监听设备类型变化
-    deviceTypes(val) {
-      this.getSiteTree();
+    deviceTypes (val) {
+      this.getSiteTree()
     },
     // 监听场所类型变化
-    siteTypes(val) {
-      this.getSiteTree();
+    siteTypes (val) {
+      this.getSiteTree()
     }
   }
-};
+}
 </script>

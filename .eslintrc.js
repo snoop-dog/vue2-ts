@@ -30,6 +30,6 @@ module.exports = {
     '@typescript-eslint/no-this-alias': 'off',
     'prefer-rest-params': 'off',
     'no-tabs': 'off',
-    'indent': 'off'
+    indent: 'off'
   }
 }

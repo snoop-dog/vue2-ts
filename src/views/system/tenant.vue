@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-05-17 01:08:59
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-17 01:35:38
+ * @LastEditTime: 2021-05-24 01:06:17
  * @FilePath: \vue2-ts\src\views\system\tenant.vue
 -->
 <template>
@@ -35,6 +35,24 @@
           <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
         </div>
         <div slot="phone" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="provinceStr" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="cityStr" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="areaStr" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="streetStr" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="communityStr" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+        </div>
+        <div slot="houseAddress" slot-scope="props">
           <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
         </div>
         <div slot="start_time" slot-scope="props">
@@ -90,43 +108,73 @@ export default {
           name: '民族',
           prop: 'nationStr',
           value: 'nationStr',
-          width: 60
+          width: 50
         },
         {
           name: '性别',
           prop: 'sexStr',
           value: 'sexStr',
-          width: 60
+          width: 50
         },
         {
           name: '手机号',
           prop: 'phone',
           value: 'phone',
-          width: 120
+          width: 80
         },
         {
           name: '身份证',
           prop: 'idcard',
           value: 'idcard',
-          width: 120
+          width: 110
         },
         {
-          name: '详细地址',
-          prop: 'address',
-          value: 'address',
-          width: 120
+          name: '省',
+          prop: 'provinceStr',
+          value: 'provinceStr',
+          width: 50
+        },
+        {
+          name: '市',
+          prop: 'cityStr',
+          value: 'cityStr',
+          width: 50
+        },
+        {
+          name: '区/县',
+          prop: 'areaStr',
+          value: 'areaStr',
+          width: 50
+        },
+        {
+          name: '街道',
+          prop: 'streetStr',
+          value: 'streetStr',
+          width: 50
+        },
+        {
+          name: '社区',
+          prop: 'communityStr',
+          value: 'communityStr',
+          width: 60
+        },
+        {
+          name: '房屋地址',
+          prop: 'houseAddress',
+          value: 'houseAddress',
+          width: 80
         },
         {
           name: '承租起始时间',
           prop: 'start_time',
           value: 'start_time',
-          width: 120
+          width: 100
         },
         {
           name: '承租结束时间',
           prop: 'end_time',
           value: 'end_time',
-          width: 120
+          width: 100
         }
       ],
       tableTitle: { // 表格title

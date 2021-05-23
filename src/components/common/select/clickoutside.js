@@ -59,7 +59,7 @@ function createDocumentHandler (el, binding, vnode) {
  * <div v-element-clickoutside="handleClose">
  * ```
  */
-let clickoutside = {
+const clickoutside = {
   bind (el, binding, vnode) {
     nodeList.push(el)
     const id = seed++
@@ -78,7 +78,7 @@ let clickoutside = {
   },
 
   unbind (el) {
-    let len = nodeList.length
+    const len = nodeList.length
 
     for (let i = 0; i < len; i++) {
       if (nodeList[i][ctx].id === el[ctx].id) {

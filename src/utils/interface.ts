@@ -7,18 +7,18 @@
  * @FilePath: \vue2-ts\src\utils\interface.ts
  */
 interface res {
-  data: any[]
+  data: any[];
 }
 
 interface token {
-  access_token: String,
-  expires_in: Number,
-  refresh_token?: String
+  access_token: string;
+  expires_in: number;
+  refresh_token?: string;
 }
 
 interface echartsOption {
-  timeline?: any,
-  options: any[]
+  timeline?: any;
+  options: any[];
 }
 
 export {

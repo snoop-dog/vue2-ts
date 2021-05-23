@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:05:30
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-21 01:54:29
+ * @LastEditTime: 2021-05-23 22:15:56
  * @FilePath: \vue2-ts\src\views\system\user.vue
 -->
 
@@ -99,6 +99,7 @@
             clearable
             :multiple="false"
             placeholder="请选择角色"
+            @change="changeRole"
             v-model="ruleForm.role_id"
           >
             <el-option
@@ -262,11 +263,29 @@
             placeholder="请输入详细地址">
           </el-input>
         </el-form-item>
-        <el-form-item label="职位：">
+        <el-form-item label="单位：">
           <el-select
             clearable
             :multiple="false"
-            placeholder="请选择职位"
+            :disabled="!ruleForm.role_id"
+            placeholder="请选择单位"
+            v-model="ruleForm.unit_id"
+          >
+            <el-option
+              v-for="item in unitList"
+              :label="item.name"
+              :value="item.id"
+              :key="item.id"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="职位：">
+          <el-select
+            clearable
+            :disabled="!ruleForm.role_id || !ruleForm.unit_id"
+            :multiple="false"
+            placeholder="请选择角色和单位后再选择职位"
             v-model="ruleForm.position_id"
           >
             <el-option
@@ -410,7 +429,7 @@ export default {
         isShow: true, // 是否含有操作列
         name: '操作',
         fixed: 'right',
-        width: 400
+        width: 330
       },
       tableTitle: { // 表格title
         name: '用户列表',
@@ -437,7 +456,8 @@ export default {
         plot: '',
         building: '',
         address: '',
-        position_id: ''
+        position_id: '',
+        unit_id: ''
       },
       showDialog: false, // 是否显示修改新增弹框
       size: 20, // 每页条数
@@ -467,7 +487,8 @@ export default {
       updateParam: { // 修改用户参数
         id: '',
         creater: ''
-      }
+      },
+      unitList: [] // 单位列表
     }
   },
   components: {
@@ -520,16 +541,58 @@ export default {
       })
     },
     /**
-     * @description: 获取角色列表
+     * @description: 获取职位列表
+     * @param {*} none
+     * @returns {*} void
+     */
+    getPositionSimple () {
+      if (!this.ruleForm.role_id || !this.ruleForm.unit_id) return
+
+      const params = {
+        role_id: this.ruleForm.role_id,
+        unit_id: this.ruleForm.unit_id
+      }
+
+      getPositionSimple(params).then(data => {
+        this.positionList = data.data || []
+      })
+    },
+    /**
+     * @description: 获取角单位列表
      * @param {*} none
      * @returns {*} void
      */
     getJobUnitSimple () {
-      const params = {}
+      if (!this.ruleForm.role_id) return
+
+      const params = {
+        role_id: this.ruleForm.role_id
+      }
 
       getJobUnitSimple(params).then(data => {
-        this.positionList = data.data || []
+        this.unitList = data.data || []
       })
+    },
+    /**
+     * @description: 改变角色下拉
+     * @param {*} e
+     * @returns {*}
+     */    
+    changeRole (e) {
+      this.ruleForm.role_id = e
+      this.ruleForm.unit_id = ''
+      this.ruleForm.position_id = ''
+      this.getJobUnitSimple()
+    },
+    /**
+     * @description: 改变单位下拉
+     * @param {*} e
+     * @returns {*}
+     */    
+    changeUnit (e) {
+      this.ruleForm.unit_id = e
+      this.ruleForm.position_id = ''
+      this.getPositionSimple()
     },
     /**
      * @description: 获取角色列表
@@ -719,6 +782,7 @@ export default {
         plot: this.ruleForm.plot,
         building: this.ruleForm.building,
         address: this.ruleForm.address,
+        unit_id: this.ruleForm.unit_id,
         position_id: this.ruleForm.position_id
       }
       if (!this.isEdit) {
@@ -837,7 +901,6 @@ export default {
           this.ruleForm[key] = ''
         }
 
-        this.province.data =
         this.city.data =
         this.area.data =
         this.street.data = []
