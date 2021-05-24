@@ -2,9 +2,9 @@
  * @Description: 用户管理
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:05:30
- * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-23 22:15:56
- * @FilePath: \vue2-ts\src\views\system\user.vue
+ * @LastEditors  : snoop-dog
+ * @LastEditTime : 2021-05-24 12:40:44
+ * @FilePath     : \vue2-tsc:\Users\Crystal\Desktop\vue2-ts\src\views\system\user.vue
 -->
 
 <template>
@@ -99,8 +99,8 @@
             clearable
             :multiple="false"
             placeholder="请选择角色"
-            @change="changeRole"
             v-model="ruleForm.role_id"
+            @change="changeRole"
           >
             <el-option
               v-for="item in roleList"
@@ -120,7 +120,7 @@
           >
           </el-input>
         </el-form-item>
-        <el-form-item label="手机号：">
+        <el-form-item label="手机号：" class="required">
           <el-input
             clearable
             v-model.trim="ruleForm.phonenumber"
@@ -129,7 +129,7 @@
             placeholder="请输入数字">
           </el-input>
         </el-form-item>
-        <el-form-item label="身份证：">
+        <el-form-item label="身份证：" class="required">
           <el-input
             clearable
             v-model.trim="ruleForm.idcard"
@@ -140,7 +140,7 @@
         </el-form-item>
         <transition name="el-zoom-in-center">
           <template>
-            <el-form-item label="省：">
+            <el-form-item label="省：" class="required">
               <el-select
                 clearable
                 :multiple="false"
@@ -241,7 +241,7 @@
             </el-form-item>
           </template>
         </transition>
-        <transition name="el-zoom-in-center">
+        <!-- <transition name="el-zoom-in-center">
           <template>
             <el-form-item label="小区：">
               <el-input 
@@ -255,7 +255,7 @@
         </transition>
         <el-form-item label="楼栋：">
           <el-input clearable v-model.trim="ruleForm.building" placeholder="请输入楼栋"></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="详细地址：">
           <el-input
             clearable
@@ -263,27 +263,26 @@
             placeholder="请输入详细地址">
           </el-input>
         </el-form-item>
-        <el-form-item label="单位：">
+        <el-form-item label="单位：" class="required">
           <el-select
             clearable
             :multiple="false"
-            :disabled="!ruleForm.role_id"
             placeholder="请选择单位"
+            @change="changeUnit"
             v-model="ruleForm.unit_id"
           >
             <el-option
               v-for="item in unitList"
-              :label="item.name"
-              :value="item.id"
+              :label="item.unit"
+              :value="String(item.id)"
               :key="item.id"
             >
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="职位：">
+        <el-form-item label="职位：" class="required">
           <el-select
             clearable
-            :disabled="!ruleForm.role_id || !ruleForm.unit_id"
             :multiple="false"
             placeholder="请选择角色和单位后再选择职位"
             v-model="ruleForm.position_id"
@@ -314,7 +313,8 @@ import {
   addUser,
   getAreaDim,
   getRoleSimple,
-  getJobUnitSimple
+  getJobUnitSimple,
+  getPositionSimple
 } from '../../apis/index'
 
 // utils
@@ -429,7 +429,7 @@ export default {
         isShow: true, // 是否含有操作列
         name: '操作',
         fixed: 'right',
-        width: 330
+        width: 400
       },
       tableTitle: { // 表格title
         name: '用户列表',
@@ -484,11 +484,11 @@ export default {
       },
       roleList: [], // 角色集合
       positionList: [], // 职位集合
+      unitList: [], // 单位列表
       updateParam: { // 修改用户参数
         id: '',
         creater: ''
-      },
-      unitList: [] // 单位列表
+      }
     }
   },
   components: {
@@ -541,13 +541,19 @@ export default {
       })
     },
     /**
-     * @description: 获取职位列表
+     * @description: 获取角色列表
      * @param {*} none
      * @returns {*} void
      */
+    getJobUnitSimple () {
+      const params = {}
+
+      getJobUnitSimple(params).then(data => {
+        this.unitList = data.data || []
+      })
+    },
     getPositionSimple () {
       if (!this.ruleForm.role_id || !this.ruleForm.unit_id) return
-
       const params = {
         role_id: this.ruleForm.role_id,
         unit_id: this.ruleForm.unit_id
@@ -557,41 +563,12 @@ export default {
         this.positionList = data.data || []
       })
     },
-    /**
-     * @description: 获取角单位列表
-     * @param {*} none
-     * @returns {*} void
-     */
-    getJobUnitSimple () {
-      if (!this.ruleForm.role_id) return
-
-      const params = {
-        role_id: this.ruleForm.role_id
-      }
-
-      getJobUnitSimple(params).then(data => {
-        this.unitList = data.data || []
-      })
+    changeRole (role) {
+      this.ruleForm.role_id = role
+      this.getPositionSimple()
     },
-    /**
-     * @description: 改变角色下拉
-     * @param {*} e
-     * @returns {*}
-     */    
-    changeRole (e) {
-      this.ruleForm.role_id = e
-      this.ruleForm.unit_id = ''
-      this.ruleForm.position_id = ''
-      this.getJobUnitSimple()
-    },
-    /**
-     * @description: 改变单位下拉
-     * @param {*} e
-     * @returns {*}
-     */    
-    changeUnit (e) {
-      this.ruleForm.unit_id = e
-      this.ruleForm.position_id = ''
+    changeUnit (unit) {
+      this.ruleForm.unit_id = unit
       this.getPositionSimple()
     },
     /**
@@ -755,6 +732,10 @@ export default {
       if (this.ruleForm.street) {
         this.changeStreet(this.ruleForm.street)
       }
+
+      if (this.ruleForm.role_id && this.ruleForm.unit_id) {
+        this.getPositionSimple()
+      }
       
       this.$set(this.updateParam, 'id', item.id)
       this.$set(this.updateParam, 'creater', item.creater)
@@ -779,8 +760,8 @@ export default {
         area: this.ruleForm.area,
         street: this.ruleForm.street,
         community: this.ruleForm.community,
-        plot: this.ruleForm.plot,
-        building: this.ruleForm.building,
+        // plot: this.ruleForm.plot,
+        // building: this.ruleForm.building,
         address: this.ruleForm.address,
         unit_id: this.ruleForm.unit_id,
         position_id: this.ruleForm.position_id
@@ -825,8 +806,23 @@ export default {
       } else if (!this.ruleForm.role_id) {
         this.showMessageBox('请选择角色！', 'warning')
         return false
+      } else if (!this.ruleForm.phonenumber) {
+        this.showMessageBox('请输入手机号！', 'warning')
+        return false
+      } else if (!this.ruleForm.idcard) {
+        this.showMessageBox('请输入身份证号！', 'warning')
+        return false
+      } else if (!this.ruleForm.province) {
+        this.showMessageBox('请选择省！', 'warning')
+        return false
       } else if (!this.ruleForm.password && !this.isEdit) {
         this.showMessageBox('请填写密码！', 'warning')
+        return false
+      } else if (!this.ruleForm.unit_id) {
+        this.showMessageBox('请填写单位！', 'warning')
+        return false
+      } else if (!this.ruleForm.position_id) {
+        this.showMessageBox('请填写职位！', 'warning')
         return false
       } else {
         return true
