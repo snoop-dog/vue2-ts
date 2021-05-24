@@ -3,20 +3,20 @@
  * @Author: snoop-dog
  * @Date: 2021-05-03 10:13:47
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-21 01:49:55
+ * @LastEditTime: 2021-05-24 23:16:09
  * @FilePath: \vue2-ts\src\views\system\unit.vue
 -->
 <template>
   <el-container class="unit-container">
     <el-main class="unit-main">
-      <el-container class="tree-container">
+      <!-- <el-container class="tree-container">
         <tree-single
           ref="treeSingle"
           :siteTreeData="unitTree"
           :defaultProps="defaultProps"
         >
         </tree-single>
-      </el-container>
+      </el-container> -->
       <el-container class="table-container">
         <el-row class="searchModel">
           <layout-search :search-param="searchParam" :query-loading='queryLoading' @query="searchList" ></layout-search>
@@ -77,6 +77,14 @@
       @submit="confirmUpdate"
     >
       <el-form label-width="8rem" label-position="left" class="alarm-form required-form">
+        <el-form-item label="上级单位：" class="required">
+          <tree-single
+            ref="treeSingle"
+            :siteTreeData="unitTree"
+            :defaultProps="defaultProps"
+          >
+          </tree-single>
+        </el-form-item>
         <el-form-item label="单位名称：" class="required">
           <el-input 
             clearable 
@@ -396,8 +404,8 @@ export default {
     this.getProviceData() // 获取省级数据
   },
   mounted () {
-    this.$refs.treeSingle.showTreeData()
-    this.$refs.treeSingle.showTreeFlag = true
+    // this.$refs.treeSingle.showTreeData()
+    // this.$refs.treeSingle.showTreeFlag = true
     console.log(this.$refs.treeSingle)
   },
   methods: {

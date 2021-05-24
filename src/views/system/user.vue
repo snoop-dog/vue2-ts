@@ -2,9 +2,9 @@
  * @Description: 用户管理
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:05:30
- * @LastEditors  : snoop-dog
- * @LastEditTime : 2021-05-24 12:40:44
- * @FilePath     : \vue2-tsc:\Users\Crystal\Desktop\vue2-ts\src\views\system\user.vue
+ * @LastEditors: snoop-dog
+ * @LastEditTime: 2021-05-24 21:21:52
+ * @FilePath: \vue2-ts\src\views\system\user.vue
 -->
 
 <template>
@@ -429,7 +429,7 @@ export default {
         isShow: true, // 是否含有操作列
         name: '操作',
         fixed: 'right',
-        width: 400
+        width: 330
       },
       tableTitle: { // 表格title
         name: '用户列表',
