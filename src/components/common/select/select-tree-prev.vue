@@ -26,6 +26,16 @@
 
 <script>
     import clickoutside from './clickoutside.js'
+    function getArray (data, id, propsId, propsLabel, propsChildren) {
+        for (const i in data) {
+            if (data[i][propsId] === id) {
+                ary.push(data[i][propsLabel])
+                break
+            } else {
+                getArray(data[i][propsChildren], id, propsId, propsLabel, propsChildren)
+            }
+        }
+    }
     let _self
     export default {
         name: 'select-tree-prev',
@@ -49,17 +59,6 @@
                     this.siteTreeCodes.map((item, index) => {
                         getArray(this.siteTreeData, item, this.defaultProps.id, this.defaultProps.label, this.defaultProps.children)
                     })
-
-                    function getArray (data, id, propsId, propsLabel, propsChildren) {
-                        for (const i in data) {
-                            if (data[i][propsId] == id) {
-                                ary.push(data[i][propsLabel])
-                                break
-                            } else {
-                                getArray(data[i][propsChildren], id, propsId, propsLabel, propsChildren)
-                            }
-                        }
-                    }
                     return ary
                 } else {
                     return []
@@ -146,16 +145,13 @@
                 this.filterText = ''
             }
         },
-        mounted () {
-
-        },
         watch: {
             /**
              * @desc 监听采集地点输入框的值的变化
              * @param {*} val
              */
             filterText (val) {
-                if (this.$refs[this.refId] == undefined) {
+                if (this.$refs[this.refId] === undefined) {
 
                 } else {
                     this.$refs[this.refId].filter(val)
@@ -166,7 +162,7 @@
              * @param {*} val
              */
             siteTreeCodes (val) {
-                if (val.length == 0) {
+                if (val.length === 0) {
                     this.filterText = ''
                 }
             }

@@ -2,9 +2,9 @@
  * @Description: write something
  * @Author: snoop-dog
  * @Date: 2020-09-21 20:26:17
- * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-05 19:34:09
- * @FilePath: \vue2-ts\src\main.ts
+ * @LastEditors  : snoop-dog
+ * @LastEditTime : 2021-05-24 15:24:17
+ * @FilePath     : \vue2-ts\src\main.ts
  */
 import Vue from 'vue'
 import App from './App.vue'
