@@ -2,9 +2,9 @@
  * @Description: 出租登记
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:00:07
- * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-24 00:32:49
- * @FilePath: \vue2-ts\src\views\rent\register.vue
+ * @LastEditors  : snoop-dog
+ * @LastEditTime : 2021-05-25 17:33:52
+ * @FilePath     : \vue2-ts\src\views\rent\register.vue
 -->
 <template>
   <el-container class="register-container table-container">
@@ -21,6 +21,7 @@
         :table-head="tableHead"
         :table-title="tableTitle"
         @title-click="handleClick"
+        :oprate="oprate"
         ref="multipleTable"
         >
         <div slot="homeowner" slot-scope="props">
@@ -65,8 +66,24 @@
         <div slot="premisesPermitNo" slot-scope="props">
           <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
         </div>
+        <div slot="oprate" slot-scope="props">
+          <el-button @click.stop="updateRegister(props.value)" class="btnPrimary">修改</el-button>
+          <el-button class="btnPrimary">删除</el-button>
+          <el-button class="btnPrimary">详情</el-button>
+        </div>
       </layout-table>
     </el-row>
+
+    <my-dialog
+      size="middle"
+      modal
+      :visible.sync="showDialog"
+      :title="dialogTitle"
+      :show-btns="false"
+      @submit="confirmUpdate"
+    >
+      
+    </my-dialog>
   </el-container>
 </template>
 
@@ -75,6 +92,8 @@ import { getHousePage } from '@/apis/index'
 import layoutSearch from '../../components/common/layout/layout-search.vue'
 import layoutTable from '../../components/common/layout/layout-table.vue'
 import myTooltip from '@/components/common/layout/layout-tooltip.vue'
+import myDialog from '@/components/common/layout/layout-dialog.vue'
+
 export default {
   name: 'register',
   data () {
@@ -179,27 +198,36 @@ export default {
           width: 100
         }
       ],
-      tableTitle: { // 表格title
-        name: '出租登记'
-        // button: [
-        //   {
-        //     label: '创建',
-        //     value: 'addObject'
-        //   },
-        //   {
-        //     label: '全部导出',
-        //     value: 'allDownload',
-        //     iconfont: 'el-icon-download'
-        //   }
-        // ]
+      oprate: { // 数据操作列
+        isShow: true, // 是否含有操作列
+        name: '操作',
+        fixed: 'right',
+        width: 280
       },
-      propsParams: {} // 初始参数
+      tableTitle: { // 表格title
+        name: '出租登记',
+        button: [
+          {
+            label: '添加',
+            value: 'addObject'
+          },
+          {
+            label: '全部导出',
+            value: 'allDownload',
+            iconfont: 'el-icon-download'
+          }
+        ]
+      },
+      propsParams: {}, // 初始参数
+      showDialog: false, // 添加出租登记信息弹框
+      dialogTitle: '添加出租登记' // dialog title
     }
   },
   components: {
     layoutSearch,
     layoutTable,
-    myTooltip
+    myTooltip,
+    myDialog
   },
   created () {
     // this.searchList()
@@ -246,6 +274,19 @@ export default {
      */
     handleClick (val) {
       console.log(val)
+      if (val === 'addObject') {
+        this.showDialog = true
+        this.dialogTitle = '添加出租登记'
+      }
+    },
+    /**
+     * @description: 编辑出租登记信息
+     * @param {object} item 要修改的出租登记信息
+     * @return {*} void
+     */    
+    updateRegister (item) {
+      this.showDialog = true
+      this.dialogTitle = '修改出租登记'
     }
   },
   filters: {

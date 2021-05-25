@@ -883,7 +883,7 @@ export function updateRegistrar (params: any) {
  */
 export function updateTenant (params: any) {
   return new Promise((resolve, reject) => {
-    httpRequest('get', '/rr/updateTenant', params)
+    httpRequest('post', '/rr/updateTenant', params)
       .then(res => {
         resolve(res)
       })

@@ -2,9 +2,9 @@
  * @Description: 租户信息
  * @Author: snoop-dog
  * @Date: 2021-05-17 01:08:59
- * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-25 00:48:37
- * @FilePath: \vue2-ts\src\views\system\tenant.vue
+ * @LastEditors  : snoop-dog
+ * @LastEditTime : 2021-05-25 17:17:58
+ * @FilePath     : \vue2-ts\src\views\system\tenant.vue
 -->
 <template>
   <el-container class="table-container">
@@ -14,6 +14,7 @@
 
     <el-row class="tableModel">
       <layout-table
+        fixed
         :pagination="pagination"
         :ending-load="endingLoad"
         :data-list="dataList"
@@ -56,6 +57,9 @@
         <div slot="houseAddress" slot-scope="props">
           <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
         </div>
+        <div slot="address" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+        </div>
         <div slot="start_time" slot-scope="props">
           <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
         </div>
@@ -73,104 +77,104 @@
     </el-row>
 
     <my-dialog
-        size="extra-small"
-        modal
-        :visible.sync="showDialog"
-        title="修改租户信息"
-        @submit="confirmUpdate"
-      >
-        <el-form label-width="8rem" label-position="left" class="alarm-form required-form">
-          <el-form-item label="房屋：" class="required">
-            <el-select
-              clearable
-              :multiple="false"
-              v-model="ruleForm.house_id"
+      size="extra-small"
+      modal
+      :visible.sync="showDialog"
+      title="修改租户信息"
+      @submit="confirmUpdate"
+    >
+      <el-form label-width="8rem" label-position="left" class="alarm-form required-form">
+        <el-form-item label="房屋：" class="required">
+          <el-select
+            clearable
+            :multiple="false"
+            v-model="ruleForm.house_id"
+          >
+            <el-option
+              v-for="item in houseList"
+              :key="item.id"
+              :label="item.address"
+              :value="item.id"
             >
-              <el-option
-                v-for="item in houseList"
-                :key="item.id"
-                :label="item.address"
-                :value="item.id"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="租户姓名：" class="required">
-            <el-input clearable v-model.trim="ruleForm.name" placeholder="请输入租户姓名"></el-input>
-          </el-form-item>
-          <el-form-item label="租户性别：" class="required">
-            <el-select
-              clearable
-              :multiple="false"
-              v-model="ruleForm.sex"
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="租户姓名：" class="required">
+          <el-input clearable v-model.trim="ruleForm.name" placeholder="请输入租户姓名"></el-input>
+        </el-form-item>
+        <el-form-item label="租户性别：" class="required">
+          <el-select
+            clearable
+            :multiple="false"
+            v-model="ruleForm.sex"
+          >
+            <el-option
+              v-for="item in sexArray"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             >
-              <el-option
-                v-for="item in sexArray"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="租户民族：" class="required">
-            <el-select
-              clearable
-              :multiple="false"
-              v-model="ruleForm.nation"
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="租户民族：" class="required">
+          <el-select
+            clearable
+            :multiple="false"
+            v-model="ruleForm.nation"
+          >
+            <el-option
+              v-for="item in nationArray"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
             >
-              <el-option
-                v-for="item in nationArray"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="手机号：" class="required">
-            <el-input
-              clearable
-              v-model.trim="ruleForm.phone"
-              @input="ruleForm.phone=ruleForm.phone.replace(/[^\d]/g,'')"
-              @blur="ruleForm.phone=ruleForm.phone.replace(/[^\d]/g,'')"
-              placeholder="请输入数字">
-            </el-input>
-          </el-form-item>
-          <el-form-item label="身份证：" class="required">
-            <el-input
-              clearable
-              v-model.trim="ruleForm.idcard"
-              @input="ruleForm.idcard=ruleForm.idcard.replace(/[^\d]/g,'')"
-              @blur="ruleForm.idcard=ruleForm.idcard.replace(/[^\d]/g,'')"
-              placeholder="请输入数字">
-            </el-input>
-          </el-form-item>
-          <el-form-item label="详细地址：" class="required">
-            <el-input clearable v-model.trim="ruleForm.address" placeholder="请输入详细地址"></el-input>
-          </el-form-item>
-          <el-form-item label="承租起始时间：" class="required">
-            <date-picker
-              v-model="ruleForm.start_time"
-              type="date"
-              placeholder="承租起始时间"
-              format="yyyy-MM-dd"
-              clearable
-            >
-            </date-picker>
-          </el-form-item>
-          <el-form-item label="承租结束时间：" class="required">
-            <date-picker
-              v-model="ruleForm.end_time"
-              type="date"
-              placeholder="承租起始时间"
-              format="yyyy-MM-dd"
-              clearable
-            >
-            </date-picker>
-          </el-form-item>
-        </el-form>
-      </my-dialog>
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="手机号：" class="required">
+          <el-input
+            clearable
+            v-model.trim="ruleForm.phone"
+            @input="ruleForm.phone=ruleForm.phone.replace(/[^\d]/g,'')"
+            @blur="ruleForm.phone=ruleForm.phone.replace(/[^\d]/g,'')"
+            placeholder="请输入数字">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="身份证：" class="required">
+          <el-input
+            clearable
+            v-model.trim="ruleForm.idcard"
+            @input="ruleForm.idcard=ruleForm.idcard.replace(/[^\d]/g,'')"
+            @blur="ruleForm.idcard=ruleForm.idcard.replace(/[^\d]/g,'')"
+            placeholder="请输入数字">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="详细地址：" class="required">
+          <el-input clearable v-model.trim="ruleForm.address" placeholder="请输入详细地址"></el-input>
+        </el-form-item>
+        <el-form-item label="承租起始时间：" class="required">
+          <date-picker
+            v-model="ruleForm.start_time"
+            type="date"
+            placeholder="承租起始时间"
+            format="yyyy-MM-dd"
+            clearable
+          >
+          </date-picker>
+        </el-form-item>
+        <el-form-item label="承租结束时间：" class="required">
+          <date-picker
+            v-model="ruleForm.end_time"
+            type="date"
+            placeholder="承租起始时间"
+            format="yyyy-MM-dd"
+            clearable
+          >
+          </date-picker>
+        </el-form-item>
+      </el-form>
+    </my-dialog>
   </el-container>
 </template>
 
@@ -271,6 +275,12 @@ export default {
           width: 80
         },
         {
+          name: '详细地址',
+          prop: 'address',
+          value: 'address',
+          width: 80
+        },
+        {
           name: '承租起始时间',
           prop: 'start_time',
           value: 'start_time',
@@ -301,7 +311,7 @@ export default {
         isShow: true, // 是否含有操作列
         name: '操作',
         fixed: 'right',
-        width: 240
+        width: 220
       },
       ruleForm: { // 租户信息表单参数
         id: '', // 租户id
@@ -328,7 +338,8 @@ export default {
         }
       ],
       nationArray: [], // 民族数组
-      houseList: [] // 房屋列表
+      houseList: [], // 房屋列表
+      size: 20 // 分页参数
     }
   },
   components: {
@@ -349,6 +360,7 @@ export default {
      */
     searchList (param, val, size) {
       this.propsParams = _.cloneDeep(param)
+      this.size = size
       const params = {
         name: param.keyword,
         pageIndex: val,
@@ -428,7 +440,7 @@ export default {
       } else if (!this.ruleForm.name) {
         this.showMessageBox('请填写租户姓名！', 'warning')
         return false
-      } else if (!this.ruleForm.sex) {
+      } else if (!(this.ruleForm.sex + '')) {
         this.showMessageBox('请选择租户性别！', 'warning')
         return false
       } else if (!this.ruleForm.nation) {
@@ -463,6 +475,7 @@ export default {
 
       const params = {
         id: this.ruleForm.id,
+        name: this.ruleForm.name,
         house_id: this.ruleForm.house_id,
         sex: this.ruleForm.sex,
         nation: this.ruleForm.nation,
@@ -474,6 +487,7 @@ export default {
       }
 
       updateTenant(params).then(data => {
+        this.showDialog = false
         this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
         this.showMessageBox('操作成功!', 'success')
       })
