@@ -2,9 +2,9 @@
  * @Description: write something
  * @Author: snoop-dog
  * @Date: 2021-04-24 14:03:25
- * @LastEditors  : snoop-dog
- * @LastEditTime : 2021-05-24 15:45:17
- * @FilePath     : \vue2-ts\src\utils\request.ts
+ * @LastEditors: snoop-dog
+ * @LastEditTime: 2021-05-25 22:08:32
+ * @FilePath: \vue2-ts\src\utils\request.ts
  */
 import axios from 'axios'
 import qs from 'qs'
@@ -18,7 +18,7 @@ const request = axios.create({
 })
 
 const pending: Array<any> = [] // 声明一个数组用于存储每个ajax请求的取消函数和ajax标识
-const whiteListUrl = ['/area/getAreaDim']
+const whiteListUrl = ['/area/getAreaDim', '/data/getDataList']
 const CancelToken = axios.CancelToken
 const removePending = (ever: any) => {
   pending.map((item, idx) => {

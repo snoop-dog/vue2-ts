@@ -2,9 +2,9 @@
  * @Description: 租户信息
  * @Author: snoop-dog
  * @Date: 2021-05-17 01:08:59
- * @LastEditors  : snoop-dog
- * @LastEditTime : 2021-05-25 17:17:58
- * @FilePath     : \vue2-ts\src\views\system\tenant.vue
+ * @LastEditors: snoop-dog
+ * @LastEditTime: 2021-05-26 01:32:00
+ * @FilePath: \vue2-ts\src\views\system\tenant.vue
 -->
 <template>
   <el-container class="table-container">
@@ -71,7 +71,7 @@
         </div>
         <div slot="oprate" slot-scope="props">
           <el-button @click.stop="updateTenant(props.value)" class="btnPrimary">修改</el-button>
-          <el-button class="btnPrimary">详情</el-button>
+          <el-button class="btnPrimary" @click.stop="goRegisterDetail(props.value.id)">详情</el-button>
         </div>
       </layout-table>
     </el-row>
@@ -490,6 +490,30 @@ export default {
         this.showDialog = false
         this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
         this.showMessageBox('操作成功!', 'success')
+      })
+    },
+    /**
+     * @description: 查看出租登记详情
+     * @param {Number} id 出租登记信息id
+     * @returns {*} void
+     */    
+    goRegisterDetail (id) {
+      this.$store.commit(
+        'addTabList',
+        {
+          url: '/rent/register-detail',
+          param: {
+            id: id,
+            type: 3
+          }
+        }
+      )
+      this.$router.push({
+        path: '/rent/register-detail',
+        query: {
+          id: id,
+          type: 3
+        }
       })
     }
   },

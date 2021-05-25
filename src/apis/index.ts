@@ -892,6 +892,22 @@ export function updateTenant (params: any) {
       })
   })
 }
+
+/**
+ * @api {get} /rr/getDataById  根据id查询登记详情(租户列表,房屋,房东信息)
+ * @param {Object} params 根据id查询登记详情(租户列表,房屋,房东信息)参数
+ */
+export function getRegisterDetail (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/rr/getDataById', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 // 房屋入住登记相关中介公司信息 API end
 
 // 日志管理 API start

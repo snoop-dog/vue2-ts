@@ -53,6 +53,11 @@ const routes: Array<RouteConfig> = [
         component: () => import('../views/rent/register.vue')
       },
       {
+        path: '/rent/register-detail',
+        name: 'Registerdetail',
+        component: () => import('../views/rent/detail.vue')
+      },
+      {
         path: '/system/role',
         name: 'Systemrole',
         component: () => import('../views/system/role.vue')
