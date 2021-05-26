@@ -2,15 +2,19 @@
  * @Description: 出租登记详情
  * @Author: snoop-dog
  * @Date: 2021-05-26 01:20:32
- * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-26 02:15:46
- * @FilePath: \vue2-ts\src\views\rent\detail.vue
+ * @LastEditors  : snoop-dog
+ * @LastEditTime : 2021-05-26 19:00:07
+ * @FilePath     : \vue2-ts\src\views\rent\detail.vue
 -->
 <template>
   <el-container class="detail-container">
     <el-main class="detail-main">
-      <el-container class="basic-info"></el-container>
-      <el-container class="basic-info"></el-container>
+      <el-container class="basic-info">
+        <el-main class="basic-main">
+          <el-header class="basic-title">房主信息</el-header>
+          
+        </el-main>
+      </el-container>
     </el-main>
   </el-container>
 </template>

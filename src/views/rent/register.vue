@@ -2,9 +2,9 @@
  * @Description: 出租登记
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:00:07
- * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-26 01:31:39
- * @FilePath: \vue2-ts\src\views\rent\register.vue
+ * @LastEditors  : snoop-dog
+ * @LastEditTime : 2021-05-26 14:29:12
+ * @FilePath     : \vue2-ts\src\views\rent\register.vue
 -->
 <template>
   <el-container class="register-container table-container">
@@ -1203,7 +1203,7 @@ export default {
       this.$store.commit(
         'addTabList',
         {
-          url: '/rent/register-detail',
+          url: '/rent/detail',
           param: {
             id: id,
             type: 1
@@ -1211,7 +1211,7 @@ export default {
         }
       )
       this.$router.push({
-        path: '/rent/register-detail',
+        path: '/rent/detail',
         query: {
           id: id,
           type: 1

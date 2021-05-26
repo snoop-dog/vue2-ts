@@ -2,9 +2,9 @@
  * @Description: write something
  * @Author: snoop-dog
  * @Date: 2020-09-21 20:26:17
- * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-17 01:12:34
- * @FilePath: \vue2-ts\src\router\index.ts
+ * @LastEditors  : snoop-dog
+ * @LastEditTime : 2021-05-26 14:29:20
+ * @FilePath     : \vue2-ts\src\router\index.ts
  */
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
@@ -53,7 +53,7 @@ const routes: Array<RouteConfig> = [
         component: () => import('../views/rent/register.vue')
       },
       {
-        path: '/rent/register-detail',
+        path: '/rent/detail:id?:type?',
         name: 'Registerdetail',
         component: () => import('../views/rent/detail.vue')
       },

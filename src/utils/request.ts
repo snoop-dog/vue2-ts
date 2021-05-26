@@ -2,9 +2,9 @@
  * @Description: write something
  * @Author: snoop-dog
  * @Date: 2021-04-24 14:03:25
- * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-25 22:08:32
- * @FilePath: \vue2-ts\src\utils\request.ts
+ * @LastEditors  : snoop-dog
+ * @LastEditTime : 2021-05-26 11:40:16
+ * @FilePath     : \vue2-ts\src\utils\request.ts
  */
 import axios from 'axios'
 import qs from 'qs'
@@ -13,7 +13,7 @@ import { getToken, removeToken } from '../utils/auth'
 
 const request = axios.create({
   timeout: 60000,
-  baseURL: 'http://47.114.46.149:8766/'
+  baseURL: 'http://113.57.168.50:17880/'
   // withCredentials: true,
 })
 

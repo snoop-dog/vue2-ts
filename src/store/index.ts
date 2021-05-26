@@ -60,15 +60,18 @@ export default new Vuex.Store({
      * @param object
      */
     addTabList (state, object) {
-      const samePath = state.tabList.filter(x => object.url.indexOf(x.url) > -1)
+      if (Object.keys(object.param).length) {
+        object.url = object.url + '?' + qs.stringify(object.param)
+      }
+      const samePath = state.tabList.filter(x => x.url === object.url)
       if (samePath.length) {
         if (Object.keys(object.param).length) {
-          state.activeTab = samePath[0].url + '?' + qs.stringify(object.param)
+          state.activeTab = samePath[0].url
         } else {
           state.activeTab = samePath[0].url
         }
       } else {
-        const curMenu: any = state.menuData.filter(x => x.url === object.url)
+        const curMenu: any = state.menuData.filter(x => object.url.indexOf(x.url) !== -1)
         if (!Object.keys(object.param).length) {
           state.tabList.push({
             name: curMenu[0].name,
@@ -80,7 +83,7 @@ export default new Vuex.Store({
             name: curMenu[0].name,
             url: curMenu[0].url + '?' + qs.stringify(object.param)
           })
-          state.activeTab = object.url + '?' + qs.stringify(object.param)
+          state.activeTab = object.url
         } 
       }
     },
