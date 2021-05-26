@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-05-17 01:08:59
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-26 01:32:00
+ * @LastEditTime: 2021-05-27 01:43:25
  * @FilePath: \vue2-ts\src\views\system\tenant.vue
 -->
 <template>
@@ -501,7 +501,7 @@ export default {
       this.$store.commit(
         'addTabList',
         {
-          url: '/rent/register-detail',
+          url: '/rent/detail',
           param: {
             id: id,
             type: 3
@@ -509,7 +509,7 @@ export default {
         }
       )
       this.$router.push({
-        path: '/rent/register-detail',
+        path: '/rent/detail',
         query: {
           id: id,
           type: 3

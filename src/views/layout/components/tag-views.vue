@@ -14,7 +14,7 @@
 
     <el-main class="tag-tab">
       <el-tabs class="tab-content" v-model="activeName" closable @tab-click="handleClick" @tab-remove="removeTab">
-        <el-tab-pane :label="item.name" :name="item.url" :key="item.name" v-for="item in tabList">
+        <el-tab-pane :label="item.name" :name="item.url" :key="item.url" v-for="item in tabList">
         </el-tab-pane>
       </el-tabs>
     </el-main>

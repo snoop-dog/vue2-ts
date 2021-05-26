@@ -908,6 +908,22 @@ export function getRegisterDetail (params: any) {
       })
   })
 }
+
+/**
+ * @api {post} /rr/updateDataAll  出租登记修改(一起添加)
+ * @param {Object} params 出租登记修改(一起添加)参数
+ */
+export function updateRegisterInfo (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/rr/updateDataAll', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 // 房屋入住登记相关中介公司信息 API end
 
 // 日志管理 API start

@@ -2,9 +2,9 @@
  * @Description: 出租登记
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:00:07
- * @LastEditors  : snoop-dog
- * @LastEditTime : 2021-05-26 14:29:12
- * @FilePath     : \vue2-ts\src\views\rent\register.vue
+ * @LastEditors: snoop-dog
+ * @LastEditTime: 2021-05-27 00:41:18
+ * @FilePath: \vue2-ts\src\views\rent\register.vue
 -->
 <template>
   <el-container class="register-container table-container">
@@ -390,7 +390,7 @@
             <el-row class="tenant-box" v-for="(item, index) in tenantArray" :key="index">
               <el-row class="tenant-title">
                 <el-col :span="20" class="label-text">租户信息{{index + 1}}</el-col>
-                <el-col :span="4" class="close-icon" v-if="tenantArray.length > 1">
+                <el-col :span="4" class="close-icon" v-if="tenantArray.length > 1 && !isEdit">
                   <i class="el-icon-circle-close" @click.stop="deleteTenant(index)"></i>
                 </el-col>
               </el-row>
@@ -481,7 +481,7 @@
                 </el-form-item>
               </el-form>
             </el-row>
-            <el-row class="add-box">
+            <el-row class="add-box" v-if="!isEdit">
               <i class="el-icon-circle-plus-outline" @click.stop="addTenant"></i>
             </el-row>
           </el-main>
@@ -499,7 +499,15 @@
 
 <script>
 // apis
-import { getHousePage, getDicList, getAreaDim, getNationDic, addTenant } from '@/apis/index'
+import { 
+  getHousePage, 
+  getDicList, 
+  getAreaDim, 
+  getNationDic, 
+  addTenant, 
+  getRegisterDetail,
+  updateRegisterInfo
+} from '@/apis/index'
 
 // components
 import layoutSearch from '../../components/common/layout/layout-search.vue'
@@ -713,7 +721,11 @@ export default {
       sexArray: [ // 性别字典
         { name: '男', id: 0 },
         { name: '女', id: 1 }
-      ]
+      ],
+      isEdit: false, // 是否是修改数据
+      ownerId: '', // 房主id
+      houseId: '', // 房屋id
+      tenantId: ''
     }
   },
   components: {
@@ -1067,19 +1079,40 @@ export default {
         companyName: this.ownerObject.owners_type === 2 ? this.ownerObject.companyName : '',
         businessLicense: this.ownerObject.owners_type === 2 ? this.ownerObject.businessLicense : ''
       }
+
+      if (this.isEdit) {
+        ownerParam.id = this.ownerId
+        houseParam.id = this.houseId
+        tenantParam.map((item, index) => {
+          item.id = this.tenantArray[index].id
+          item.house_id = this.houseId
+        })
+      }
       
       houseParam.tenants = tenantParam
       ownerParam.house = houseParam
 
-      addTenant(ownerParam).then(data => {
-        if (data.status === 200) {
-          this.showMessageBox(data.message, 'success')
-        } else {
-          this.showMessageBox(data.message, 'error')
-        }
-        this.showDialog = false
-        this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
-      })
+      if (this.isEdit) {
+        updateRegisterInfo(ownerParam).then(data => {
+          if (data.status === 200) {
+            this.showMessageBox(data.message, 'success')
+          } else {
+            this.showMessageBox(data.message, 'error')
+          }
+          this.showDialog = false
+          this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+        })
+      } else {
+        addTenant(ownerParam).then(data => {
+          if (data.status === 200) {
+            this.showMessageBox(data.message, 'success')
+          } else {
+            this.showMessageBox(data.message, 'error')
+          }
+          this.showDialog = false
+          this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+        })
+      }
     },
     /**
      * @description: 改变省级数据
@@ -1191,8 +1224,81 @@ export default {
      * @return {*} void
      */    
     updateRegister (item) {
-      this.showDialog = true
-      this.dialogTitle = '修改出租登记'
+      const params = {
+        id: item.id,
+        type: 2
+      }
+
+      getRegisterDetail(params).then(data => {
+        console.log(data)
+        if (data.status === 200) {
+          const res = data.data.homeowner
+          this.ownerId = item.id
+          this.ownerObject.nation = res.nation
+          this.ownerObject.sex = res.sex
+          this.ownerObject.name = res.name
+          this.ownerObject.idcard = res.idcard
+          this.ownerObject.phone = res.phone
+          this.ownerObject.address = res.address
+          this.ownerObject.owners_type = res.owners_type
+          this.ownerObject.businessLicense = res.businessLicense
+          this.ownerObject.companyName = res.companyName
+
+          this.houseId = res.houses[0].id
+          this.houseObject.houseType = res.houses[0].housingNature
+          this.houseObject.useType = res.houses[0].planningPurposes
+          this.houseObject.houseArea = res.houses[0].constructionArea
+          this.houseObject.premisesPermitNo = res.houses[0].premisesPermitNo
+          this.houseObject.province = res.houses[0].province
+          this.houseObject.city = res.houses[0].city
+          this.houseObject.area = res.houses[0].area
+          this.houseObject.street = res.houses[0].street
+          this.houseObject.community = res.houses[0].community
+          this.houseObject.address = res.houses[0].address
+
+          if (this.houseObject.province) {
+            this.changeProvice(this.houseObject.province)
+          }
+
+          if (this.houseObject.city) {
+            this.changeCity(this.houseObject.city)
+          }
+
+          if (this.houseObject.area) {
+            this.changeCountry(this.houseObject.area)
+          }
+
+          if (this.houseObject.street) {
+            this.changeStreet(this.houseObject.street)
+          }
+
+          res.houses[0].tenants.length && 
+          (this.tenantArray = []) &&
+          res.houses[0].tenants.map(item => {
+            const object = {}
+            object.id = item.id
+            object.name = item.name
+            object.sex = item.sex
+            object.nation = item.nation
+            object.phone = item.phone
+            object.idcard = item.idcard
+            object.address = item.address
+            object.startTime = item.start_time ? item.start_time.split(' ')[0] : ''
+            object.endTime = item.end_time ? item.end_time.split(' ')[0] : ''
+            this.tenantArray.push(object)
+          })
+
+          this.isEdit = true
+          this.showDialog = true
+          this.dialogTitle = '修改出租登记'
+        } else {
+          this.isEdit = false
+          this.showMessageBox(data.message, 'error')
+        }
+      }).catch(err => {
+        this.isEdit = false
+        this.showMessageBox(err.message, 'error')
+      })
     },
     /**
      * @description: 查看出租登记详情
@@ -1206,7 +1312,7 @@ export default {
           url: '/rent/detail',
           param: {
             id: id,
-            type: 1
+            type: 2
           }
         }
       )
@@ -1214,7 +1320,7 @@ export default {
         path: '/rent/detail',
         query: {
           id: id,
-          type: 1
+          type: 2
         }
       })
     }
@@ -1223,6 +1329,7 @@ export default {
     showDialog (val) {
       if (!val) {
         this.stepActive = 1
+        this.isEdit = false
         for (const k in this.houseObject) {
           this.houseObject[k] = ''
         }
