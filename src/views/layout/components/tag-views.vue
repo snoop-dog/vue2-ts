@@ -198,6 +198,8 @@ export default Vue.extend({
           margin: 0;
         }
         &__nav-wrap {
+          display: flex;
+          align-items: center;
           &::after {
             background: transparent;
           }

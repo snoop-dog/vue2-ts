@@ -2,9 +2,9 @@
  * @Description: 出租登记详情
  * @Author: snoop-dog
  * @Date: 2021-05-26 01:20:32
- * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-27 02:11:26
- * @FilePath: \vue2-ts\src\views\rent\detail.vue
+ * @LastEditors  : snoop-dog
+ * @LastEditTime : 2021-05-27 09:37:28
+ * @FilePath     : \vue2-ts\src\views\rent\detail.vue
 -->
 <template>
   <el-container class="detail-container">
@@ -162,12 +162,12 @@
           <el-table-column
             prop="sexStr"
             label="性别"
-            width="50">
+            width="7">
           </el-table-column>
           <el-table-column
             prop="nationStr"
             label="民族"
-            width="50">
+            width="70">
           </el-table-column>
           <el-table-column
             prop="phone"
@@ -179,25 +179,25 @@
             prop="idcard"
             show-overflow-tooltip
             label="身份证"
-            width="140">
+            width="170">
           </el-table-column>
           <el-table-column
             prop="address"
             show-overflow-tooltip
             label="详细地址"
-            width="140">
+            width="200">
           </el-table-column>
           <el-table-column
             prop="start_time"
             show-overflow-tooltip
             label="承租起始时间"
-            width="140">
+            >
           </el-table-column>
           <el-table-column
             prop="end_time"
             show-overflow-tooltip
             label="承租结束时间"
-            width="140">
+            >
           </el-table-column>
         </el-table>
       </el-container>
@@ -352,6 +352,11 @@ export default {
       }
       .el-table {
         margin-top: 1rem;
+        .cell {
+          &.el-tooltip {
+            width: auto !important;
+          }
+        }
       }
     }
   }

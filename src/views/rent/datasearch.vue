@@ -2,9 +2,9 @@
  * @Description: 数据检索
  * @Author: snoop-dog
  * @Date: 2021-04-24 14:59:31
- * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-06 23:58:11
- * @FilePath: \vue2-ts\src\views\rent\datasearch.vue
+ * @LastEditors  : snoop-dog
+ * @LastEditTime : 2021-05-27 10:03:44
+ * @FilePath     : \vue2-ts\src\views\rent\datasearch.vue
 -->
 
 <template>
@@ -62,9 +62,16 @@ export default {
   justify-content: center;
   align-items: center;
   background: #fff;
-  .input-with-select {
+  /deep/.input-with-select {
     width: 50%;
     margin-top: -8rem;
+    &.el-input-group {
+      >.el-input__inner {
+        height: 2.66rem;
+        line-height: 2.66rem;
+        display: unset;
+      }
+    }
   }
 }
 </style>

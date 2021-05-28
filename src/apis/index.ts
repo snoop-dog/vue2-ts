@@ -524,6 +524,22 @@ export function getJobUnitList (params: any) {
 }
 
 /**
+ * @api {get} /jobunit/getJobUnitPage 获取职位单位列表
+ * @param {Object} params 获取职位单位列表参数
+ */
+ export function getJobUnitPage (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/jobunit/getJobUnitPage', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
  * @api {get} /jobunit/getJobUnitSimple 获取单位(精简)
  * @param {Object} params 获取单位(精简)参数
  */

@@ -2,9 +2,9 @@
  * @Description: 单位管理
  * @Author: snoop-dog
  * @Date: 2021-05-03 10:13:47
- * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-24 23:16:09
- * @FilePath: \vue2-ts\src\views\system\unit.vue
+ * @LastEditors  : snoop-dog
+ * @LastEditTime : 2021-05-27 12:46:58
+ * @FilePath     : \vue2-ts\src\views\system\unit.vue
 -->
 <template>
   <el-container class="unit-container">
@@ -73,17 +73,25 @@
       size="small"
       modal
       :visible.sync="showDialog"
-      title="新增单位"
+      :title="dialogTitle"
       @submit="confirmUpdate"
     >
       <el-form label-width="8rem" label-position="left" class="alarm-form required-form">
         <el-form-item label="上级单位：" class="required">
-          <tree-single
-            ref="treeSingle"
-            :siteTreeData="unitTree"
-            :defaultProps="defaultProps"
+          <el-select
+            clearable
+            :multiple="false"
+            placeholder="请选择上级单位"
+            v-model="ruleForm.pid"
           >
-          </tree-single>
+            <el-option
+              v-for="item in unitList"
+              :label="item.name"
+              :value="item.pid"
+              :key="item.pid"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="单位名称：" class="required">
           <el-input 
@@ -114,6 +122,7 @@
             <el-form-item label="省：">
               <el-select
                 clearable
+                :disabled="isEdit"
                 :multiple="false"
                 v-model="ruleForm.province"
                 @change="changeProvice"
@@ -134,7 +143,7 @@
             <el-form-item label="市：">
               <el-select
                 clearable
-                :disabled="!ruleForm.province"
+                :disabled="!ruleForm.province || isEdit"
                 :multiple="false"
                 v-model="ruleForm.city"
                 @change="changeCity"
@@ -155,7 +164,7 @@
             <el-form-item label="区/县：">
               <el-select
                 clearable
-                :disabled="!ruleForm.city"
+                :disabled="!ruleForm.city  || isEdit"
                 :multiple="false"
                 v-model="ruleForm.area"
                 @change="changeCountry"
@@ -176,7 +185,7 @@
             <el-form-item label="街道：">
               <el-select
                 clearable
-                :disabled="!ruleForm.area"
+                :disabled="!ruleForm.area  || isEdit"
                 :multiple="false"
                 @change="changeStreet"
                 v-model="ruleForm.street"
@@ -197,7 +206,7 @@
             <el-form-item label="社区：">
               <el-select
                 clearable
-                :disabled="!ruleForm.street"
+                :disabled="!ruleForm.street  || isEdit"
                 :multiple="false"
                 v-model="ruleForm.community"
               >
@@ -215,6 +224,7 @@
         <el-form-item label="详细地址：">
           <el-input
             clearable
+            :disabled="isEdit"
             v-model.trim="ruleForm.address"
             placeholder="请输入详细地址">
           </el-input>
@@ -245,13 +255,14 @@ import {
   updateUnit,
   getAreaDim,
   getRoleSimple,
-  getJobUnitList
+  getJobUnitList,
+  getJobUnitPage
 } from '@/apis/index'
 
 // conponents
-import treeSingle from '@/components/common/select/select-tree-single'
-import layoutSearch from '../../components/common/layout/layout-search.vue'
-import layoutTable from '../../components/common/layout/layout-table.vue'
+// import treeSingle from '@/components/common/select/select-tree-single'
+import layoutSearch from '@/components/common/layout/layout-search.vue'
+import layoutTable from '@/components/common/layout/layout-table.vue'
 import myTooltip from '@/components/common/layout/layout-tooltip.vue'
 import myDialog from '@/components/common/layout/layout-dialog.vue'
 
@@ -348,13 +359,14 @@ export default {
         name: '单位列表',
         button: [
           {
-            label: '新增',
+            label: '添加',
             value: 'addUnit'
           }
         ]
       },
       propsParams: {}, // 初始参数
-      ruleForm: { // 新增编辑表单参数
+      ruleForm: { // 添加编辑表单参数
+        id: '',
         pid: '',
         name: '',
         province: '',
@@ -363,9 +375,10 @@ export default {
         street: '',
         community: '',
         role_id: '',
-        address: ''
+        address: '',
+        describe: ''
       },
-      showDialog: false, // 是否显示修改新增弹框
+      showDialog: false, // 是否显示修改添加弹框
       size: 20, // 每页条数
       isEdit: false, // 是否是编辑标识
       roleList: [], // 角色列表
@@ -388,17 +401,20 @@ export default {
       community: {
         data: [],
         value: ''
-      }
+      },
+      unitList: [], // 上级单位列表
+      dialogTitle: '添加单位'
     }
   },
   components: {
-    treeSingle,
+    // treeSingle,
     layoutSearch,
     layoutTable,
     myTooltip,
     myDialog
   },
   created () {
+    this.getJobUnitList()
     this.getUnitTree() // 获取单位树
     this.getRoleListSimple() // 获取用户角色
     this.getProviceData() // 获取省级数据
@@ -428,7 +444,7 @@ export default {
       this.queryLoading = true
       this.endingLoad = true
 
-      getJobUnitList(params).then(data => {
+      getJobUnitPage(params).then(data => {
         const res = data.data
         this.dataList = _.cloneDeep(res.data)
         this.queryLoading = false
@@ -444,6 +460,17 @@ export default {
         this.pagination.pageCount = 1
         this.pagination.totalCount = 0
         this.pagination.pageIndex = 1
+      })
+    },
+    /**
+     * @description: 获取上级单位列表
+     * @param {*} none
+     * @return {*} void
+     */    
+    getJobUnitList () {
+      getJobUnitList({}).then(data => {
+        console.log(data)
+        this.unitList = data.data
       })
     },
     /**
@@ -555,6 +582,7 @@ export default {
     updateUnit (item) {
       this.isEdit = true
       this.showDialog = true
+      this.dialogTitle = '修改单位'
       for (const key in this.ruleForm) {
         this.$set(this.ruleForm, key, item[key])
       }
@@ -623,7 +651,8 @@ export default {
       })
     },
     handleClick (val) {
-      console.log(val)
+      this.showDialog = true
+      this.dialogTitle = '添加单位'
     },
     /**
      * @description: 删除单位
@@ -652,12 +681,55 @@ export default {
       })
     },
     /**
-     * @description: 确认提交单位新增修改表单
+     * @description: 确认提交单位添加修改表单
      * @param {*} none
      * @returns {*} void
      */    
     confirmUpdate () {
-      console.log(1)
+      if (this.isEdit) {
+        const params = {
+          id: this.ruleForm.id,
+          pid: this.ruleForm.pid,
+          name: this.ruleForm.name,
+          role_id: this.ruleForm.role_id,
+          describe: this.ruleForm.describe
+        }
+
+        updateUnit(params).then(data => {
+          if (data.status === 200) {
+            this.showMessageBox(data.message, 'success')
+            this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+          } else {
+            this.showMessageBox(data.message, 'error')
+          }
+          this.showDialog = false
+          this.isEdit = false
+        })
+      } else {
+        const params = {
+          pid: this.ruleForm.pid,
+          name: this.ruleForm.name,
+          role_id: this.ruleForm.role_id,
+          province: this.ruleForm.province,
+          city: this.ruleForm.city,
+          area: this.ruleForm.area,
+          street: this.ruleForm.street,
+          community: this.ruleForm.community,
+          address: this.ruleForm.address,
+          describe: this.ruleForm.describe
+        }
+
+        addDepartment(params).then(data => {
+          if (data.status === 200) {
+            this.showMessageBox(data.message, 'success')
+            this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+          } else {
+            this.showMessageBox(data.message, 'error')
+          }
+          this.showDialog = false
+          this.isEdit = false
+        })
+      }
     }
   },
   filters: {
