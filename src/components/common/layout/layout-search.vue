@@ -247,7 +247,7 @@ export default {
       checkbox: false,
       index: 0,
       initWidth: 0,
-      size: '', // 自选每页的数量
+      size: 20, // 自选每页的数量
       domRefsArray: []
     };
   },

@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:05:30
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-24 21:21:52
+ * @LastEditTime: 2021-05-30 18:28:05
  * @FilePath: \vue2-ts\src\views\system\user.vue
 -->
 
@@ -40,7 +40,7 @@
         <div slot="password" slot-scope="props">
           <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
         </div>
-        <div slot="position_str" slot-scope="props">
+        <div slot="position" slot-scope="props">
           <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
         </div>
         <div slot="role_id_str" slot-scope="props">
@@ -58,7 +58,7 @@
         <div slot="create_time" slot-scope="props">
           <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
         </div>
-        <div slot="creater" slot-scope="props">
+        <div slot="createrName" slot-scope="props">
           <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
         </div>
         <div slot="oprate" slot-scope="props">
@@ -110,6 +110,31 @@
             >
             </el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="单位：" class="required">
+          <el-select
+            clearable
+            :multiple="false"
+            placeholder="请选择单位"
+            @change="changeUnit"
+            v-model="ruleForm.unit_id"
+          >
+            <el-option
+              v-for="item in unitList"
+              :label="item.name"
+              :value="String(item.id)"
+              :key="item.id"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="职位：" class="required">
+          <el-input
+            v-model.trim="ruleForm.position"
+            placeholder="请输入职位名称"
+            clearabl
+          >
+          </el-input>
         </el-form-item>
         <el-form-item v-if="!isEdit" label="密码：" class="required">
           <el-input 
@@ -263,39 +288,6 @@
             placeholder="请输入详细地址">
           </el-input>
         </el-form-item>
-        <el-form-item label="单位：" class="required">
-          <el-select
-            clearable
-            :multiple="false"
-            placeholder="请选择单位"
-            @change="changeUnit"
-            v-model="ruleForm.unit_id"
-          >
-            <el-option
-              v-for="item in unitList"
-              :label="item.unit"
-              :value="String(item.id)"
-              :key="item.id"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="职位：" class="required">
-          <el-select
-            clearable
-            :multiple="false"
-            placeholder="请选择角色和单位后再选择职位"
-            v-model="ruleForm.position_id"
-          >
-            <el-option
-              v-for="item in positionList"
-              :label="item.name"
-              :value="item.id"
-              :key="item.id"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
       </el-form>
     </my-dialog>
   </el-container>
@@ -312,9 +304,11 @@ import {
   deleteUser,
   addUser,
   getAreaDim,
+  getDicList,
   getRoleSimple,
-  getJobUnitSimple,
-  getPositionSimple
+  getJobUnitList,
+  getPositionSimple,
+  getIsWXUser
 } from '../../apis/index'
 
 // utils
@@ -384,8 +378,8 @@ export default {
         },
         {
           name: '职位',
-          prop: 'position_str',
-          value: 'position_str',
+          prop: 'position',
+          value: 'position',
           width: 120
         },
         {
@@ -420,8 +414,8 @@ export default {
         },
         {
           name: '创建人',
-          prop: 'creater',
-          value: 'creater',
+          prop: 'createrName',
+          value: 'createrName',
           width: 80
         }
       ],
@@ -456,8 +450,9 @@ export default {
         plot: '',
         building: '',
         address: '',
-        position_id: '',
-        unit_id: ''
+        position: '',
+        unit_id: '',
+        unit_type: ''
       },
       showDialog: false, // 是否显示修改新增弹框
       size: 20, // 每页条数
@@ -488,7 +483,8 @@ export default {
       updateParam: { // 修改用户参数
         id: '',
         creater: ''
-      }
+      },
+      unitTypeList: [] // 单位类型下拉
     }
   },
   components: {
@@ -498,8 +494,9 @@ export default {
     layoutTable
   },
   created () {
+    this.getDicList()
     this.getRoleListSimple() // 获取角色列表
-    this.getJobUnitSimple() // 获取职位列表
+    this.getJobUnitList() // 获取职位列表
     this.getProviceData() // 获取省级数据
   },
   methods: {
@@ -541,14 +538,30 @@ export default {
       })
     },
     /**
+     * @description: 获取单位类型列表
+     * @param {*} none
+     * @returns {*} void
+     */    
+    getDicList () {
+      const params = {
+        pid: 4
+      }
+
+      getDicList(params).then(data => {
+        console.log(data)
+        this.unitTypeList = data.data.data || []
+      })
+    },
+    /**
      * @description: 获取角色列表
      * @param {*} none
      * @returns {*} void
      */
-    getJobUnitSimple () {
+    getJobUnitList () {
       const params = {}
 
-      getJobUnitSimple(params).then(data => {
+      getJobUnitList(params).then(data => {
+        console.log(data)
         this.unitList = data.data || []
       })
     },
@@ -563,13 +576,23 @@ export default {
         this.positionList = data.data || []
       })
     },
+    /**
+     * @description: 改变角色
+     * @param {*} role
+     * @returns {*}
+     */    
     changeRole (role) {
       this.ruleForm.role_id = role
-      this.getPositionSimple()
+      // this.getPositionSimple()
     },
+    /**
+     * @description: 改变单位下拉
+     * @param {*} unit
+     * @returns {*}
+     */    
     changeUnit (unit) {
       this.ruleForm.unit_id = unit
-      this.getPositionSimple()
+      // this.getPositionSimple()
     },
     /**
      * @description: 获取角色列表
@@ -749,6 +772,31 @@ export default {
       if (!this.validParam()) return
 
       const params = {
+        phonenumber: this.ruleForm.phonenumber
+      }
+      getIsWXUser(params).then(data => {
+        console.log(data)
+        if (data.data === 1) {
+          this.$confirm('此电话号码已在安邦小程序中注册，是否覆盖信息?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.submitForm({
+              isCoverWX: data.data
+            })
+          }).catch(err => {
+            console.log(err)
+          })
+        } else {
+          this.submitForm({
+            isCoverWX: data.data || 0
+          })
+        }
+      })
+    },
+    submitForm (param) {
+      const params = {
         username: this.ruleForm.username,
         name: this.ruleForm.name,
         role_id: this.ruleForm.role_id,
@@ -764,10 +812,10 @@ export default {
         // building: this.ruleForm.building,
         address: this.ruleForm.address,
         unit_id: this.ruleForm.unit_id,
-        position_id: this.ruleForm.position_id
+        position: this.ruleForm.position
       }
       if (!this.isEdit) {
-        addUser(params).then(data => {
+        addUser({ ...params, ...param }).then(data => {
           this.showDialog = false
           this.showMessageBox(data.message, 'success')
           for (const key in this.ruleForm) {
@@ -776,7 +824,7 @@ export default {
           this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
         }) 
       } else {
-        updateUserInfo({ ...params, ...this.updateParam })
+        updateUserInfo({ ...params, ...this.updateParam, ...param })
           .then(data => {
             this.showDialog = false
             this.showMessageBox(data.message, 'success')
@@ -819,9 +867,9 @@ export default {
         this.showMessageBox('请填写密码！', 'warning')
         return false
       } else if (!this.ruleForm.unit_id) {
-        this.showMessageBox('请填写单位！', 'warning')
+        this.showMessageBox('请选择单位！', 'warning')
         return false
-      } else if (!this.ruleForm.position_id) {
+      } else if (!this.ruleForm.position) {
         this.showMessageBox('请填写职位！', 'warning')
         return false
       } else {

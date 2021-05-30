@@ -3,12 +3,12 @@
  * @Author: snoop-dog
  * @Date: 2020-09-21 20:26:17
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-27 01:41:03
+ * @LastEditTime: 2021-05-30 21:45:43
  * @FilePath: \vue2-ts\src\views\layout\components\app-main.vue
 -->
 <template>
   <el-container class="app-container">
-    <keep-alive>
+    <keep-alive :include="keepAlive">
       <router-view :key="key" v-if='isRouterShow'></router-view>
     </keep-alive>
   </el-container>
@@ -25,6 +25,9 @@ export default Vue.extend({
     }),
     key () {
       return this.$route.path
+    },
+    keepAlive () {
+      return this.$store.state.included
     }
   },
   data () {
@@ -37,14 +40,23 @@ export default Vue.extend({
   },
   methods: {
     reload () {
-      eventBus.$on('reload-page', () => {
+      eventBus.$on('reload-page', async () => {
         console.log(1)
         this.isRouterShow = false
-        this.$nextTick()
-        setTimeout(() => {
-          this.isRouterShow = true
-        }, 500)
+        await this.$store.commit('removeIncluded', this.$route.name)
+        await this.$nextTick()
+        await this.$store.commit('addIncluded', this.$route.name)
+        this.isRouterShow = true
       })
+    }
+  },
+  watch: {
+    $route: {
+      handler (to, from) {
+        // if (to.name === from.name) return
+        this.$store.commit('addIncluded', to.name)
+      },
+      deep: true
     }
   }
 })

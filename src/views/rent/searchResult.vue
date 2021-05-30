@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-05-06 21:34:20
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-07 00:59:56
+ * @LastEditTime: 2021-05-30 01:40:16
  * @FilePath: \vue2-ts\src\views\rent\searchResult.vue
 -->
 
@@ -27,6 +27,7 @@
           :data-list="dataList"
           :table-head="tableHead"
           :table-title="tableTitle"
+          :oprate="oprate"
           ref="multipleTable"
         >
           <div slot="name" slot-scope="props">
@@ -64,6 +65,9 @@
           </div>
           <div slot="address" slot-scope="props">
             <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+          </div>
+          <div slot="oprate" slot-scope="props">
+            <el-button @click.stop="goDetail(props.value)" class="btnPrimary">详情</el-button>
           </div>
         </layout-table>
       </el-row>
@@ -156,6 +160,12 @@ export default {
           value: 'address'
         }
       ],
+      oprate: { // 数据操作列
+        isShow: true, // 是否含有操作列
+        name: '操作',
+        fixed: 'right',
+        width: 120
+      },
       tableTitle: { // 表格title
         name: '查询结果列表'
       },
@@ -207,6 +217,35 @@ export default {
         this.pagination.pageCount = 1
         this.pagination.totalCount = 0
         this.pagination.pageIndex = 1
+      })
+    },
+    /**
+     * @description: 跳转详情页面
+     * @param {*} item
+     * @returns {*}
+     */    
+    goDetail (item) {
+      if (this.activeTab === '1') {
+        this.showMessageBox('暂未开放房主查询详情！', 'warning')
+        return
+      }
+
+      this.$store.commit(
+        'addTabList',
+        {
+          url: '/rent/detail',
+          param: {
+            id: item.id,
+            type: this.activeTab
+          }
+        }
+      )
+      this.$router.push({
+        path: '/rent/detail',
+        query: {
+          id: item.id,
+          type: this.activeTab
+        }
       })
     }
   },

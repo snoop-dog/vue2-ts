@@ -166,6 +166,22 @@ export function addUser (params: any) {
 }
 
 /**
+ * @api {get} /user/getIsWXUser 查询是否是微信用户
+ * @param {Object} params 查询是否是微信用户参数
+ */
+export function getIsWXUser (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/user/getIsWXUser', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
  * @api {delete} /user/delete 用户删除
  * @param {Object} params 用户删除参数
  */

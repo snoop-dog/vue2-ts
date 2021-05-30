@@ -32,7 +32,8 @@ export default new Vuex.Store({
       }
     ],
     echartsUnit: null, // echarts单位
-    renovate: false
+    renovate: false,
+    included: []
   },
   mutations: {
     /**
@@ -86,6 +87,23 @@ export default new Vuex.Store({
           state.activeTab = object.url
         } 
       }
+    },
+    /**
+     * @desc 添加缓存菜单
+     */
+    addIncluded: (state, menu) => {
+      if (!state.included.includes(menu)) {
+        state.included.push(menu)
+      }
+    },
+    /**
+     * @desc 删除缓存菜单
+     */
+    removeIncluded (state, menu) {
+      state.included.map((item, index) => {
+        if (item === menu) state.included.splice(index, 1)
+      })
+      // console.log(state.included)
     },
     /**
      * @description 改变当前active

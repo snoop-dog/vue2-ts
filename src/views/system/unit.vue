@@ -2,9 +2,9 @@
  * @Description: 单位管理
  * @Author: snoop-dog
  * @Date: 2021-05-03 10:13:47
- * @LastEditors  : snoop-dog
- * @LastEditTime : 2021-05-27 12:46:58
- * @FilePath     : \vue2-ts\src\views\system\unit.vue
+ * @LastEditors: snoop-dog
+ * @LastEditTime: 2021-05-30 19:07:17
+ * @FilePath: \vue2-ts\src\views\system\unit.vue
 -->
 <template>
   <el-container class="unit-container">
@@ -77,7 +77,7 @@
       @submit="confirmUpdate"
     >
       <el-form label-width="8rem" label-position="left" class="alarm-form required-form">
-        <el-form-item label="上级单位：" class="required">
+        <el-form-item label="上级单位：">
           <el-select
             clearable
             :multiple="false"
@@ -87,8 +87,8 @@
             <el-option
               v-for="item in unitList"
               :label="item.name"
-              :value="item.pid"
-              :key="item.pid"
+              :value="item.id"
+              :key="item.id"
             >
             </el-option>
           </el-select>
@@ -101,25 +101,25 @@
           >
           </el-input>
         </el-form-item>
-        <el-form-item label="角色名称：" class="required">
+        <el-form-item label="单位类型：" class="required" v-if="!isEdit && userInfo.role_id === 1">
           <el-select
             clearable
             :multiple="false"
-            placeholder="请选择角色"
-            v-model="ruleForm.role_id"
+            placeholder="请选择单位类型"
+            v-model="ruleForm.type"
           >
             <el-option
-              v-for="item in roleList"
+              v-for="item in unitTypeList"
               :label="item.name"
-              :value="item.id"
-              :key="item.id"
+              :value="item.code"
+              :key="item.code"
             >
             </el-option>
           </el-select>
         </el-form-item>
         <transition name="el-zoom-in-center">
           <template>
-            <el-form-item label="省：">
+            <el-form-item label="省：" class="required">
               <el-select
                 clearable
                 :disabled="isEdit"
@@ -249,6 +249,7 @@
 <script>
 // apis
 import {
+  getDicList,
   addDepartment,
   deleteDepartment,
   getUnitTree,
@@ -256,7 +257,8 @@ import {
   getAreaDim,
   getRoleSimple,
   getJobUnitList,
-  getJobUnitPage
+  getJobUnitPage,
+  getUserDetail
 } from '@/apis/index'
 
 // conponents
@@ -298,12 +300,6 @@ export default {
           name: '单位名称',
           prop: 'name',
           value: 'name',
-          width: 100
-        },
-        {
-          name: '角色名称',
-          prop: 'roleStr',
-          value: 'roleStr',
           width: 100
         },
         {
@@ -367,14 +363,14 @@ export default {
       propsParams: {}, // 初始参数
       ruleForm: { // 添加编辑表单参数
         id: '',
-        pid: '',
+        pid: '0',
         name: '',
         province: '',
         city: '',
         area: '',
         street: '',
         community: '',
-        role_id: '',
+        type: '',
         address: '',
         describe: ''
       },
@@ -403,7 +399,9 @@ export default {
         value: ''
       },
       unitList: [], // 上级单位列表
-      dialogTitle: '添加单位'
+      dialogTitle: '添加单位',
+      unitTypeList: [],
+      userInfo: null
     }
   },
   components: {
@@ -414,6 +412,8 @@ export default {
     myDialog
   },
   created () {
+    this.getUserDetail()
+    this.getDicList()
     this.getJobUnitList()
     this.getUnitTree() // 获取单位树
     this.getRoleListSimple() // 获取用户角色
@@ -463,6 +463,31 @@ export default {
       })
     },
     /**
+     * @description: 获取用户信息
+     * @param {*} none
+     * @returns {*} void
+     */    
+    getUserDetail () {
+      getUserDetail({}).then(data => {
+        this.userInfo = data.data
+      })
+    },
+    /**
+     * @description: 获取角色类型列表
+     * @param {*} none
+     * @returns {*} void
+     */    
+    getDicList () {
+      const params = {
+        pid: 4
+      }
+
+      getDicList(params).then(data => {
+        console.log(data)
+        this.unitTypeList = data.data.data || []
+      })
+    },
+    /**
      * @description: 获取上级单位列表
      * @param {*} none
      * @return {*} void
@@ -470,7 +495,16 @@ export default {
     getJobUnitList () {
       getJobUnitList({}).then(data => {
         console.log(data)
-        this.unitList = data.data
+        if (data.data.length) {
+          const object = {
+            id: '0',
+            name: '未选择'
+          }
+          this.unitList = data.data
+          this.unitList.unshift(object)
+        } else {
+          this.unitList = []
+        }
       })
     },
     /**
@@ -651,6 +685,7 @@ export default {
       })
     },
     handleClick (val) {
+      this.isEdit = false
       this.showDialog = true
       this.dialogTitle = '添加单位'
     },
@@ -681,17 +716,38 @@ export default {
       })
     },
     /**
+     * @description: 验证参数
+     * @param {*} none
+     * @returns {Boolean} 参数验证是否通过
+     */    
+    validParam () {
+      if (!this.ruleForm.name) {
+        this.showMessageBox('请填写单位名称！', 'warning')
+        return false
+      } else if (this.userInfo.role_id === 1 && !this.isEdit && !this.ruleForm.type) {
+        this.showMessageBox('请选择单位类型！', 'warning')
+        return false
+      } else if (!this.ruleForm.province) {
+        this.showMessageBox('请选择省！', 'warning')
+        return false
+      } else {
+        return true
+      }
+    },
+    /**
      * @description: 确认提交单位添加修改表单
      * @param {*} none
      * @returns {*} void
      */    
     confirmUpdate () {
+      if (!this.validParam()) return
+      
       if (this.isEdit) {
         const params = {
           id: this.ruleForm.id,
-          pid: this.ruleForm.pid,
+          pid: this.ruleForm.pid || '0',
           name: this.ruleForm.name,
-          role_id: this.ruleForm.role_id,
+          type: this.ruleForm.type,
           describe: this.ruleForm.describe
         }
 
@@ -707,9 +763,9 @@ export default {
         })
       } else {
         const params = {
-          pid: this.ruleForm.pid,
+          pid: this.ruleForm.pid || '0',
           name: this.ruleForm.name,
-          role_id: this.ruleForm.role_id,
+          type: this.ruleForm.type,
           province: this.ruleForm.province,
           city: this.ruleForm.city,
           area: this.ruleForm.area,
@@ -729,6 +785,19 @@ export default {
           this.showDialog = false
           this.isEdit = false
         })
+      }
+    }
+  },
+  watch: {
+    showDialog (val) {
+      if (!val) {
+        for (const key in this.ruleForm) {
+          if (key === 'pid') {
+            this.ruleForm[key] = '0'
+          } else {
+            this.ruleForm[key] = ''
+          }
+        }
       }
     }
   },

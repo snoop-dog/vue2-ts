@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:00:07
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-27 00:41:18
+ * @LastEditTime: 2021-05-31 01:15:09
  * @FilePath: \vue2-ts\src\views\rent\register.vue
 -->
 <template>
@@ -24,14 +24,11 @@
         :oprate="oprate"
         ref="multipleTable"
         >
-        <div slot="homeowner" slot-scope="props">
-          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
-        </div>
         <div slot="ownername" slot-scope="props">
           <my-tooltip width="100%" :value="props.value.homeownerInfo.name | nullTextFilter"></my-tooltip>
         </div>
         <div slot="nation" slot-scope="props">
-          <my-tooltip width="100%" :value="props.value.homeownerInfo.nation | nullTextFilter"></my-tooltip>
+          <my-tooltip width="100%" :value="props.value.homeownerInfo.nationStr | nullTextFilter"></my-tooltip>
         </div>
         <div slot="idcard" slot-scope="props">
           <my-tooltip width="100%" :value="props.value.homeownerInfo.idcard | nullTextFilter"></my-tooltip>
@@ -68,7 +65,7 @@
         </div>
         <div slot="oprate" slot-scope="props">
           <el-button @click.stop="updateRegister(props.value)" class="btnPrimary">修改</el-button>
-          <el-button class="btnPrimary">删除</el-button>
+          <el-button class="btnPrimary" @click.stop="addTenants(props.value)">租户补录</el-button>
           <el-button class="btnPrimary" @click.stop="goRegisterDetail(props.value.id)">详情</el-button>
         </div>
       </layout-table>
@@ -99,9 +96,9 @@
                 >
                   <el-option
                     v-for="item in houseTypeList"
-                    :key="item.id"
+                    :key="item.code"
                     :label="item.name"
-                    :value="item.id"
+                    :value="item.code"
                   >
                   </el-option>
                 </el-select>
@@ -114,9 +111,9 @@
                 >
                   <el-option
                     v-for="item in useTypeList"
-                    :key="item.id"
+                    :key="item.code"
                     :label="item.name"
-                    :value="item.id"
+                    :value="item.code"
                   >
                   </el-option>
                 </el-select>
@@ -488,7 +485,7 @@
         </transition>
 
         <el-row class="btn-box">
-          <el-button v-if="stepActive !== 1" @click.stop="prevStep" type="primary">上一步</el-button>
+          <el-button v-if="stepActive !== 1 && !isAdd" @click.stop="prevStep" type="primary">上一步</el-button>
           <el-button v-if="stepActive !== 3" @click.stop="nextStep" type="primary">下一步</el-button>
           <el-button v-else type="primary" @click.stop="submitRegisterInfo">提交</el-button>
         </el-row>
@@ -505,6 +502,7 @@ import {
   getAreaDim, 
   getNationDic, 
   addTenant, 
+  addTenants,
   getRegisterDetail,
   updateRegisterInfo
 } from '@/apis/index'
@@ -541,56 +539,55 @@ export default {
       },
       tableHead: [ // 表头
         {
-          name: '户主id',
-          prop: 'homeowner',
-          value: 'homeowner',
-          width: 40
-        },
-        {
           name: '户主姓名',
           prop: 'ownername',
           value: 'ownername',
           showRow: true,
-          width: 60
+          width: 100
         },
         {
           name: '民族',
           prop: 'nation',
           value: 'nation',
           showRow: true,
-          width: 40
+          width: 60
         },
         {
           name: '身份证',
           prop: 'idcard',
           value: 'idcard',
           showRow: true,
-          width: 150
+          width: 200
         },
         {
           name: '省',
           prop: 'provinceStr',
-          value: 'provinceStr'
+          value: 'provinceStr',
+          width: 80
         },
         {
           name: '市',
           prop: 'cityStr',
-          value: 'cityStr'
+          value: 'cityStr',
+          width: 80
         },
         {
           name: '区/县',
           prop: 'areaStr',
-          value: 'areaStr'
+          value: 'areaStr',
+          width: 80
         },
         {
           name: '街道',
           prop: 'streetStr',
-          value: 'streetStr'
+          value: 'streetStr',
+          width: 100
         },
         {
           name: '社区',
           prop: 'communityStr',
-          value: 'communityStr'
+          value: 'communityStr',
+          width: 100
         },
         {
           name: '详细地址',
@@ -601,7 +598,8 @@ export default {
         {
           name: '房屋性质',
           prop: 'housingNatureStr',
-          value: 'housingNatureStr'
+          value: 'housingNatureStr',
+          width: 100
         },
         {
           name: '规划用途',
@@ -626,7 +624,7 @@ export default {
         isShow: true, // 是否含有操作列
         name: '操作',
         fixed: 'right',
-        width: 300
+        width: 350
       },
       tableTitle: { // 表格title
         name: '出租登记',
@@ -634,12 +632,12 @@ export default {
           {
             label: '添加',
             value: 'addObject'
-          },
-          {
-            label: '全部导出',
-            value: 'allDownload',
-            iconfont: 'el-icon-download'
           }
+          // {
+          //   label: '全部导出',
+          //   value: 'allDownload',
+          //   iconfont: 'el-icon-download'
+          // }
         ]
       },
       propsParams: {}, // 初始参数
@@ -725,7 +723,9 @@ export default {
       isEdit: false, // 是否是修改数据
       ownerId: '', // 房主id
       houseId: '', // 房屋id
-      tenantId: ''
+      tenantId: '',
+      isAdd: false, // 是否补录租户
+      house_id: ''
     }
   },
   components: {
@@ -824,7 +824,7 @@ export default {
      */    
     getUseTypeList () {
       const params = {
-        pid: 4
+        pid: 3
       }
 
       getDicList(params).then(data => {
@@ -838,7 +838,7 @@ export default {
      */    
     getHouseTypeList () {
       const params = {
-        pid: 3
+        pid: 2
       }
 
       getDicList(params).then(data => {
@@ -1103,15 +1103,30 @@ export default {
           this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
         })
       } else {
-        addTenant(ownerParam).then(data => {
-          if (data.status === 200) {
-            this.showMessageBox(data.message, 'success')
-          } else {
-            this.showMessageBox(data.message, 'error')
-          }
-          this.showDialog = false
-          this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
-        })
+        if (!this.isAdd) {
+          addTenant(ownerParam).then(data => {
+            if (data.status === 200) {
+              this.showMessageBox(data.message, 'success')
+            } else {
+              this.showMessageBox(data.message, 'error')
+            }
+            this.showDialog = false
+            this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+          })
+        } else {
+          tenantParam.map(item => {
+            item.house_id = this.house_id
+          })
+          addTenants(tenantParam).then(data => {
+            if (data.status === 200) {
+              this.showMessageBox(data.message, 'success')
+            } else {
+              this.showMessageBox(data.message, 'error')
+            }
+            this.showDialog = false
+            this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+          })
+        }
       }
     },
     /**
@@ -1233,7 +1248,7 @@ export default {
         console.log(data)
         if (data.status === 200) {
           const res = data.data.homeowner
-          this.ownerId = item.id
+          this.ownerId = item.homeowner
           this.ownerObject.nation = res.nation
           this.ownerObject.sex = res.sex
           this.ownerObject.name = res.name
@@ -1244,7 +1259,7 @@ export default {
           this.ownerObject.businessLicense = res.businessLicense
           this.ownerObject.companyName = res.companyName
 
-          this.houseId = res.houses[0].id
+          this.houseId = item.id
           this.houseObject.houseType = res.houses[0].housingNature
           this.houseObject.useType = res.houses[0].planningPurposes
           this.houseObject.houseArea = res.houses[0].constructionArea
@@ -1301,6 +1316,19 @@ export default {
       })
     },
     /**
+     * @description: 租户批量补录
+     * @param {Object} item 当前登记信息
+     * @returns {*} void
+     */    
+    addTenants (item) {
+      console.log(item)
+      this.stepActive = 3
+      this.isAdd = true
+      this.showDialog = true
+      this.dialogTitle = '租户补录'
+      this.house_id = item.id
+    },
+    /**
      * @description: 查看出租登记详情
      * @param {Number} id 出租登记信息id
      * @returns {*} void
@@ -1330,12 +1358,17 @@ export default {
       if (!val) {
         this.stepActive = 1
         this.isEdit = false
+        this.isAdd = false
         for (const k in this.houseObject) {
           this.houseObject[k] = ''
         }
 
         for (const k1 in this.ownerObject) {
-          this.ownerObject[k1] = ''
+          if (k1 === 'owners_type') {
+            this.ownerObject[k1] = 1
+          } else {
+            this.ownerObject[k1] = ''
+          }
         }
 
         this.tenantArray = []

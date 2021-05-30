@@ -2,9 +2,9 @@
  * @Description: 出租登记详情
  * @Author: snoop-dog
  * @Date: 2021-05-26 01:20:32
- * @LastEditors  : snoop-dog
- * @LastEditTime : 2021-05-27 09:37:28
- * @FilePath     : \vue2-ts\src\views\rent\detail.vue
+ * @LastEditors: snoop-dog
+ * @LastEditTime: 2021-05-31 01:10:23
+ * @FilePath: \vue2-ts\src\views\rent\detail.vue
 -->
 <template>
   <el-container class="detail-container">
@@ -21,12 +21,13 @@
               <tbody>
                 <tr>
                   <th>
-                    <span>户主姓名：</span>
+                    <span v-if="detailData.owners_type === 1">户主姓名：</span>
+                    <span v-else>负责人姓名：</span>
                     <span>{{detailData.name}}</span>
                   </th>
                   <td>
                     <span>民族：</span>
-                    <span>{{detailData.sexStr}}</span>
+                    <span>{{detailData.nationStr}}</span>
                   </td>
                   <td>
                     <span>户主类型：</span>
@@ -37,7 +38,7 @@
                     <span>{{detailData.phone}}</span>
                   </td>
                   <td>
-                    <span>手机号：</span>
+                    <span>身份证：</span>
                     <span>{{detailData.idcard}}</span>
                   </td>
                 </tr>
@@ -76,11 +77,11 @@
                 <tr class="third-line">
                   <td style="flex: 1">
                     <span>籍贯：</span>
-                    <span>{{detailData.province}}</span>
+                    <span v-if="detailData.owners_type === 1">{{detailData.address}}</span>
                   </td>
                   <td>
                     <span>详细地址：</span>
-                    <span>{{detailData.address}}</span>
+                    <span v-if="detailData.owners_type !== 1">{{detailData.address}}</span>
                   </td>
                 </tr>
               </tbody>
@@ -100,7 +101,7 @@
               <tbody>
                 <tr>
                   <td>
-                    <span>房屋类型</span>
+                    <span>房屋类型：</span>
                     <span>{{item.housingNatureStr}}</span>
                   </td>
                   <td>
@@ -162,7 +163,7 @@
           <el-table-column
             prop="sexStr"
             label="性别"
-            width="7">
+            width="70">
           </el-table-column>
           <el-table-column
             prop="nationStr"
@@ -217,6 +218,12 @@ export default {
       type: '', // 查询类型
       detailData: null // 详情数据
     }
+  },
+  created () {
+    console.log(this.$route)
+    this.id = this.$route.query.id
+    this.type = this.$route.query.type
+    this.getRegisterDetail()
   },
   activated () {
     console.log(this.$route)

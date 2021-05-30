@@ -77,6 +77,7 @@ export default Vue.extend({
         item?.name
       )
       this.$router.push(item.name)
+      this.reload()
     },
     /**
      * @description 点击切换tab

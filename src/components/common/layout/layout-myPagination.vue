@@ -117,7 +117,7 @@ export default {
   created () {
     this.size = this.sizeNum
     eventBus.$on('reset-size' + this.$route.path + this.name, () => {
-      this.size = 10
+      this.size = 20
     })
   },
   methods: {
