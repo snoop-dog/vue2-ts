@@ -3,6 +3,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import _ from 'lodash'
 import qs from 'qs'
+import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 
@@ -17,7 +18,9 @@ const initState = {
     }
   ],
   echartsUnit: null,
-  renovate: false
+  renovate: false,
+  included: [],
+  user: null
 }
 
 export default new Vuex.Store({
@@ -33,7 +36,8 @@ export default new Vuex.Store({
     ],
     echartsUnit: null, // echarts单位
     renovate: false,
-    included: []
+    included: [],
+    user: null
   },
   mutations: {
     /**
@@ -87,6 +91,9 @@ export default new Vuex.Store({
           state.activeTab = object.url
         } 
       }
+    },
+    addUserInfo: (state, user) => {
+      user && (state.user = { ...user })
     },
     /**
      * @desc 添加缓存菜单
@@ -156,5 +163,13 @@ export default new Vuex.Store({
     }
   },
   modules: {
-  }
+  },
+  plugins: [createPersistedState({
+    storage: window.localStorage,
+    reducer (val) {
+      return {
+        user: val.user
+      }
+    }
+  })]
 })

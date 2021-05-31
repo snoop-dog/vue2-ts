@@ -527,15 +527,15 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { doLogin } from '../apis/index'
+import { doLogin, getUserDetail } from '../apis/index'
 import md5 from 'js-md5'
 import { setToken } from '../utils/auth'
-import { token } from '../utils/interface'
+import { token, res } from '../utils/interface'
 export default Vue.extend({
   data () {
     return {
-      username: 'admin',
-      password: '123',
+      username: '',
+      password: '',
       loading: false
     }
   },
@@ -567,9 +567,18 @@ export default Vue.extend({
       }
 
       doLogin(params).then((res: token) => {
-        setToken(res.access_token, res.expires_in)
         this.loading = false
-        this.$router.push('/layout')
+        if (res.access_token) {
+          setToken(res.access_token, res.expires_in)
+          getUserDetail({}).then((res: res) => {
+            console.log(res)
+            const user = res.data
+            this.$store.commit('addUserInfo', user)
+          })
+          this.$router.push('/layout')
+        } else {
+          this.showMessageBox('登录失败！', 'error')
+        }
       }).catch(error => {
         console.log(error)
         this.showMessageBox(error.message, 'error')

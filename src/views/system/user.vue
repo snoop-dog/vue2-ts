@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:05:30
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-30 18:28:05
+ * @LastEditTime: 2021-05-31 23:36:53
  * @FilePath: \vue2-ts\src\views\system\user.vue
 -->
 
@@ -307,7 +307,6 @@ import {
   getDicList,
   getRoleSimple,
   getJobUnitList,
-  getPositionSimple,
   getIsWXUser
 } from '../../apis/index'
 
@@ -757,7 +756,7 @@ export default {
       }
 
       if (this.ruleForm.role_id && this.ruleForm.unit_id) {
-        this.getPositionSimple()
+        // this.getPositionSimple()
       }
       
       this.$set(this.updateParam, 'id', item.id)

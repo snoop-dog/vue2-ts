@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 14:03:25
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-30 20:13:50
+ * @LastEditTime: 2021-05-31 22:56:09
  * @FilePath: \vue2-ts\src\utils\request.ts
  */
 import axios from 'axios'
@@ -14,7 +14,8 @@ import { getToken, removeToken } from '../utils/auth'
 const request = axios.create({
   timeout: 60000,
   // baseURL: 'http://113.57.168.50:17880/'
-  baseURL: 'http://47.114.46.149:8766/'
+  // baseURL: 'http://47.114.46.149:8766/'
+  baseURL: 'https://aby.whyjtech.com'
   // withCredentials: true,
 })
 

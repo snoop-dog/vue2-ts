@@ -26,10 +26,64 @@
       <el-row class="tool-logout" @click.native='reload'>
         <i class="el-icon-refresh"></i>
       </el-row>
-      <el-row class="tool-logout" @click.native='logout'>
-        <i class="el-icon-switch-button"></i>
-      </el-row>
+      <el-popover
+        placement="bottom"
+        width="160"
+        trigger="hover"
+      >
+        <el-row class="drop-item text">{{userInfo.username}}</el-row>
+        <el-row class="drop-item text">{{userInfo.role_id_str}}</el-row>
+        <el-row class="drop-item" @click.native="editPassword">
+          <el-col :span="6"><i class="el-icon-edit"></i></el-col>
+          <el-col :span="18">修改密码</el-col>
+        </el-row>
+        <el-row class="drop-item" @click.native='logout'>
+          <el-col :span="6"><i class="el-icon-switch-button"></i></el-col>
+          <el-col :span="18">系统退出</el-col>
+        </el-row>
+        <el-row slot="reference" class="tool-logout">
+          <i class="el-icon-s-custom"></i>
+        </el-row>
+      </el-popover>
     </el-main>
+
+    <my-dialog
+      size="small"
+      modal
+      :visible.sync="showDialog"
+      title="修改密码"
+      @submit="confirmUpdate"
+    >
+      <el-form label-width="8rem" label-position="left" class="alarm-form required-form">
+        <el-form-item label="旧密码：" class="required">
+          <el-input 
+            clearable 
+            type="password"
+            v-model.trim="ruleForm.old_password" 
+            placeholder="请输入旧密码"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item label="新密码：" class="required">
+          <el-input 
+            clearable 
+            type="password"
+            v-model.trim="ruleForm.new_password" 
+            placeholder="请输入新密码"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item label="确认密码：" class="required">
+          <el-input 
+            clearable 
+            type="password"
+            v-model.trim="ruleForm.confirm_password" 
+            placeholder="请输入确认密码"
+          >
+          </el-input>
+        </el-form-item>
+      </el-form>
+    </my-dialog>
   </el-container>
 </template>
 
@@ -38,17 +92,28 @@ import { ElMenuItemGroup } from 'element-ui/types/menu-item-group'
 import Vue from 'vue'
 import { mapState } from 'vuex'
 import { removeToken } from '../../../utils/auth'
+import md5 from 'js-md5'
 import eventBus from '../../../components/event-bus.js'
+import myDialog from '@/components/common/layout/layout-dialog.vue'
+import { updatePassword } from '@/apis/index'
+import { res } from '@/utils/interface'
 export default Vue.extend({
   data () {
     return {
-
+      showDialog: false,
+      ruleForm: {
+        id: '',
+        old_password: '',
+        new_password: '',
+        confirm_password: ''
+      }
     }
   },
   computed: {
     ...mapState({
       tabList: (state: any) => state.tabList,
-      Fold: (state: any) => state.isFold
+      Fold: (state: any) => state.isFold,
+      userInfo: (state: any) => state.user
     }),
     activeName: {
       get () {
@@ -58,6 +123,9 @@ export default Vue.extend({
         return val
       }
     }
+  },
+  components: {
+    myDialog
   },
   watch: {
     tabList (newval, oldVal) {
@@ -133,6 +201,68 @@ export default Vue.extend({
             showClose: true
           })
         })
+    },
+    /**
+     * @description: 点击打开修改密码弹框
+     * @param {*} none
+     * @returns {*} void
+     */    
+    editPassword () {
+      this.showDialog = true
+    },
+    /**
+     * @description: 密码修改参数验证
+     * @param {*} none
+     * @returns {*} void
+     */    
+    validParam () {
+      if (!this.ruleForm.old_password) {
+        this.showMessageBox('请输入老密码！', 'warning')
+        return false
+      } else if (!this.ruleForm.new_password) {
+        this.showMessageBox('请输入新密码！', 'warning')
+        return false
+      } else if (this.ruleForm.new_password.length < 6) {
+        this.showMessageBox('密码长度不能小于6位！', 'warning')
+        return false
+      } else if (!this.ruleForm.confirm_password) {
+        this.showMessageBox('请输入确认密码！', 'warning')
+        return false
+      } else if (this.ruleForm.new_password !== this.ruleForm.confirm_password) {
+        this.showMessageBox('确认密码输入错误！', 'warning')
+        return false
+      } else {
+        return true
+      }
+    },
+    /**
+     * @description: 确认提交密码修改
+     * @param {*} none
+     * @returns {*} void
+     */    
+    confirmUpdate () {
+      if (!this.validParam()) return
+
+      const params = {
+        id: this.userInfo.id,
+        new_password: md5(this.ruleForm.new_password),
+        old_password: md5(this.ruleForm.old_password)
+      }
+
+      updatePassword(params).then((res: res) => {
+        console.log(res)
+        if (res.status === 200) {
+          this.showDialog = false
+          this.showMessageBox('密码修改成功，请重新登录！', 'success')
+          setTimeout(() => {
+            removeToken()
+            this.$store.commit('resetState')
+            this.$router.push('/')
+          }, 1000)
+        } else {
+          this.showMessageBox(res.message, 'error')
+        }
+      })
     }
   }
 })
@@ -232,11 +362,12 @@ export default Vue.extend({
     .tag-toolbox {
       flex: 0 0 16rem;
       display: flex;
-      padding-right: 0.5rem;
+      padding-right: 1.5rem;
       align-items: center;
       justify-content: flex-end;
       .tool-logout {
         flex: 0 0 3.2rem;
+        width: 3.2rem;
         height: 100%;
         line-height: 3.2rem;
         font-size: 1.6rem;
@@ -261,6 +392,24 @@ export default Vue.extend({
     }
     50% {
       clip-path: polygon(1% 50%, 24% 74%, 40% 64%, 66% 59%,87% 50%,97% 45%,100% 43%, 100% 99%, 3% 100%, 1% 36%)
+    }
+  }
+  .el-popover {
+    .drop-item {
+      height: 2.33rem;
+      line-height: 2.33rem;
+      padding: 0 1.5rem;
+      cursor: pointer;
+      &:hover {
+        background: #efefef;
+      }
+      &.text {
+        color: #f23335;
+        text-align: center;
+        &:hover {
+          background: #fff;
+        }
+      }
     }
   }
 </style>
