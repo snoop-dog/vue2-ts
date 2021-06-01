@@ -23,6 +23,29 @@
       <!-- <el-avatar :size="25" src="../../../assets/logo.png">
         <img src="../../../assets/logo.png"/>
       </el-avatar> -->
+      <el-popover
+        placement="bottom"
+        width="160"
+        trigger="hover"
+      >
+        <el-row class="drop-item" style="display: flex;" @click.native="waitDep">
+          <el-badge :value="message.approve" class="item" type="warning">
+            <el-col :span="6"><i class="iconfont icon-approve"></i></el-col>
+            <el-col :span="18">我的审批</el-col>
+          </el-badge>
+        </el-row>
+        <el-row class="drop-item" style="display: flex;" @click.native="waitDep">
+          <el-badge :value="message.agent" class="item" type="warning">
+            <el-col :span="6"><i class="iconfont icon-todo"></i></el-col>
+            <el-col :span="18">我的待办</el-col>
+          </el-badge>
+        </el-row>
+        <el-row slot="reference" class="tool-logout message-box">
+          <el-badge :value="totalMessage" class="item">
+            <i class="el-icon-message-solid"></i>
+          </el-badge>
+        </el-row>
+      </el-popover>
       <el-row class="tool-logout" @click.native='reload'>
         <i class="el-icon-refresh"></i>
       </el-row>
@@ -106,6 +129,10 @@ export default Vue.extend({
         old_password: '',
         new_password: '',
         confirm_password: ''
+      },
+      message: {
+        approve: 0,
+        agent: 0
       }
     }
   },
@@ -122,6 +149,9 @@ export default Vue.extend({
       set (val) {
         return val
       }
+    },
+    totalMessage () {
+      return this.message.approve + this.message.agent
     }
   },
   components: {
@@ -132,6 +162,9 @@ export default Vue.extend({
       console.log(newval)
       console.log(oldVal)
     }
+  },
+  created () {
+    this.initWebsocket()
   },
   methods: {
     /**
@@ -146,6 +179,41 @@ export default Vue.extend({
       )
       this.$router.push(item.name)
       this.reload()
+    },
+    /**
+     * @description: 开发中提示
+     * @param {*}
+     * @returns {*}
+     */    
+    waitDep () {
+      this.showMessageBox('正在开发中，敬请期待！')
+    },
+    /**
+     * @description: 铃铛消息websocket链接
+     * @param {*} none
+     * @returns {*} void
+     */    
+    initWebsocket () {
+      const _self = this
+      const userId = this.$store.state.user.id
+      const url = 'ws://113.57.168.50:17880/websocket/taskNum/' + userId
+      const ws = new WebSocket(url)
+
+      ws.onopen = (e) => {
+        console.log(e)
+        ws.send('lilei')
+      }
+
+      ws.onmessage = (e) => {
+        if (e.data === 'success') return
+        const data = JSON.parse(e.data)
+        _self.message.approve = data.approve
+        _self.message.agent = data.agent
+      }
+
+      ws.onclose = (e) => {
+        console.log(e)
+      }
     },
     /**
      * @description 点击切换tab
@@ -383,7 +451,30 @@ export default Vue.extend({
             color: #37e;
           }
         }
+        &.message-box {
+          width: 4rem;
+          flex: 0 0 4rem;
+          text-align: left;
+          text-indent: 0.2em;
+          /deep/.el-badge {
+            width: 100%;
+            height: 100%;
+            display: block;
+            .el-badge__content {
+              &.is-fixed {
+                top: 15px;
+                right: 33px;
+              }
+            }
+          }
+        }
       }
+    }
+    .modal {
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
     }
   }
   @keyframes animate {
@@ -408,6 +499,16 @@ export default Vue.extend({
         text-align: center;
         &:hover {
           background: #fff;
+        }
+      }
+      /deep/.el-badge {
+        width: 100%;
+        height: 100%;
+        .el-badge__content {
+          &.is-fixed {
+            top: 10px;
+            right: 15px;
+          }
         }
       }
     }

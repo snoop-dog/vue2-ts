@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2509183 */
-  src: url('iconfont.woff2?t=1621185078526') format('woff2'),
-       url('iconfont.woff?t=1621185078526') format('woff'),
-       url('iconfont.ttf?t=1621185078526') format('truetype');
+  src: url('iconfont.woff2?t=1622564932992') format('woff2'),
+       url('iconfont.woff?t=1622564932992') format('woff'),
+       url('iconfont.ttf?t=1622564932992') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,14 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-todo:before {
+  content: "\e62f";
+}
+
+.icon-approve:before {
+  content: "\e61f";
 }
 
 .icon-tenant-info:before {
