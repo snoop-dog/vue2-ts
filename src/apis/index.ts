@@ -1009,3 +1009,37 @@ export function dataSearch (params: any) {
   })
 }
 // 数据检索 API end
+
+// 审批待办 API start
+/**
+ * @api {get} /task/getTaskPage  查看审批待办列表
+ * @param {Object} params 审批待办列表参数
+ */
+export function getTaskPage (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/task/getTaskPage', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /task/processingTask  查看审批待办列表
+ * @param {Object} params 审批待办列表参数
+ */
+export function processingTask (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/task/processingTask', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 审批待办 API end

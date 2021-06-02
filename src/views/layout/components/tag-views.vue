@@ -28,13 +28,13 @@
         width="160"
         trigger="hover"
       >
-        <el-row class="drop-item" style="display: flex;" @click.native="waitDep">
+        <el-row class="drop-item" style="display: flex;" @click.native="jumpApprove">
           <el-badge :value="message.approve" class="item" type="warning">
             <el-col :span="6"><i class="iconfont icon-approve"></i></el-col>
             <el-col :span="18">我的审批</el-col>
           </el-badge>
         </el-row>
-        <el-row class="drop-item" style="display: flex;" @click.native="waitDep">
+        <el-row class="drop-item" style="display: flex;" @click.native="jumpTodo">
           <el-badge :value="message.agent" class="item" type="warning">
             <el-col :span="6"><i class="iconfont icon-todo"></i></el-col>
             <el-col :span="18">我的待办</el-col>
@@ -189,6 +189,40 @@ export default Vue.extend({
       this.showMessageBox('正在开发中，敬请期待！')
     },
     /**
+     * @description: 点击铃铛跳转我的审批
+     * @param {*} void
+     * @returns {*} none
+     */    
+    jumpApprove () {
+      this.$store.commit(
+        'addTabList',
+        {
+          url: '/system/approve',
+          param: {}
+        }
+      )
+      this.$router.push({
+        path: '/system/approve'
+      })
+    },
+    /**
+     * @description: 点击铃铛跳转我的审批
+     * @param {*} void
+     * @returns {*} none
+     */    
+    jumpTodo () {
+      this.$store.commit(
+        'addTabList',
+        {
+          url: '/system/todo',
+          param: {}
+        }
+      )
+      this.$router.push({
+        path: '/system/todo'
+      })
+    },
+    /**
      * @description: 铃铛消息websocket链接
      * @param {*} none
      * @returns {*} void
@@ -201,14 +235,15 @@ export default Vue.extend({
 
       ws.onopen = (e) => {
         console.log(e)
-        ws.send('lilei')
       }
 
       ws.onmessage = (e) => {
+        console.log(e)
         if (e.data === 'success') return
         const data = JSON.parse(e.data)
-        _self.message.approve = data.approve
-        _self.message.agent = data.agent
+        console.log(data)
+        _self.message.approve = data.data.approve || 0
+        _self.message.agent = data.data.agent || 0
       }
 
       ws.onclose = (e) => {

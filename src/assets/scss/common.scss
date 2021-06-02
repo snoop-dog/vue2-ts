@@ -9,6 +9,14 @@ body {
   font-weight: 600 !important;
 }
 
+.ivu-icon,
+.ivu-article a:not([class^=ivu-])[target="_blank"]:after,
+.ivu-select-multiple .ivu-select-item-selected:after,
+.ivu-rate-star-chart,
+.ivu-rate-star {
+  font-family: Ionicons !important;
+}
+
 .el-input {
   height: 2.66rem;
   line-height: 2.66rem;

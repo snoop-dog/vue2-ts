@@ -2,9 +2,9 @@
  * @Description: write something
  * @Author: snoop-dog
  * @Date: 2020-09-21 20:26:17
- * @LastEditors  : snoop-dog
- * @LastEditTime : 2021-05-24 15:24:17
- * @FilePath     : \vue2-ts\src\main.ts
+ * @LastEditors: snoop-dog
+ * @LastEditTime: 2021-06-02 23:34:12
+ * @FilePath: \vue2-ts\src\main.ts
  */
 import Vue from 'vue'
 import App from './App.vue'
@@ -16,10 +16,10 @@ import { getToken, removeToken } from './utils/auth'
 import Element, { Message, MessageBox } from 'element-ui'
 import iView from 'iview'
 
+import 'iview/dist/styles/iview.css'
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/scss/common.scss'
 import './assets/fonts/iconfont.css'
-import 'iview/dist/styles/iview.css'
 
 Vue.config.productionTip = false
 
