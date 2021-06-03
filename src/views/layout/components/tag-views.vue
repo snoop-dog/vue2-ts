@@ -230,7 +230,7 @@ export default Vue.extend({
     initWebsocket () {
       const _self = this
       const userId = this.$store.state.user.id
-      const url = 'ws://113.57.168.50:17880/websocket/taskNum/' + userId
+      const url = 'ws://47.114.46.149:8766/websocket/taskNum/' + userId
       const ws = new WebSocket(url)
 
       ws.onopen = (e) => {

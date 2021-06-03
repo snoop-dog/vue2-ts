@@ -1043,3 +1043,69 @@ export function processingTask (params: any) {
   })
 }
 // 审批待办 API end
+
+// banner管理 API start
+/**
+ * @api {delete} /banner/delete  文件夹,文件删除
+ * @param {Object} params 文件夹,文件删除参数
+ */
+export function deleteBanner (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('delete', '/banner/delete', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {get} /banner/getFilePage  获图片目录与文件列表
+ * @param {Object} params 获图片目录与文件列表参数
+ */
+export function getBannerPage (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('get', '/banner/getFilePage', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /banner/updateFolderName  文件夹名称修改
+ * @param {Object} params 文件夹名称修改参数
+ */
+export function updateFolderName (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/banner/updateFolderName', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /banner/uploadFile  上传图片、创建目录
+ * @param {Object} params 上传图片、创建目录参数
+ */
+export function createFolderAndFile (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/banner/uploadFile', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// banner管理 API end

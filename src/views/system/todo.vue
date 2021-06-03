@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-06-02 22:25:21
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-03 01:52:35
+ * @LastEditTime: 2021-06-03 21:36:59
  * @FilePath: \vue2-ts\src\views\system\todo.vue
 -->
 
@@ -80,22 +80,32 @@
     >
       <el-form label-width="8rem" label-position="left" class="alarm-form required-form">
         <el-form-item label="续租时间：" v-if="ruleForm.state === 2">
-          <date-picker
+          <!-- <date-picker
             v-model="ruleForm.end_time"
             format="yyyy-MM-dd HH:mm:ss"
             clearable
             type="datetime"
             placeholder="续租时间">
-          </date-picker>
+          </date-picker> -->
+          <el-date-picker
+            v-model="ruleForm.end_time"
+            type="date"
+            placeholder="续租时间">
+          </el-date-picker>
         </el-form-item>
         <el-form-item label="停租时间：" v-if="ruleForm.state === 3">
-          <date-picker
+          <!-- <date-picker
             v-model="ruleForm.end_time"
             format="yyyy-MM-dd HH:mm:ss"
             clearable
             type="datetime"
             placeholder="停租时间">
-          </date-picker>
+          </date-picker> -->
+          <el-date-picker
+            v-model="ruleForm.end_time"
+            type="date"
+            placeholder="停租时间">
+          </el-date-picker>
         </el-form-item>
         <el-form-item label="处理说明：">
           <el-input 

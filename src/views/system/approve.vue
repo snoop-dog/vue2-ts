@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-06-02 22:25:21
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-03 01:45:33
+ * @LastEditTime: 2021-06-03 22:51:43
  * @FilePath: \vue2-ts\src\views\system\approve.vue
 -->
 
@@ -65,6 +65,7 @@
           <div slot="oprate" slot-scope="props">
             <el-button @click.stop="approveSuccess(props.value)" class="btnPrimary">通过</el-button>
             <el-button @click.stop="approveFail(props.value)" class="btnPrimary">驳回</el-button>
+            <el-button v-if="props.value.houses_id" @click.stop="approveDetail(props.value)" class="btnPrimary">详情</el-button>
           </div>
         </layout-table>
       </el-row>
@@ -195,7 +196,7 @@ export default {
         isShow: true, // 是否含有操作列
         name: '操作',
         fixed: 'right',
-        width: 200
+        width: 300
       },
       tableTitle: { // 表格title
         name: '审批列表'
@@ -284,6 +285,11 @@ export default {
       this.ruleForm.id = item.id
       this.ruleForm.state = 3
     },
+    /**
+     * @description: 确认弹框
+     * @param {*} none
+     * @returns {*} void
+     */    
     confirmUpdate () {
       const params = {
         id: this.ruleForm.id,
@@ -303,6 +309,32 @@ export default {
       }).catch(err => {
         this.showDialog = false
         this.showMessageBox(err.message, 'error')
+      })
+    },
+    /**
+     * @description: 跳转详情
+     * @param {object} item 跳转数据
+     * @returns {*} none
+     */    
+    approveDetail (item) {
+      console.log(item)
+      const id = item.houses_id
+      this.$store.commit(
+        'addTabList',
+        {
+          url: '/rent/detail',
+          param: {
+            id: id,
+            type: 2
+          }
+        }
+      )
+      this.$router.push({
+        path: '/rent/detail',
+        query: {
+          id: id,
+          type: 2
+        }
       })
     }
   },

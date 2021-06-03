@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 14:03:25
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-31 22:56:09
+ * @LastEditTime: 2021-06-04 01:07:07
  * @FilePath: \vue2-ts\src\utils\request.ts
  */
 import axios from 'axios'
