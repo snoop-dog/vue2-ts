@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-05-13 23:14:23
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-04 01:40:55
+ * @LastEditTime: 2021-06-04 02:02:22
  * @FilePath: \vue2-ts\src\views\system\banner.vue
 -->
 <template>
@@ -136,7 +136,8 @@ export default {
       uploadLoading: false, // 上传文件loading
       checkArray: [], // 选中文件夹和文件
       folderId: '', // 修改文件或文件夹id
-      editFoldname: '' // 当前文件名
+      editFoldname: '', // 当前文件名
+      isEdit: false // 是否为编辑文件名
     }
   },
   components: {
@@ -236,16 +237,40 @@ export default {
         return this.showMessageBox('请输入文件夹名称！', 'warning')
       }
 
-      const formData = new FormData()
-      formData.append('type', 2)
-      formData.append('pid', this.pid)
-      formData.append('fileName', this.editFoldname)
-      formData.append('files', '')
+      if (!this.isEdit) {
+        const formData = new FormData()
+        formData.append('type', 2)
+        formData.append('pid', this.pid)
+        formData.append('fileName', this.editFoldname)
+        formData.append('files', '')
 
-      createFolderAndFile(formData).then(data => {
-        console.log(data)
-        this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
-      })
+        createFolderAndFile(formData).then(data => {
+          console.log(data)
+          this.editFoldname = ''
+          if (data.status === 200) {
+            this.showMessageBox(data.message, 'success')
+            this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+          } else {
+            this.showMessageBox(data.message, 'error')
+          }
+        })
+      } else {
+        const params = {
+          id: this.folderId,
+          fileName: this.editFoldname
+        }
+        updateFolderName(params).then(data => {
+          this.editFoldname = ''
+          this.folderId = ''
+          this.isEdit = false
+          if (data.status === 200) {
+            this.showMessageBox(data.message, 'success')
+            this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+          } else {
+            this.showMessageBox(data.message, 'error')
+          }
+        })
+      }
     },
     /**
      * @description: 关闭创建文件夹修改文件夹编辑项
@@ -253,7 +278,14 @@ export default {
      * @returns {*} void
      */    
     closeUpdate () {
-      this.dataList.splice(0, 1)
+      if (!this.isEdit) {
+        this.dataList.splice(0, 1)
+      } else {
+        this.folderId = ''
+        this.isEdit = false
+      }
+
+      this.editFoldname = ''
     },
     /**
      * @description: 列表选中回传事件
@@ -275,6 +307,7 @@ export default {
         return this.showMessageBox('请选择1个文件夹或文件！', 'warning')
       }
 
+      this.isEdit = true
       this.folderId = this.checkArray[0].id
       this.editFoldname = this.checkArray[0].fileName
     },
