@@ -111,6 +111,7 @@
 </template>
 
 <script lang="ts">
+import { insertLog, doLogout, updatePassword } from '@/apis/index'
 import { ElMenuItemGroup } from 'element-ui/types/menu-item-group'
 import Vue from 'vue'
 import { mapState } from 'vuex'
@@ -118,7 +119,6 @@ import { removeToken } from '../../../utils/auth'
 import md5 from 'js-md5'
 import eventBus from '../../../components/event-bus.js'
 import myDialog from '@/components/common/layout/layout-dialog.vue'
-import { updatePassword } from '@/apis/index'
 import { res } from '@/utils/interface'
 export default Vue.extend({
   data () {
@@ -293,6 +293,7 @@ export default Vue.extend({
         type: 'warning'
       })
         .then(() => {
+          // this.doLogout()
           removeToken()
           this.$store.commit('resetState')
           this.$router.push('/')
@@ -304,6 +305,27 @@ export default Vue.extend({
             showClose: true
           })
         })
+    },
+    /**
+     * @description: 退出系统
+     * @param {*} none
+     * @returns {*} void
+     */    
+    doLogout () {
+      doLogout({}).then(data => {
+        console.log(data)
+        insertLog({
+          menu_name: '首页',
+          operation_type: 'logout',
+          operation_condition: {},
+          sub_menu_name: '',
+          operation_type_detail: '登出',
+          source: 0
+        })
+        removeToken()
+        this.$store.commit('resetState')
+        this.$router.push('/')
+      })
     },
     /**
      * @description: 点击打开修改密码弹框
@@ -362,6 +384,17 @@ export default Vue.extend({
             this.$store.commit('resetState')
             this.$router.push('/')
           }, 1000)
+
+          insertLog({
+            menu_name: '首页',
+            operation_type: 'edit',
+            operation_condition: {
+              ...params
+            },
+            sub_menu_name: '',
+            operation_type_detail: '修改密码',
+            source: 0
+          })
         } else {
           this.showMessageBox(res.message, 'error')
         }

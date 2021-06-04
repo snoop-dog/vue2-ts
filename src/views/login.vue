@@ -527,7 +527,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { doLogin, getUserDetail } from '../apis/index'
+import { doLogin, getUserDetail, insertLog } from '../apis/index'
 import md5 from 'js-md5'
 import { setToken } from '../utils/auth'
 import { token, res } from '../utils/interface'
@@ -579,10 +579,32 @@ export default Vue.extend({
         } else {
           this.showMessageBox('登录失败！', 'error')
         }
+        insertLog({
+          menu_name: '登录',
+          operation_type: 'login',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '登录',
+          source: 0,
+          result_type: 0
+        })
       }).catch(error => {
         console.log(error)
         this.showMessageBox(error.message, 'error')
         this.loading = false
+        insertLog({
+          menu_name: '登录',
+          operation_type: 'login',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '登录',
+          source: 0,
+          result_type: 1
+        })
       })
     }
   }

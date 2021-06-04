@@ -17,6 +17,22 @@ export function doLogin (params: any) {
 }
 
 /**
+ * @api {delete} /api/login 登出
+ * @param {Object} params 登出参数
+ */
+export function doLogout (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('delete', '/login/user', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
  * @api {get} /api/vue-ts/menu 获取菜单
  * @param {Object} params 请求菜单参数
  */

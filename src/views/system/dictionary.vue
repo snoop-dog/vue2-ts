@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-05-13 23:15:22
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-24 01:41:26
+ * @LastEditTime: 2021-06-05 00:18:31
  * @FilePath: \vue2-ts\src\views\system\dictionary.vue
 -->
 <template>
@@ -193,7 +193,8 @@ import {
   addDictionary,
   delDictionary,
   getDicList,
-  updateDictionary
+  updateDictionary,
+  insertLog
 } from '@/apis/index'
 
 // components
@@ -351,6 +352,17 @@ export default {
         this.pagination.pageCount = data.data.totalPage
         this.pagination.totalCount = data.data.totalCount
         this.pagination.pageIndex = data.data.pageIndex
+
+        insertLog({
+          menu_name: '字典管理',
+          operation_type: 'query',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '查询字典管理列表',
+          source: 0
+        })
       }).catch(error => {
         cosnole.log(error)
         this.firstDicList = []
@@ -389,6 +401,17 @@ export default {
         this.paginationSec.pageCount = data.data.totalPage
         this.paginationSec.totalCount = data.data.totalCount
         this.paginationSec.pageIndex = data.data.pageIndex
+
+        insertLog({
+          menu_name: '字典管理',
+          operation_type: 'query',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '查询二级字典列表',
+          source: 0
+        })
       }).catch(error => {
         cosnole.log(error)
         this.dataList = []
@@ -496,8 +519,28 @@ export default {
         addDictionary(params).then(data => {
           if (this.isAddSecond) {
             this.searchSecList(this.propsParamsSec, this.paginationSec.pageIndex, this.sizeSEc)
+            insertLog({
+              menu_name: '字典管理',
+              operation_type: 'add',
+              operation_condition: {
+                ...params
+              },
+              sub_menu_name: '',
+              operation_type_detail: '添加二级字典',
+              source: 0
+            })
           } else {
             this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+            insertLog({
+              menu_name: '字典管理',
+              operation_type: 'add',
+              operation_condition: {
+                ...params
+              },
+              sub_menu_name: '',
+              operation_type_detail: '添加一级字典',
+              source: 0
+            })
           }
           this.showDialog = false
           this.showMessageBox(data.message, 'success')
@@ -506,8 +549,28 @@ export default {
         updateDictionary({ ...params, ...{ id: this.ruleForm.id } }).then(data => {
           if (this.isAddSecond) {
             this.searchSecList(this.propsParamsSec, this.paginationSec.pageIndex, this.sizeSEc)
+            insertLog({
+              menu_name: '字典管理',
+              operation_type: 'edit',
+              operation_condition: {
+                ...params
+              },
+              sub_menu_name: '',
+              operation_type_detail: '修改二级字典',
+              source: 0
+            })
           } else {
             this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+            insertLog({
+              menu_name: '字典管理',
+              operation_type: 'edit',
+              operation_condition: {
+                ...params
+              },
+              sub_menu_name: '',
+              operation_type_detail: '修改一级字典',
+              source: 0
+            })
           }
           this.showDialog = false
           this.showMessageBox(data.message, 'success')
@@ -547,8 +610,28 @@ export default {
         this.showMessageBox(data.message, 'success')
         if (this.isAddSecond) {
           this.searchSecList(this.propsParamsSec, this.paginationSec.pageIndex, this.sizeSEc)
+          insertLog({
+            menu_name: '字典管理',
+            operation_type: 'del',
+            operation_condition: {
+              ...params
+            },
+            sub_menu_name: '',
+            operation_type_detail: '删除二级字典',
+            source: 0
+          })
         } else {
           this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+          insertLog({
+            menu_name: '字典管理',
+            operation_type: 'del',
+            operation_condition: {
+              ...params
+            },
+            sub_menu_name: '',
+            operation_type_detail: '删除一级字典',
+            source: 0
+          })
         }
       })
     }

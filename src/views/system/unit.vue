@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-05-03 10:13:47
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-30 19:07:17
+ * @LastEditTime: 2021-06-05 00:04:51
  * @FilePath: \vue2-ts\src\views\system\unit.vue
 -->
 <template>
@@ -258,7 +258,8 @@ import {
   getRoleSimple,
   getJobUnitList,
   getJobUnitPage,
-  getUserDetail
+  getUserDetail,
+  insertLog
 } from '@/apis/index'
 
 // conponents
@@ -452,6 +453,17 @@ export default {
         this.pagination.pageCount = data.data.totalPage
         this.pagination.totalCount = data.data.totalCount
         this.pagination.pageIndex = data.data.pageIndex
+
+        insertLog({
+          menu_name: '单位管理',
+          operation_type: 'query',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '查询单位列表',
+          source: 0
+        })
       }).catch(error => {
         console.log(error)
         this.dataList = []
@@ -709,6 +721,17 @@ export default {
           console.log(data)
           this.showMessageBox('删除成功！', 'success')
           this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+
+          insertLog({
+            menu_name: '单位管理',
+            operation_type: 'del',
+            operation_condition: {
+              ...params
+            },
+            sub_menu_name: '',
+            operation_type_detail: '删除单位',
+            source: 0
+          })
         })
       }).catch(err => {
         console.log(err)
@@ -760,6 +783,17 @@ export default {
           }
           this.showDialog = false
           this.isEdit = false
+
+          insertLog({
+            menu_name: '单位管理',
+            operation_type: 'edit',
+            operation_condition: {
+              ...params
+            },
+            sub_menu_name: '',
+            operation_type_detail: '修改单位',
+            source: 0
+          })
         })
       } else {
         const params = {
@@ -784,6 +818,17 @@ export default {
           }
           this.showDialog = false
           this.isEdit = false
+
+          insertLog({
+            menu_name: '单位管理',
+            operation_type: 'add',
+            operation_condition: {
+              ...params
+            },
+            sub_menu_name: '',
+            operation_type_detail: '新增单位',
+            source: 0
+          })
         })
       }
     }

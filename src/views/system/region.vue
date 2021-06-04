@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:03:47
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-23 22:11:06
+ * @LastEditTime: 2021-06-05 00:15:07
  * @FilePath: \vue2-ts\src\views\system\region.vue
 -->
 
@@ -203,7 +203,8 @@ import {
   deleteArea,
   getAreaDim,
   getAreaList,
-  updateArea
+  updateArea,
+  insertLog
 } from '@/apis/index'
 
 // components
@@ -403,6 +404,16 @@ export default {
         this.pagination.pageCount = data.data.totalPage
         this.pagination.totalCount = data.data.totalCount
         this.pagination.pageIndex = data.data.pageIndex
+        insertLog({
+          menu_name: '地区管理',
+          operation_type: 'query',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '查询地区管理列表',
+          source: 0
+        })
       }).catch(error => {
         console.log(error)
         this.dataList = []
@@ -659,6 +670,17 @@ export default {
             this.showDialog = false
             this.showMessageBox(data.message, 'success')
             this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+
+            insertLog({
+              menu_name: '地区管理',
+              operation_type: 'add',
+              operation_condition: {
+                ...params
+              },
+              sub_menu_name: '',
+              operation_type_detail: '添加地区',
+              source: 0
+            })
           }).catch(err => {
             this.showMessageBox(err.message, 'error')
           })
@@ -682,6 +704,17 @@ export default {
             this.showDialog = false
             this.showMessageBox(data.message, 'success')
             this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+
+            insertLog({
+              menu_name: '地区管理',
+              operation_type: 'edit',
+              operation_condition: {
+                ...params
+              },
+              sub_menu_name: '',
+              operation_type_detail: '修改地区',
+              source: 0
+            })
           }).catch(err => {
             this.showMessageBox(err.message, 'error')
           })
@@ -742,6 +775,17 @@ export default {
       deleteArea(params).then(data => {
         this.showMessageBox(data.message, 'success')
         this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+
+        insertLog({
+          menu_name: '地区管理',
+          operation_type: 'del',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '删除地区',
+          source: 0
+        })
       }).catch(err => {
         this.showMessageBox(err.message, 'error')
       })

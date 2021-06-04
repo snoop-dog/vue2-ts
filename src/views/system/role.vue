@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:00:59
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-31 01:34:22
+ * @LastEditTime: 2021-06-05 00:13:00
  * @FilePath: \vue2-ts\src\views\system\role.vue
 -->
 <template>
@@ -139,7 +139,8 @@ import {
   enableRole,
   getRoleSimple,
   getDicList,
-  getUserDetail
+  getUserDetail,
+  insertLog
 } from '../../apis/index'
 
 // components
@@ -270,6 +271,16 @@ export default {
         this.pagination.pageCount = data.data.totalPage
         this.pagination.totalCount = data.data.totalCount
         this.pagination.pageIndex = data.data.pageIndex
+        insertLog({
+          menu_name: '角色管理',
+          operation_type: 'query',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '查询角色列表',
+          source: 0
+        })
       }).catch(error => {
         console.log(error)
         this.dataList = []
@@ -368,6 +379,17 @@ export default {
       deleteRole(params).then(data => {
         this.showMessageBox(data.message, 'success')
         this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+
+        insertLog({
+          menu_name: '角色管理',
+          operation_type: 'del',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '删除角色',
+          source: 0
+        })
       })
     },
     /**
@@ -386,6 +408,17 @@ export default {
         console.log(data)
         this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
         this.showMessageBox('操作成功!', 'success')
+
+        insertLog({
+          menu_name: '角色管理',
+          operation_type: 'edit',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '修改角色状态',
+          source: 0
+        })
       })
     },
     /**
@@ -415,6 +448,17 @@ export default {
             this.showDialog = false
             this.showMessageBox(data.message, 'error')
           }
+
+          insertLog({
+            menu_name: '角色管理',
+            operation_type: 'edit',
+            operation_condition: {
+              ...params
+            },
+            sub_menu_name: '',
+            operation_type_detail: '修改角色',
+            source: 0
+          })
         }).catch(err => {
           console.log(err)
           this.showMessageBox(err.message, 'error')
@@ -430,6 +474,17 @@ export default {
             this.showDialog = false
             this.showMessageBox(data.message, 'error')
           }
+
+          insertLog({
+            menu_name: '角色管理',
+            operation_type: 'add',
+            operation_condition: {
+              ...params
+            },
+            sub_menu_name: '',
+            operation_type_detail: '添加角色',
+            source: 0
+          })
         }).catch(err => {
           console.log(err)
           this.showMessageBox(err.message, 'error')

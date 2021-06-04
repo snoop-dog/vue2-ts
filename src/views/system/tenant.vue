@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-05-17 01:08:59
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-27 01:43:25
+ * @LastEditTime: 2021-06-05 00:10:58
  * @FilePath: \vue2-ts\src\views\system\tenant.vue
 -->
 <template>
@@ -180,7 +180,7 @@
 
 <script>
 // apis
-import { getTenantPage, getHousesList, getNationDic, updateTenant } from '@/apis'
+import { getTenantPage, getHousesList, getNationDic, updateTenant, insertLog } from '@/apis'
 
 // components
 import layoutSearch from '../../components/common/layout/layout-search.vue'
@@ -378,6 +378,17 @@ export default {
         this.pagination.pageCount = data.data.totalPage
         this.pagination.totalCount = data.data.totalCount
         this.pagination.pageIndex = data.data.pageIndex
+
+        insertLog({
+          menu_name: '租户管理',
+          operation_type: 'query',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '查询租户管理列表',
+          source: 0
+        })
       }).catch(error => {
         console.log(error)
         this.dataList = []
@@ -490,6 +501,17 @@ export default {
         this.showDialog = false
         this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
         this.showMessageBox('操作成功!', 'success')
+
+        insertLog({
+          menu_name: '租户管理',
+          operation_type: 'edit',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '修改租户',
+          source: 0
+        })
       })
     },
     /**

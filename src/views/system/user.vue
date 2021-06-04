@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:05:30
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-31 23:36:53
+ * @LastEditTime: 2021-06-05 00:01:15
  * @FilePath: \vue2-ts\src\views\system\user.vue
 -->
 
@@ -307,7 +307,8 @@ import {
   getDicList,
   getRoleSimple,
   getJobUnitList,
-  getIsWXUser
+  getIsWXUser,
+  insertLog
 } from '../../apis/index'
 
 // utils
@@ -526,6 +527,17 @@ export default {
         this.pagination.pageCount = data.data.totalPage
         this.pagination.totalCount = data.data.totalCount
         this.pagination.pageIndex = data.data.pageIndex
+        insertLog({
+          menu_name: '用户管理',
+          operation_type: 'query',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '',
+          source: 0,
+          result_type: 0
+        })
       }).catch(error => {
         console.log(error)
         this.dataList = []
@@ -534,6 +546,17 @@ export default {
         this.pagination.pageCount = 1
         this.pagination.totalCount = 0
         this.pagination.pageIndex = 1
+        insertLog({
+          menu_name: '用户管理',
+          operation_type: 'query',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '',
+          source: 0,
+          result_type: 1
+        })
       })
     },
     /**
@@ -821,6 +844,16 @@ export default {
             this.$set(this.ruleForm, key, '')
           }
           this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+          insertLog({
+            menu_name: '用户管理',
+            operation_type: 'add',
+            operation_condition: {
+              ...params, ...param
+            },
+            sub_menu_name: '添加用户',
+            operation_type_detail: '',
+            source: 0
+          })
         }) 
       } else {
         updateUserInfo({ ...params, ...this.updateParam, ...param })
@@ -835,6 +868,17 @@ export default {
               this.$set(this.updateParam, key, '')
             }
             this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+          })
+
+          insertLog({
+            menu_name: '用户管理',
+            operation_type: 'edit',
+            operation_condition: {
+              ...params, ...this.updateParam, ...param
+            },
+            sub_menu_name: '',
+            operation_type_detail: '修改用户',
+            source: 0
           })
       }
     },
@@ -892,6 +936,17 @@ export default {
         this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
         this.showMessageBox('操作成功!', 'success')
       })
+
+      insertLog({
+        menu_name: '用户管理',
+        operation_type: 'edit',
+        operation_condition: {
+          ...params, ...this.updateParam, ...param
+        },
+        sub_menu_name: '',
+        operation_type_detail: '修改用户状态',
+        source: 0
+      })
     },
     /**
      * @description: 删除用户
@@ -913,6 +968,16 @@ export default {
           console.log(data)
           this.showMessageBox('删除成功！', 'success')
           this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+          insertLog({
+            menu_name: '用户管理',
+            operation_type: 'del',
+            operation_condition: {
+              ...params
+            },
+            sub_menu_name: '',
+            operation_type_detail: '删除用户',
+            source: 0
+          })
         })
       }).catch(err => {
         console.log(err)

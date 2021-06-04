@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-06-02 22:25:21
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-03 21:36:59
+ * @LastEditTime: 2021-06-05 00:08:30
  * @FilePath: \vue2-ts\src\views\system\todo.vue
 -->
 
@@ -126,7 +126,7 @@
 
 <script>
 // apis
-import { getTaskPage, processingTask } from '@/apis/index'
+import { getTaskPage, processingTask, insertLog } from '@/apis/index'
 
 // utils
 import { doDateTimeShift } from '@/utils/date'
@@ -276,6 +276,17 @@ export default {
         this.pagination.pageCount = data.data.totalPage
         this.pagination.totalCount = data.data.totalCount
         this.pagination.pageIndex = data.data.pageIndex
+
+        insertLog({
+          menu_name: '我的待办',
+          operation_type: 'query',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '查询我的待办',
+          source: 0
+        })
       }).catch(error => {
         console.log(error)
         this.dataList = []
@@ -335,6 +346,17 @@ export default {
         } else {
           this.showMessageBox(data.message, 'error')
         }
+
+        insertLog({
+          menu_name: '我的待办',
+          operation_type: 'edit',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: this.ruleForm.state === 2 ? '续租' : this.ruleForm.state === 3 ? '停租' : '忽略',
+          source: 0
+        })
         this.showDialog = false
       }).catch(err => {
         this.showDialog = false

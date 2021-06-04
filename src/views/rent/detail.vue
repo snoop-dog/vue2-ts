@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-05-26 01:20:32
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-31 01:10:23
+ * @LastEditTime: 2021-06-05 00:25:16
  * @FilePath: \vue2-ts\src\views\rent\detail.vue
 -->
 <template>
@@ -208,7 +208,7 @@
 
 <script>
 // apis
-import { getRegisterDetail } from '@/apis/index'
+import { getRegisterDetail, insertLog } from '@/apis/index'
 
 export default {
   name: 'detail',
@@ -246,6 +246,17 @@ export default {
       getRegisterDetail(params).then(data => {
         console.log(data)
         this.detailData = data.data.homeowner
+
+        insertLog({
+          menu_name: '出租登记详情',
+          operation_type: 'query',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '查询出租登记详情',
+          source: 0
+        })
       })
     }
   }

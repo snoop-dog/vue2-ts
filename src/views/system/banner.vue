@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-05-13 23:14:23
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-04 02:02:22
+ * @LastEditTime: 2021-06-05 00:21:58
  * @FilePath: \vue2-ts\src\views\system\banner.vue
 -->
 <template>
@@ -46,15 +46,27 @@
         @selectionchange="selectChange"
         ref="multipleTable"
       >
+        <div slot="read-msg" class="bread-container">
+          <el-breadcrumb separator-class="el-icon-arrow-right">
+            <el-breadcrumb-item
+							@click.native="clickBreadItem(item, idx)"
+							v-for="(item, idx) in breadArray"
+							:key="idx"
+							:class="[{'active': idx === breadArray.length - 1}]">
+							<my-tooltip :value='item.label'></my-tooltip>
+						</el-breadcrumb-item>
+          </el-breadcrumb>
+        </div>
         <div slot="name" slot-scope="props">
           <!-- <my-tooltip width="100%" :value="props.value"></my-tooltip> -->
           <el-col :span="2" class="img-box">
             <el-row :class="['img-container', { 'img' : props.value.type === 1 }]"></el-row>
           </el-col>
-          <el-col @click.stop="enterFolder(props.value)" v-if="folderId !== props.value.id" :span="12">{{props.value.fileName}}</el-col>
+          <el-col @click.native="enterFolder(props.value)" v-if="folderId !== props.value.id" :span="12">{{props.value.fileName}}</el-col>
           <el-col v-else :span="12" class="update-item">
             <el-input
               clearable
+              autofocus
               v-model.trim="editFoldname"
             >
             </el-input>
@@ -62,8 +74,8 @@
             <em @click.stop="closeUpdate" class="el-icon-close"></em>
           </el-col>
         </div>
-        <div slot="size" slot-scope="props">
-          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+        <div slot="file_size" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | fileSizeFilter"></my-tooltip>
         </div>
         <div slot="create_time" slot-scope="props">
           <my-tooltip width="100%" :value="props.value  | nullTextFilter"></my-tooltip>
@@ -79,7 +91,8 @@ import {
   deleteBanner, 
   getBannerPage, 
   updateFolderName, 
-  createFolderAndFile 
+  createFolderAndFile,
+  insertLog
 } from '@/apis/index'
 
 // components
@@ -118,8 +131,8 @@ export default {
         },
         {
           name: '文件大小',
-          prop: 'size',
-          value: 'size'
+          prop: 'file_size',
+          value: 'file_size'
         },
         {
           name: '创建时间',
@@ -137,7 +150,8 @@ export default {
       checkArray: [], // 选中文件夹和文件
       folderId: '', // 修改文件或文件夹id
       editFoldname: '', // 当前文件名
-      isEdit: false // 是否为编辑文件名
+      isEdit: false, // 是否为编辑文件名
+      breadArray: [{ label: '全部文件', pid: 0 }]
     }
   },
   components: {
@@ -173,6 +187,17 @@ export default {
         this.pagination.pageCount = data.data.totalPage
         this.pagination.totalCount = data.data.totalCount
         this.pagination.pageIndex = data.data.pageIndex
+
+        insertLog({
+          menu_name: 'banner图管理',
+          operation_type: 'query',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '查询banner图列表',
+          source: 0
+        })
       }).catch(error => {
         console.log(error)
         this.dataList = []
@@ -192,10 +217,22 @@ export default {
       const object = {
         fileName: "'",
         id: '',
-        type: 2
+        type: 0
       }
 
       this.dataList.unshift(object)
+    },
+    /**
+     * @description: 点击面包屑
+     * @param {object} item 当前点击的面包屑
+     * @param {number} index 面包屑索引
+     * @returns {*} void
+     */    
+    clickBreadItem (item, index) {
+      if (index === this.breadArray.length - 1) return
+      this.breadArray.splice(index + 1, this.breadArray.length - 1)
+      this.pid = item.pid
+      this.searchList(this.propsParams, 1, this.size)
     },
     /**
      * @description: 进入下级文件夹
@@ -205,6 +242,10 @@ export default {
     enterFolder (item) {
       if (item.type === 1) return
       this.pid = item.id
+      this.breadArray.push({
+        label: item.fileName,
+        pid: this.pid
+      })
       this.searchList(this.propsParams, 1, this.size)
     },
     /**
@@ -214,6 +255,10 @@ export default {
      */    
     uploadFile (param) {
       console.log(param)
+      if (param.file.type.split('/')[0] !== 'image') {
+        return this.showMessageBox('请上传jpg，png，jpeg格式图片！', 'warning')
+      }
+      
       const formData = new FormData()
       formData.append('type', 1)
       formData.append('pid', this.pid)
@@ -225,6 +270,17 @@ export default {
         console.log(data)
         this.uploadLoading = false
         this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+
+        insertLog({
+          menu_name: 'banner图管理',
+          operation_type: 'add',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '上传文件',
+          source: 0
+        })
       })
     },
     /**
@@ -239,7 +295,7 @@ export default {
 
       if (!this.isEdit) {
         const formData = new FormData()
-        formData.append('type', 2)
+        formData.append('type', 0)
         formData.append('pid', this.pid)
         formData.append('fileName', this.editFoldname)
         formData.append('files', '')
@@ -253,6 +309,17 @@ export default {
           } else {
             this.showMessageBox(data.message, 'error')
           }
+
+          insertLog({
+            menu_name: 'banner图管理',
+            operation_type: 'add',
+            operation_condition: {
+              ...params
+            },
+            sub_menu_name: '',
+            operation_type_detail: '新建文件夹',
+            source: 0
+          })
         })
       } else {
         const params = {
@@ -269,6 +336,17 @@ export default {
           } else {
             this.showMessageBox(data.message, 'error')
           }
+
+          insertLog({
+            menu_name: 'banner图管理',
+            operation_type: 'edit',
+            operation_condition: {
+              ...params
+            },
+            sub_menu_name: '',
+            operation_type_detail: '修改文件名',
+            source: 0
+          })
         })
       }
     },
@@ -321,23 +399,14 @@ export default {
         return this.showMessageBox('请至少选择1个文件夹或文件！', 'warning')
       }
       console.log(this.checkArray)
-      const imgIds = this.checkArray.reduce((prev, cur) => {
-        if (cur.type === 1) {
-          prev.push(cur.id)
-        }
+      const ids = this.checkArray.reduce((prev, cur) => {
+        prev.push(cur.id)
         return prev
       }, [])
 
-      const folderIds = this.checkArray.reduce((prev, cur) => {
-        if (cur.type !== 1) {
-          prev.push(cur.id)
-        }
-        return prev
-      }, [])
       // deleteBanner
       const params = {
-        folderIds: folderIds.join(','),
-        imgIds: imgIds.join('.')
+        ids: ids.join(',')
       }
 
       this.$confirm('是否删除选中文件夹或文件?', '提示', {
@@ -353,6 +422,17 @@ export default {
           } else {
             this.showMessageBox(data.message, 'error')
           }
+
+          insertLog({
+            menu_name: 'banner图管理',
+            operation_type: 'del',
+            operation_condition: {
+              ...params
+            },
+            sub_menu_name: '',
+            operation_type_detail: '删除文件夹或文件',
+            source: 0
+          })
         })
       }).catch(err => {
         console.log(err)
@@ -363,6 +443,21 @@ export default {
   filters: {
     nullTextFilter (val) {
       return val || '--'
+    },
+    fileSizeFilter (val) {
+      if (val) {
+        if ((val + '').length <= 2) {
+          return (val + 'Byte')
+          } else if ((val + '').length <= 6) {
+          return ((val / 1024).toFixed(2) + 'KB')
+          } else if ((val + '').length <= 10) {
+          return ((val / 1024 / 1024).toFixed(2) + 'M')
+          } else {
+          return ((val / 1024 / 1024 / 1024).toFixed(2) + 'G')
+        }
+      } else {
+        return '--'
+      }
     }
   }
 }
@@ -372,17 +467,17 @@ export default {
 .banner-container {
   .searchModel {
     .searchModule {
-      height: 4rem;
+      height: 5rem;
       width: 100%;
       background: #fff;
       border-radius: 0.7rem 0.7rem 0 0;
       display: flex;
       justify-content: center;
-      align-items: flex-end;
+      align-items: center;
       .operate-btn {
         display: flex;
         padding: 0 2rem;
-        align-items: flex-end;
+        align-items: center;
         .upload-demo {
           margin-right: 0.7rem;
         }
@@ -396,6 +491,33 @@ export default {
   /deep/.tableModel {
     margin-top: 0;
     border-radius: 0 0 0.7rem 0.7rem;
+    .bread-container {
+      display: flex;
+      align-items: center;
+      padding-left: 1rem;
+      .el-breadcrumb__item {
+        display: flex;
+        line-height: 3.6rem;
+        .el-breadcrumb__inner {
+          color: #37e;
+        }
+        &.active {
+          .el-breadcrumb__inner {
+            color: #606266;
+          }
+        }
+        .el-breadcrumb__separator {
+          line-height: 3.6rem;
+        }
+      }
+    }
+    .tableContainer {
+      .tableTitle {
+        .titleText {
+          display: none;
+        }
+      }
+    }
     .el-table {
       .cell {
         // line-height: 4rem;

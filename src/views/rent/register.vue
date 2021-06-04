@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:00:07
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-31 01:15:09
+ * @LastEditTime: 2021-06-05 00:29:36
  * @FilePath: \vue2-ts\src\views\rent\register.vue
 -->
 <template>
@@ -503,6 +503,7 @@ import {
   getNationDic, 
   addTenant, 
   addTenants,
+  insertLog,
   getRegisterDetail,
   updateRegisterInfo
 } from '@/apis/index'
@@ -766,6 +767,17 @@ export default {
         this.pagination.pageCount = data.data.totalPage
         this.pagination.totalCount = data.data.totalCount
         this.pagination.pageIndex = data.data.pageIndex
+
+        insertLog({
+          menu_name: '出租登记列表',
+          operation_type: 'query',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '查询出租登记列表',
+          source: 0
+        })
       }).catch(error => {
         console.log(error)
         this.dataList = []
@@ -1101,6 +1113,17 @@ export default {
           }
           this.showDialog = false
           this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+
+          insertLog({
+            menu_name: '出租登记列表',
+            operation_type: 'edit',
+            operation_condition: {
+              ...params
+            },
+            sub_menu_name: '',
+            operation_type_detail: '修改出租登记',
+            source: 0
+          })
         })
       } else {
         if (!this.isAdd) {
@@ -1112,6 +1135,17 @@ export default {
             }
             this.showDialog = false
             this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+
+            insertLog({
+              menu_name: '出租登记列表',
+              operation_type: 'add',
+              operation_condition: {
+                ...params
+              },
+              sub_menu_name: '',
+              operation_type_detail: '补录租户',
+              source: 0
+            })
           })
         } else {
           tenantParam.map(item => {
@@ -1125,6 +1159,17 @@ export default {
             }
             this.showDialog = false
             this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+
+            insertLog({
+              menu_name: '出租登记列表',
+              operation_type: 'add',
+              operation_condition: {
+                ...params
+              },
+              sub_menu_name: '',
+              operation_type_detail: '新增出租登记信息',
+              source: 0
+            })
           })
         }
       }

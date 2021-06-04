@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 21:22:27
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-01 00:09:30
+ * @LastEditTime: 2021-06-05 00:51:48
  * @FilePath: \vue2-ts\src\views\system\log.vue
 -->
 
@@ -26,7 +26,7 @@
           <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
         </div>
         <div slot="operation_type" slot-scope="props">
-          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+          <my-tooltip width="100%" :value="props.value | typeFilter"></my-tooltip>
         </div>
         <div slot="operation_condition" slot-scope="props">
           <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
@@ -133,11 +133,11 @@ export default {
           value: 'operation_condition',
           width: 200
         },
-        {
-          name: '二级菜单名称',
-          prop: 'sub_menu_name',
-          value: 'sub_menu_name'
-        },
+        // {
+        //   name: '二级菜单名称',
+        //   prop: 'sub_menu_name',
+        //   value: 'sub_menu_name'
+        // },
         {
           name: '操作类型明细',
           prop: 'operation_type_detail',
@@ -196,6 +196,17 @@ export default {
         this.pagination.pageCount = data.data.totalPage
         this.pagination.totalCount = data.data.totalCount
         this.pagination.pageIndex = data.data.pageIndex
+        insertLog({
+          menu_name: '日志管理',
+          operation_type: 'query',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '查询日志管理列表',
+          source: 0,
+          result_type: 0
+        })
       }).catch(error => {
         cosnole.log(error)
         this.dataList = []
@@ -204,6 +215,17 @@ export default {
         this.pagination.pageCount = 1
         this.pagination.totalCount = 0
         this.pagination.pageIndex = 1
+        insertLog({
+          menu_name: '日志管理',
+          operation_type: 'query',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '查询日志管理列表',
+          source: 0,
+          result_type: 1
+        })
       })
     }
   },
@@ -224,6 +246,33 @@ export default {
       } else {
         return '登录失败'
       }
+    },
+    typeFilter (val) {
+      const typeArray = [
+        {
+          label: '查询',
+          value: 'query'
+        },
+        {
+          label: '增加',
+          value: 'add'
+        },
+        {
+          label: '修改',
+          value: 'edit'
+        },
+        {
+          label: '删除',
+          value: 'del'
+        },
+        {
+          label: '登录',
+          value: 'login'
+        }
+      ]
+
+      return typeArray.filter(x => x.value === val).length 
+        ? typeArray.filter(x => x.value === val)[0].label : '--'
     }
   }
 }

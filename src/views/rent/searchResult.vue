@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-05-06 21:34:20
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-30 01:40:16
+ * @LastEditTime: 2021-06-05 00:30:48
  * @FilePath: \vue2-ts\src\views\rent\searchResult.vue
 -->
 
@@ -209,6 +209,17 @@ export default {
         this.pagination.pageCount = data.data.totalPage
         this.pagination.totalCount = data.data.totalCount
         this.pagination.pageIndex = data.data.pageIndex
+
+        insertLog({
+          menu_name: '数据查询结果',
+          operation_type: 'query',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '查询数据检索结果列表',
+          source: 0
+        })
       }).catch(error => {
         console.log(error)
         this.dataList = []
