@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-06-02 22:25:21
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-05 00:23:41
+ * @LastEditTime: 2021-06-08 00:10:31
  * @FilePath: \vue2-ts\src\views\system\approve.vue
 -->
 
@@ -41,11 +41,14 @@
           <div slot="homeownerPhone" slot-scope="props">
             <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
           </div>
+          <div slot="idcard" slot-scope="props">
+            <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+          </div>
           <div slot="address" slot-scope="props">
             <my-tooltip width="100%" :value="props.value | addressFilter"></my-tooltip>
           </div>
           <div slot="create_time" slot-scope="props">
-            <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+            <my-tooltip width="100%" :value="props.value | dateFilter"></my-tooltip>
           </div>
           <div slot="applicantName" slot-scope="props">
             <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
@@ -63,15 +66,16 @@
             <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
           </div>
           <div slot="oprate" slot-scope="props">
-            <el-button @click.stop="approveSuccess(props.value)" class="btnPrimary">通过</el-button>
-            <el-button @click.stop="approveFail(props.value)" class="btnPrimary">驳回</el-button>
+            <!-- <el-button @click.stop="approveSuccess(props.value)" class="btnPrimary">通过</el-button>
+            <el-button @click.stop="approveFail(props.value)" class="btnPrimary">驳回</el-button> -->
+            <el-button @click.stop="approveSuccess(props.value)" class="btnPrimary">审核</el-button>
             <el-button v-if="props.value.houses_id" @click.stop="approveDetail(props.value)" class="btnPrimary">详情</el-button>
           </div>
         </layout-table>
       </el-row>
     </el-main>
 
-    <my-dialog
+    <!-- <my-dialog
       size="extra-small"
       modal
       :visible.sync="showDialog"
@@ -92,6 +96,431 @@
           </el-input>
         </el-form-item>
       </el-form>
+    </my-dialog> -->
+
+    <my-dialog
+      size="middle"
+      modal
+      :visible.sync="showDialog"
+      :title="dialogTitle"
+      :show-btns="false"
+    >
+      <el-container class="step-container">
+        <!-- <el-steps :active="stepActive" finish-status="success" simple>
+          <el-step title="房屋信息" ></el-step>
+          <el-step title="房主信息" ></el-step>
+          <el-step title="租户信息" ></el-step>
+        </el-steps> -->
+        <el-tabs class="tab-content" v-model="stepActive">
+          <el-step title="房屋信息" ></el-step>
+          <el-step title="房主信息" ></el-step>
+          <el-step title="租户信息" ></el-step>
+        </el-tabs>
+
+        <transition name="el-zoom-in-bottom">
+          <el-main class="form-main" v-if="stepActive === 1">
+            <el-form label-width="10rem" label-position="left" class="alarm-form required-form">
+              <el-form-item label="房屋类型：" class="required">
+                <el-select
+                  clearable
+                  :multiple="false"
+                  v-model="houseObject.houseType"
+                >
+                  <el-option
+                    v-for="item in houseTypeList"
+                    :key="item.code"
+                    :label="item.name"
+                    :value="item.code"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="使用类型：" class="required">
+                <el-select
+                  clearable
+                  :multiple="false"
+                  v-model="houseObject.useType"
+                >
+                  <el-option
+                    v-for="item in useTypeList"
+                    :key="item.code"
+                    :label="item.name"
+                    :value="item.code"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="房屋面积：" class="required">
+                <el-input 
+                  clearable 
+                  v-model.trim="houseObject.houseArea" 
+                  placeholder="请输入房屋面积"
+                >
+                </el-input>
+              </el-form-item>
+              <el-form-item label="房产证编号：" class="required">
+                <el-input 
+                  clearable 
+                  v-model.trim="houseObject.premisesPermitNo" 
+                  placeholder="请输入房产证编号"
+                >
+                </el-input>
+              </el-form-item>
+              <transition name="el-zoom-in-center">
+                <template>
+                  <el-form-item label="省：" class="required">
+                    <el-select
+                      clearable
+                      :multiple="false"
+                      v-model="houseObject.province"
+                      @change="changeProvice"
+                    >
+                      <el-option
+                        v-for="item in province.data"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id"
+                      >
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </template>
+              </transition>
+              <transition name="el-zoom-in-center">
+                <template>
+                  <el-form-item label="市：" class="required">
+                    <el-select
+                      clearable
+                      :disabled="!houseObject.province"
+                      :multiple="false"
+                      v-model="houseObject.city"
+                      @change="changeCity"
+                    >
+                      <el-option
+                        v-for="item in city.data"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id"
+                      >
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </template>
+              </transition>
+              <transition name="el-zoom-in-center">
+                <template>
+                  <el-form-item label="区/县：" class="required">
+                    <el-select
+                      clearable
+                      :disabled="!houseObject.city"
+                      :multiple="false"
+                      v-model="houseObject.area"
+                      @change="changeCountry"
+                    >
+                      <el-option
+                        v-for="item in area.data"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id"
+                      >
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </template>
+              </transition>
+              <transition name="el-zoom-in-center">
+                <template>
+                  <el-form-item label="街道："  class="required">
+                    <el-select
+                      clearable
+                      :disabled="!houseObject.area"
+                      :multiple="false"
+                      @change="changeStreet"
+                      v-model="houseObject.street"
+                    >
+                      <el-option
+                        v-for="item in street.data"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id"
+                      >
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </template>
+              </transition>
+              <transition name="el-zoom-in-center">
+                <template>
+                  <el-form-item label="社区：" class="required">
+                    <el-select
+                      clearable
+                      :disabled="!houseObject.street"
+                      :multiple="false"
+                      v-model="houseObject.community"
+                    >
+                      <el-option
+                        v-for="item in community.data"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id"
+                      >
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </template>
+              </transition>
+              <el-form-item label="房屋地址：" class="required">
+                <el-input 
+                  clearable 
+                  v-model.trim="houseObject.address" 
+                  placeholder="请输入房屋地址"
+                >
+                </el-input>
+              </el-form-item>
+            </el-form>
+          </el-main>
+        </transition>
+
+        <transition name="el-zoom-in-bottom">
+          <el-main class="form-main" v-if="stepActive === 2">
+            <el-form label-width="8rem" label-position="left" class="alarm-form required-form">
+              <el-form-item label="房主类型：" class="required">
+                <el-select
+                  :multiple="false"
+                  v-model="ownerObject.owners_type"
+                >
+                  <el-option
+                    v-for="item in ownerTypeArray"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <transition name="el-zoom-in-center">
+                <el-form-item v-if="ownerObject.owners_type === 2" label="负责人姓名：" class="required">
+                  <el-input 
+                    clearable 
+                    v-model.trim="ownerObject.name" 
+                    placeholder="请输入负责人姓名"
+                  >
+                  </el-input>
+                </el-form-item>
+              </transition>
+              <transition name="el-zoom-in-center">
+                <el-form-item v-if="ownerObject.owners_type === 2" label="公司名称：" class="required">
+                  <el-input 
+                    clearable 
+                    v-model.trim="ownerObject.companyName" 
+                    placeholder="请输入公司名称"
+                  >
+                  </el-input>
+                </el-form-item>
+              </transition>
+              <transition name="el-zoom-in-center">
+                <el-form-item v-if="ownerObject.owners_type === 2" label="营业执照：" class="required">
+                  <el-input 
+                    clearable 
+                    v-model.trim="ownerObject.businessLicense" 
+                    placeholder="请输入营业执照"
+                  >
+                  </el-input>
+                </el-form-item>
+              </transition>
+              <transition name="el-zoom-in-center">
+                <el-form-item v-if="ownerObject.owners_type === 1" label="户主姓名：" class="required">
+                  <el-input 
+                    clearable 
+                    v-model.trim="ownerObject.name" 
+                    placeholder="请输入户主姓名"
+                  >
+                  </el-input>
+                </el-form-item>
+              </transition>
+              <transition name="el-zoom-in-center">
+                <el-form-item v-if="ownerObject.owners_type === 1" label="民族：" class="required">
+                  <el-select
+                    clearable
+                    :multiple="false"
+                    placeholder="请选择民族"
+                    v-model="ownerObject.nation"
+                  >
+                    <el-option
+                      v-for="item in nationArray"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </transition>
+              <transition name="el-zoom-in-center">
+                <el-form-item v-if="ownerObject.owners_type === 1" label="性别：" class="required">
+                  <el-select
+                    clearable
+                    :multiple="false"
+                    placeholder="请选择性别"
+                    v-model="ownerObject.sex"
+                  >
+                    <el-option
+                      v-for="item in sexArray"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </transition>
+              <el-form-item label="手机号：" class="required">
+                <el-input 
+                  clearable 
+                  v-model.trim="ownerObject.phone" 
+                  placeholder="请输入手机号"
+                >
+                </el-input>
+              </el-form-item>
+              <el-form-item label="身份证号：" class="required">
+                <el-input 
+                  clearable 
+                  v-model.trim="ownerObject.idcard" 
+                  placeholder="请输入身份证号"
+                >
+                </el-input>
+              </el-form-item>
+              <transition name="el-zoom-in-center">
+                <el-form-item v-if="ownerObject.owners_type === 1" label="籍贯：" class="required">
+                  <el-input 
+                    clearable 
+                    v-model.trim="ownerObject.address" 
+                    placeholder="请输入籍贯"
+                  >
+                  </el-input>
+                </el-form-item>
+              </transition>
+              <transition name="el-zoom-in-center">
+                <el-form-item v-if="ownerObject.owners_type === 2" label="公司地址：" class="required">
+                  <el-input 
+                    clearable 
+                    v-model.trim="ownerObject.address" 
+                    placeholder="请输入公司地址"
+                  >
+                  </el-input>
+                </el-form-item>
+              </transition>
+            </el-form>
+          </el-main>
+        </transition>
+
+        <transition name="el-zoom-in-bottom">
+          <el-main class="form-main tenant-main" v-if="stepActive === 3">
+            <el-row class="tenant-box" v-for="(item, index) in tenantArray" :key="index">
+              <el-row class="tenant-title">
+                <el-col :span="20" class="label-text">租户信息{{index + 1}}</el-col>
+                <el-col :span="4" class="close-icon" v-if="tenantArray.length > 1 && !isEdit">
+                  <i class="el-icon-circle-close" @click.stop="deleteTenant(index)"></i>
+                </el-col>
+              </el-row>
+              <el-form label-width="8rem" label-position="left" class="alarm-form required-form">
+                <el-form-item label="租户姓名：" class="required">
+                  <el-input 
+                    clearable 
+                    v-model.trim="item.name" 
+                    placeholder="请输入租户姓名"
+                  >
+                  </el-input>
+                </el-form-item>
+                <el-form-item label="民族：" class="required">
+                  <el-select
+                    clearable
+                    :multiple="false"
+                    placeholder="请选择民族"
+                    v-model="item.nation"
+                  >
+                    <el-option
+                      v-for="item in nationArray"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="性别：" class="required">
+                  <el-select
+                    clearable
+                    :multiple="false"
+                    placeholder="请选择性别"
+                    v-model="item.sex"
+                  >
+                    <el-option
+                      v-for="item in sexArray"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="手机号：" class="required">
+                  <el-input 
+                    clearable 
+                    v-model.trim="item.phone" 
+                    placeholder="请输入手机号"
+                  >
+                  </el-input>
+                </el-form-item>
+                <el-form-item label="身份证号：" class="required">
+                  <el-input 
+                    clearable 
+                    v-model.trim="item.idcard" 
+                    placeholder="请输入身份证号"
+                  >
+                  </el-input>
+                </el-form-item>
+                <el-form-item label="籍贯：" class="required">
+                  <el-input 
+                    clearable 
+                    v-model.trim="item.address" 
+                    placeholder="请输入籍贯"
+                  >
+                  </el-input>
+                </el-form-item>
+                <el-form-item label="承租起始时间：" class="required">
+                  <date-picker
+                    v-model="item.startTime"
+                    type="date"
+                    placeholder="承租起始时间"
+                    format="yyyy-MM-dd"
+                    clearable
+                  >
+                  </date-picker>
+                </el-form-item>
+                <el-form-item label="承租结束时间：" class="required">
+                  <date-picker
+                    v-model="item.endTime"
+                    type="date"
+                    placeholder="承租起始时间"
+                    format="yyyy-MM-dd"
+                    clearable
+                  >
+                  </date-picker>
+                </el-form-item>
+              </el-form>
+            </el-row>
+            <el-row class="add-box" v-if="!isEdit">
+              <i class="el-icon-circle-plus-outline" @click.stop="addTenant"></i>
+            </el-row>
+          </el-main>
+        </transition>
+
+        <el-row class="btn-box">
+          <el-button type="primary">审批</el-button>
+          <el-button type="primary">驳回</el-button>
+        </el-row>
+      </el-container>
     </my-dialog>
   </el-container>
 </template>
@@ -144,16 +573,6 @@ export default {
       },
       tableHead: [ // 表头
         {
-          name: '申请内容',
-          prop: 'content',
-          value: 'content'
-        },
-        {
-          name: '任务类型',
-          prop: 'typeStr',
-          value: 'typeStr'
-        },
-        {
           name: '房主姓名',
           prop: 'homeownerName',
           value: 'homeownerName'
@@ -162,6 +581,11 @@ export default {
           name: '房主电话',
           prop: 'homeownerPhone',
           value: 'homeownerPhone'
+        },
+        {
+          name: '房主身份证',
+          prop: 'idcard',
+          value: 'idcard'
         },
         {
           name: '详细地址',
@@ -196,7 +620,7 @@ export default {
         isShow: true, // 是否含有操作列
         name: '操作',
         fixed: 'right',
-        width: 300
+        width: 200
       },
       tableTitle: { // 表格title
         name: '审批列表'
@@ -211,7 +635,84 @@ export default {
         describe: ''
       },
       showDialog: false, // 弹框是否展示
-      dialogTitle: '审批'
+      dialogTitle: '审批',
+      houseObject: { // 房屋信息
+        houseType: '',
+        useType: '',
+        houseArea: '',
+        premisesPermitNo: '',
+        address: '',
+        province: '',
+        city: '',
+        area: '',
+        street: '',
+        community: ''
+      },
+      ownerObject: { // 户主信息
+        name: '',
+        sex: '',
+        nation: '',
+        phone: '',
+        idcard: '',
+        address: '',
+        companyName: '',
+        businessLicense: '',
+        owners_type: 1
+      },
+      tenantArray: [ // 租户信息
+        {
+          name: '',
+          nation: '',
+          sex: '',
+          phone: '',
+          idcard: '',
+          address: '',
+          startTime: '',
+          endTime: ''
+        }
+      ],
+      stepActive: 1, // 添加出租登记流程步骤
+      useTypeList: [], // 房屋使用类型字典
+      houseTypeList: [], // 房屋类型字典
+      street: { // 弹框街道数据
+        data: [],
+        value: ''
+      },
+      area: { // 弹框区县数据
+        data: [],
+        value: ''
+      },
+      city: { // 弹框城市数据
+        data: [],
+        value: ''
+      },
+      province: { // 弹框省数据
+        data: [],
+        value: ''
+      },
+      community: {
+        data: [],
+        value: ''
+      },
+      ownerTypeArray: [
+        { name: '个人', id: 1 },
+        { name: '企业', id: 2 }
+      ],
+      tempTenant: { // 租户模板
+        name: '',
+        nation: '',
+        sex: '',
+        phone: '',
+        idcard: '',
+        address: '',
+        startTime: '',
+        endTime: ''
+      },
+      nationArray: [], // 民族字典
+      sexArray: [ // 性别字典
+        { name: '男', id: 0 },
+        { name: '女', id: 1 }
+      ]
     }
   },
   components: {
@@ -404,6 +905,13 @@ export default {
     addressFilter (val) {
       return (val.provinceStr || '') + (val.cityStr || '') + (val.areaStr || '') +
         (val.streetStr || '') + (val.communityStr || '') + (val.address || '')
+    },
+    dateFilter (val) {
+      if (!val) {
+        return '--'
+      } else {
+        return val.split(' ')[0]
+      }
     }
   }
 }
@@ -451,6 +959,66 @@ export default {
       // border-top-left-radius: 0;
       // border-bottom-left-radius: 0;
     }
+  }
+}
+
+/deep/.modal {
+  .modal-body {
+    max-height: 44rem;
+  }
+}
+
+.step-container {
+  display: flex;
+  flex-direction: column;
+  .el-steps {
+    width: 100%;
+  }
+  .form-main {
+    flex: 0 0 36rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    &.tenant-main {
+      justify-content: unset;
+      align-items: unset;
+    }
+    .el-form {
+      width: 60%;
+      margin: 0 auto;
+    }
+    .tenant-box {
+      width: 100%;
+      margin: 0.2rem 0;
+      .tenant-title {
+        width: 60%;
+        height: 2rem;
+        margin: 0.5rem auto;
+        line-height: 2rem;
+        font-size: 1.4rem;
+        .label-text {
+          text-align: left;
+          text-indent: 3em;
+          color: #fa4;
+        }
+      }
+    }
+    .add-box {
+      height: 2rem;
+      line-height: 2rem;
+      text-align: center;
+      font-size: 1.6rem;
+    }
+  }
+  .btn-box {
+    flex: 0 0 4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .ivu-date-picker {
+    width: 100%;
   }
 }
 </style>

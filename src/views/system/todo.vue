@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-06-02 22:25:21
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-05 00:08:30
+ * @LastEditTime: 2021-06-07 23:42:29
  * @FilePath: \vue2-ts\src\views\system\todo.vue
 -->
 
@@ -29,16 +29,13 @@
           :oprate="oprate"
           ref="multipleTable"
         >
-          <div slot="content" slot-scope="props">
-            <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
-          </div>
-          <div slot="typeStr" slot-scope="props">
-            <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
-          </div>
           <div slot="applicantName" slot-scope="props">
             <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
           </div>
           <div slot="phone" slot-scope="props">
+            <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+          </div>
+          <div slot="idcard" slot-scope="props">
             <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
           </div>
           <div slot="create_time" slot-scope="props">
@@ -48,10 +45,10 @@
             <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
           </div>
           <div slot="start_time" slot-scope="props">
-            <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+            <my-tooltip width="100%" :value="props.value | dateFilter"></my-tooltip>
           </div>
           <div slot="end_time" slot-scope="props">
-            <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
+            <my-tooltip width="100%" :value="props.value | dateFilter"></my-tooltip>
           </div>
           <div slot="dispose_time" slot-scope="props">
             <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
@@ -172,16 +169,6 @@ export default {
       },
       tableHead: [ // 表头
         {
-          name: '申请内容',
-          prop: 'content',
-          value: 'content'
-        },
-        {
-          name: '任务类型',
-          prop: 'typeStr',
-          value: 'typeStr'
-        },
-        {
           name: '租户姓名',
           prop: 'applicantName',
           value: 'applicantName'
@@ -192,10 +179,9 @@ export default {
           value: 'phone'
         },
         {
-          name: '创建时间',
-          prop: 'create_time',
-          value: 'create_time',
-          width: 120
+          name: '租户身份证',
+          prop: 'idcard',
+          value: 'idcard'
         },
         {
           name: '房屋地址',
@@ -207,13 +193,13 @@ export default {
           name: '承租起始时间',
           prop: 'start_time',
           value: 'start_time',
-          width: 120
+          width: 100
         },
         {
           name: '承租结束时间',
           prop: 'end_time',
           value: 'end_time',
-          width: 120
+          width: 100
         }
       ],
       oprate: { // 数据操作列
@@ -413,6 +399,13 @@ export default {
     addressFilter (val) {
       return (val.provinceStr || '') + (val.cityStr || '') + (val.areaStr || '') +
         (val.streetStr || '') + (val.communityStr || '') + (val.address || '')
+    },
+    dateFilter (val) {
+      if (!val) {
+        return '--'
+      } else {
+        return val.split(' ')[0]
+      }
     }
   }
 }

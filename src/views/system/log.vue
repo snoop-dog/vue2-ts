@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 21:22:27
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-05 00:51:48
+ * @LastEditTime: 2021-06-07 23:48:59
  * @FilePath: \vue2-ts\src\views\system\log.vue
 -->
 
@@ -40,8 +40,8 @@
         <div slot="source" slot-scope="props">
           <my-tooltip width="100%" :value="props.value | sourceFilter"></my-tooltip>
         </div>
-        <div slot="result_type" slot-scope="props">
-          <my-tooltip width="100%" :value="props.value | resultFilter"></my-tooltip>
+        <div slot="create_time" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value | nullTextFilter"></my-tooltip>
         </div>
       </layout-table>
     </el-row>
@@ -123,15 +123,9 @@ export default {
           value: 'menu_name'
         },
         {
-          name: '操作类型',
+          name: '操作',
           prop: 'operation_type',
           value: 'operation_type'
-        },
-        {
-          name: '操作条件',
-          prop: 'operation_condition',
-          value: 'operation_condition',
-          width: 200
         },
         // {
         //   name: '二级菜单名称',
@@ -139,19 +133,27 @@ export default {
         //   value: 'sub_menu_name'
         // },
         {
-          name: '操作类型明细',
+          name: '操作明细',
           prop: 'operation_type_detail',
           value: 'operation_type_detail'
         },
         {
-          name: '数据来源',
-          prop: 'source',
-          value: 'source'
+          name: '操作条件',
+          prop: 'operation_condition',
+          value: 'operation_condition',
+          width: 240
         },
         {
-          name: '结果类型',
-          prop: 'result_type',
-          value: 'result_type'
+          name: '创建时间',
+          prop: 'create_time',
+          value: 'create_time',
+          width: 100
+        },
+        {
+          name: '平台',
+          prop: 'source',
+          value: 'source',
+          width: 50
         }
       ],
       tableTitle: { // 表格title
