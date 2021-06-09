@@ -171,6 +171,7 @@ export default class Sidebar extends Vue {
           [class^=iconfont] {
             color: #abd;
             margin-right: 0.6rem;
+            font-size: 1.4rem;
           }
         }
 
@@ -199,6 +200,7 @@ export default class Sidebar extends Vue {
               .el-tooltip {
                 i {
                   color: #37e;
+                  font-size: 1.4rem;
                 }
               }
             }

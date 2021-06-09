@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-06-02 22:25:21
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-08 00:10:31
+ * @LastEditTime: 2021-06-09 00:41:05
  * @FilePath: \vue2-ts\src\views\system\approve.vue
 -->
 
@@ -112,14 +112,26 @@
           <el-step title="租户信息" ></el-step>
         </el-steps> -->
         <el-tabs class="tab-content" v-model="stepActive">
-          <el-step title="房屋信息" ></el-step>
-          <el-step title="房主信息" ></el-step>
-          <el-step title="租户信息" ></el-step>
+          <el-tab-pane label="房屋信息" name="1"></el-tab-pane>
+          <el-tab-pane label="房主信息" name="2"></el-tab-pane>
+          <el-tab-pane label="租户信息" name="3"></el-tab-pane>
         </el-tabs>
 
         <transition name="el-zoom-in-bottom">
-          <el-main class="form-main" v-if="stepActive === 1">
-            <el-form label-width="10rem" label-position="left" class="alarm-form required-form">
+          <el-main class="form-main" v-if="stepActive === '1'">
+            <el-form label-width="10rem" label-position="left" class="register-form required-form">
+              <el-form-item label="处理说明：">
+                <el-input 
+                  v-model.trim="ruleForm.describe" 
+                  type="textarea" 
+                  resize='none' 
+                  :rows="4" 
+                  placeholder="请输入处理说明"
+                  show-word-limit
+                  maxlength="100"
+                >
+                </el-input>
+              </el-form-item>
               <el-form-item label="房屋类型：" class="required">
                 <el-select
                   clearable
@@ -282,8 +294,20 @@
         </transition>
 
         <transition name="el-zoom-in-bottom">
-          <el-main class="form-main" v-if="stepActive === 2">
-            <el-form label-width="8rem" label-position="left" class="alarm-form required-form">
+          <el-main class="form-main" v-if="stepActive === '2'">
+            <el-form label-width="8rem" label-position="left" class="register-form required-form">
+              <el-form-item label="处理说明：">
+                <el-input 
+                  v-model.trim="ruleForm.describe" 
+                  type="textarea" 
+                  resize='none' 
+                  :rows="4" 
+                  placeholder="请输入处理说明"
+                  show-word-limit
+                  maxlength="100"
+                >
+                </el-input>
+              </el-form-item>
               <el-form-item label="房主类型：" class="required">
                 <el-select
                   :multiple="false"
@@ -415,15 +439,29 @@
         </transition>
 
         <transition name="el-zoom-in-bottom">
-          <el-main class="form-main tenant-main" v-if="stepActive === 3">
+          <el-main class="form-main tenant-main" v-if="stepActive === '3'">
+            <el-form label-width="8rem" label-position="left" class="alarm-form required-form">
+              <el-form-item label="处理说明：">
+                <el-input 
+                  v-model.trim="ruleForm.describe" 
+                  type="textarea" 
+                  resize='none' 
+                  :rows="4" 
+                  placeholder="请输入处理说明"
+                  show-word-limit
+                  maxlength="100"
+                >
+                </el-input>
+              </el-form-item>
+            </el-form>
             <el-row class="tenant-box" v-for="(item, index) in tenantArray" :key="index">
               <el-row class="tenant-title">
                 <el-col :span="20" class="label-text">租户信息{{index + 1}}</el-col>
-                <el-col :span="4" class="close-icon" v-if="tenantArray.length > 1 && !isEdit">
+                <el-col :span="4" class="close-icon" v-if="tenantArray.length > 1">
                   <i class="el-icon-circle-close" @click.stop="deleteTenant(index)"></i>
                 </el-col>
               </el-row>
-              <el-form label-width="8rem" label-position="left" class="alarm-form required-form">
+              <el-form label-width="8rem" label-position="left" class="register-form required-form">
                 <el-form-item label="租户姓名：" class="required">
                   <el-input 
                     clearable 
@@ -510,7 +548,7 @@
                 </el-form-item>
               </el-form>
             </el-row>
-            <el-row class="add-box" v-if="!isEdit">
+            <el-row class="add-box">
               <i class="el-icon-circle-plus-outline" @click.stop="addTenant"></i>
             </el-row>
           </el-main>
@@ -527,7 +565,17 @@
 
 <script>
 // apis
-import { getTaskPage, processingTask, insertLog } from '@/apis/index'
+import { 
+  getTaskPage, 
+  processingTask, 
+  insertLog,
+  getHousePage, 
+  getDicList, 
+  getAreaDim, 
+  getNationDic, 
+  addTenant, 
+  addTenants
+  } from '@/apis/index'
 
 // utils
 import { doDateTimeShift } from '@/utils/date'
@@ -671,7 +719,7 @@ export default {
           endTime: ''
         }
       ],
-      stepActive: 1, // 添加出租登记流程步骤
+      stepActive: '1', // 添加出租登记流程步骤
       useTypeList: [], // 房屋使用类型字典
       houseTypeList: [], // 房屋类型字典
       street: { // 弹框街道数据
@@ -835,6 +883,248 @@ export default {
       })
     },
     /**
+     * @description: 添加租户
+     * @param {*} none
+     * @returns {*} void
+     */    
+    addTenant () {
+      this.tenantArray.push(this.tempTenant)
+    },
+    /**
+     * @description: 改变省级数据
+     * @param {Number} val 改变后数据
+     * @returns {*} void
+     */
+    changeProvice (val) {
+      if (!val) {
+        this.city.data = []
+        this.houseObject.city = ''
+        this.area.data = []
+        this.houseObject.area = ''
+        this.street.data = []
+        this.houseObject.street = ''
+        this.community.data = []
+        this.houseObject.community = ''
+        return
+      }
+      const params = {
+        level: 2,
+        pid: val
+      }
+
+      getAreaDim(params).then(data => {
+        this.city.data = data.data
+      }).catch(err => {
+        console.log(err)
+        this.city.data = []
+      })
+    },
+    /**
+     * @description: 改变市级数据
+     * @param {Number} val 改变后数据
+     * @returns {*} void
+     */
+    changeCity (val) {
+      if (!val) {
+        this.area.data = []
+        this.houseObject.area = ''
+        this.street.data = []
+        this.houseObject.street = ''
+        this.community.data = []
+        this.houseObject.community = ''
+        return
+      }
+      const params = {
+        level: 3,
+        pid: val
+      }
+
+      getAreaDim(params).then(data => {
+        this.area.data = data.data
+      }).catch(err => {
+        console.log(err)
+        this.area.data = []
+      })
+    },
+    /**
+     * @description: 改变市级数据
+     * @param {Number} val 改变后数据
+     * @returns {*} void
+     */
+    changeCountry (val) {
+      if (!val) {
+        this.street.data = []
+        this.houseObject.street = ''
+        this.community.data = []
+        this.houseObject.community = ''
+        return
+      }
+      const params = {
+        level: 4,
+        pid: val
+      }
+
+      getAreaDim(params).then(data => {
+        this.street.data = data.data
+      }).catch(err => {
+        console.log(err)
+        this.street.data = []
+      })
+    },
+    /**
+     * @description: 改变街道数据
+     * @param {Number} val 改变后数据
+     * @returns {*} void
+     */
+    changeStreet (val) {
+      if (!val) {
+        this.community.data = []
+        this.houseObject.community = ''
+        return
+      }
+      const params = {
+        level: 5,
+        pid: val
+      }
+
+      getAreaDim(params).then(data => {
+        this.community.data = data.data
+      }).catch(err => {
+        console.log(err)
+        this.community.data = []
+      })
+    },
+    /**
+     * @description: 通过我的审批
+     * @param {*} none
+     * @returns {*} void
+     */    
+    submitRegisterInfo () {
+      if (!this.validTenantParam()) return
+
+      const tenantParam = []
+      this.tenantArray.map(item => {
+        const object = {
+          name: item.name,
+          nation: item.nation,
+          sex: item.sex,
+          idcard: item.idcard,
+          phone: item.phone,
+          address: item.address,
+          startTime: item.startTime,
+          endTime: item.endTime
+        }
+        tenantParam.push(object)
+      })
+
+      const houseParam = {
+        housingNature: this.houseObject.houseType,
+        planningPurposes: this.houseObject.useType,
+        constructionArea: this.houseObject.houseArea,
+        premisesPermitNo: this.houseObject.premisesPermitNo,
+        province: this.houseObject.province,
+        city: this.houseObject.city,
+        area: this.houseObject.area,
+        street: this.houseObject.street,
+        community: this.houseObject.community,
+        address: this.houseObject.address
+      }
+
+      const ownerParam = {
+        name: this.ownerObject.name,
+        owners_type: this.ownerObject.owners_type,
+        nation: this.ownerObject.nation,
+        sex: this.ownerObject.sex,
+        phone: this.ownerObject.phone,
+        idcard: this.ownerObject.idcard,
+        address: this.ownerObject.address,
+        companyName: this.ownerObject.owners_type === 2 ? this.ownerObject.companyName : '',
+        businessLicense: this.ownerObject.owners_type === 2 ? this.ownerObject.businessLicense : ''
+      }
+
+      if (this.isEdit) {
+        ownerParam.id = this.ownerId
+        houseParam.id = this.houseId
+        tenantParam.map((item, index) => {
+          item.id = this.tenantArray[index].id
+          item.house_id = this.houseId
+        })
+      }
+      
+      houseParam.tenants = tenantParam
+      ownerParam.house = houseParam
+
+      if (this.isEdit) {
+        updateRegisterInfo(ownerParam).then(data => {
+          if (data.status === 200) {
+            this.showMessageBox(data.message, 'success')
+          } else {
+            this.showMessageBox(data.message, 'error')
+          }
+          this.showDialog = false
+          this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+
+          insertLog({
+            menu_name: '出租登记列表',
+            operation_type: 'edit',
+            operation_condition: {
+              ...params
+            },
+            sub_menu_name: '',
+            operation_type_detail: '修改出租登记',
+            source: 0
+          })
+        })
+      } else {
+        if (!this.isAdd) {
+          addTenant(ownerParam).then(data => {
+            if (data.status === 200) {
+              this.showMessageBox(data.message, 'success')
+            } else {
+              this.showMessageBox(data.message, 'error')
+            }
+            this.showDialog = false
+            this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+
+            insertLog({
+              menu_name: '出租登记列表',
+              operation_type: 'add',
+              operation_condition: {
+                ...params
+              },
+              sub_menu_name: '',
+              operation_type_detail: '补录租户',
+              source: 0
+            })
+          })
+        } else {
+          tenantParam.map(item => {
+            item.house_id = this.house_id
+          })
+          addTenants(tenantParam).then(data => {
+            if (data.status === 200) {
+              this.showMessageBox(data.message, 'success')
+            } else {
+              this.showMessageBox(data.message, 'error')
+            }
+            this.showDialog = false
+            this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+
+            insertLog({
+              menu_name: '出租登记列表',
+              operation_type: 'add',
+              operation_condition: {
+                ...params
+              },
+              sub_menu_name: '',
+              operation_type_detail: '新增出租登记信息',
+              source: 0
+            })
+          })
+        }
+      }
+    },
+    /**
      * @description: 跳转详情
      * @param {object} item 跳转数据
      * @returns {*} none
@@ -965,6 +1255,8 @@ export default {
 /deep/.modal {
   .modal-body {
     max-height: 44rem;
+    overflow-y: hidden;
+    padding: 1rem 4rem;
   }
 }
 
@@ -983,10 +1275,32 @@ export default {
     &.tenant-main {
       justify-content: unset;
       align-items: unset;
+      .register-form {
+        padding-top: 0;
+        &.alarm-form {
+          padding-top: 2rem;
+        }
+      }
     }
-    .el-form {
-      width: 60%;
+    .register-form {
+      width: 100%;
       margin: 0 auto;
+      height: 100%;
+      overflow-y: auto;
+      padding-top: 2rem;
+      .el-form-item {
+        width: 70%;
+        margin: 0 auto;
+        margin-bottom: 0.2rem;
+      }
+    }
+    .alarm-form {
+      padding-top: 2rem;
+      .el-form-item {
+        width: 70%;
+        margin: 0 auto;
+        margin-bottom: 0.2rem;
+      }
     }
     .tenant-box {
       width: 100%;
@@ -1019,6 +1333,24 @@ export default {
   }
   .ivu-date-picker {
     width: 100%;
+  }
+
+  /deep/.el-tabs {
+    .el-tabs__header {
+      margin-bottom: 0;
+      .el-tabs__nav-scroll {
+        display: flex;
+        justify-content: center;
+        .el-tabs__item {
+          padding: 0 50px;
+        }
+      }
+      .el-tabs__nav-wrap {
+        &::after {
+          background: transparent;
+        }
+      }
+    }
   }
 }
 </style>

@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:05:30
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-05 00:01:15
+ * @LastEditTime: 2021-06-09 01:00:14
  * @FilePath: \vue2-ts\src\views\system\user.vue
 -->
 
@@ -613,7 +613,29 @@ export default {
      * @returns {*}
      */    
     changeUnit (unit) {
+      const unitItem = unit ? this.unitList.filter(x => x.id === unit)[0] : {}
       this.ruleForm.unit_id = unit
+      this.ruleForm.province = unitItem.province || ''
+      this.ruleForm.city = unitItem.city || ''
+      this.ruleForm.area = unitItem.area || ''
+      this.ruleForm.street = unitItem.street || ''
+      this.ruleForm.community = unitItem.community || ''
+
+      if (this.ruleForm.province) {
+        this.changeProvice(this.ruleForm.province)
+      }
+
+      if (this.ruleForm.city) {
+        this.changeCity(this.ruleForm.city)
+      }
+
+      if (this.ruleForm.area) {
+        this.changeCountry(this.ruleForm.area)
+      }
+
+      if (this.ruleForm.street) {
+        this.changeStreet(this.ruleForm.street)
+      }
       // this.getPositionSimple()
     },
     /**
