@@ -701,8 +701,7 @@ export default {
     .mainBox {
       display: flex;
       width: 100%;
-      align-items: center;
-      padding-left: 2rem;
+      // align-items: center;
 
       .showInput {
         height: auto;

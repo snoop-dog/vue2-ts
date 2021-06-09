@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-05-13 23:14:23
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-05 00:21:58
+ * @LastEditTime: 2021-06-09 23:29:23
  * @FilePath: \vue2-ts\src\views\system\banner.vue
 -->
 <template>
@@ -30,6 +30,8 @@
           <el-button plain @click.stop="createFolder"><i class="el-icon-folder-add"></i>新建文件夹</el-button>
           <el-button plain @click.stop="updateFoldname">重命名</el-button>
           <el-button type="danger" @click.stop="deleteFile"><i class="el-icon-delete"></i>删除</el-button>
+          <el-button plain @click.stop="setBannerMulti">设置BANNER</el-button>
+          <el-button type="danger" @click.stop="cancelBannerMulti"><i class="el-icon-delete"></i>取消BANNER</el-button>
         </el-main>
       </el-container>
     </el-row>
@@ -45,6 +47,7 @@
         :table-title="tableTitle"
         @selectionchange="selectChange"
         ref="multipleTable"
+        :oprate="oprate"
       >
         <div slot="read-msg" class="bread-container">
           <el-breadcrumb separator-class="el-icon-arrow-right">
@@ -80,6 +83,28 @@
         <div slot="create_time" slot-scope="props">
           <my-tooltip width="100%" :value="props.value  | nullTextFilter"></my-tooltip>
         </div>
+        <div slot="isBanner" slot-scope="props">
+          <my-tooltip width="100%" :value="props.value  | bannerFilter"></my-tooltip>
+        </div>
+        <div slot="oprate" slot-scope="props">
+          <el-button 
+            :disabled="!props.value.type" 
+            v-if="!props.value.isBanner" 
+            class="btnPrimary"
+            @click.stop="setBanner(props.value.id)"
+          >
+            设置
+          </el-button>
+          <el-button 
+            v-else 
+            :disabled="!props.value.type" 
+            type="danger" 
+            class="btnPrimary"
+            @click.stop="cancelBanner(props.value.id)"
+          >
+          取消
+          </el-button>
+        </div>
       </layout-table>
     </el-row>
   </el-container>
@@ -92,7 +117,8 @@ import {
   getBannerPage, 
   updateFolderName, 
   createFolderAndFile,
-  insertLog
+  insertLog,
+  setBanner
 } from '@/apis/index'
 
 // components
@@ -138,10 +164,21 @@ export default {
           name: '创建时间',
           prop: 'create_time',
           value: 'create_time'
+        },
+        {
+          name: 'banner图',
+          prop: 'isBanner',
+          value: 'isBanner'
         }
       ],
       tableTitle: { // 表格title
         name: '全部文件'
+      },
+      oprate: { // 数据操作列
+        isShow: true, // 是否含有操作列
+        name: '操作',
+        fixed: 'right',
+        width: 180
       },
       propsParams: {}, // 初始参数
       size: 20, // 每页条数
@@ -206,6 +243,84 @@ export default {
         this.pagination.pageCount = 1
         this.pagination.totalCount = 0
         this.pagination.pageIndex = 1
+      })
+    },
+    /**
+     * @description: 批量设置banner图
+     * @param {*} none
+     * @returns {*} void
+     */    
+    setBannerMulti () {
+      if (!this.checkArray.length) {
+        return this.showMessageBox('请至少选择一张图片！', 'warning')
+      } else if (this.checkArray.some(x => x.type === 0)) {
+        return this.showMessageBox('不可设置文件夹！', 'warning')
+      }
+
+      const ids = this.checkArray.reduce((prev, cur) => {
+        prev.push(cur.id)
+        return prev
+      }, [])
+
+      this.setBanner(ids.join(','))
+    },
+    /**
+     * @description: 批量取消banner图
+     * @param {*} none
+     * @returns {*} void
+     */    
+    cancelBannerMulti () {
+      if (!this.checkArray.length) {
+        return this.showMessageBox('请至少选择一张图片！', 'warning')
+      } else if (this.checkArray.some(x => x.type === 0)) {
+        return this.showMessageBox('不可设置文件夹！', 'warning')
+      }
+
+      const ids = this.checkArray.reduce((prev, cur) => {
+        prev.push(cur.id)
+        return prev
+      }, [])
+
+      this.cancelBanner(ids.join(','))
+    },
+    /**
+     * @description: 设置banner图
+     * @param {string} id 图片id
+     * @returns {*} void
+     */    
+    setBanner (id) {
+      const params = {
+        ids: id,
+        type: 1
+      }
+
+      setBanner(params).then(res => {
+        if (res.status === 200) {
+          this.showMessageBox(res.message, 'success')
+          this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+        } else {
+          this.showMessageBox(res.message, 'error')
+        }
+      })
+    },
+    /**
+     * @description: 取消设置banner图
+     * @param {string} id 图片id
+     * @returns {*} void
+     */    
+    cancelBanner (id) {
+      const params = {
+        ids: id,
+        type: 0
+      }
+
+      setBanner(params).then(res => {
+        if (res.status === 200) {
+          this.showMessageBox(res.message, 'success')
+          this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+        } else {
+          this.showMessageBox(res.message, 'error')
+        }
       })
     },
     /**
@@ -458,6 +573,9 @@ export default {
       } else {
         return '--'
       }
+    },
+    bannerFilter (val) {
+      return val ? '是' : '否'
     }
   }
 }

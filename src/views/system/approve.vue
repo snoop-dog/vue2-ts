@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-06-02 22:25:21
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-09 00:41:05
+ * @LastEditTime: 2021-06-09 21:43:49
  * @FilePath: \vue2-ts\src\views\system\approve.vue
 -->
 
@@ -120,7 +120,7 @@
         <transition name="el-zoom-in-bottom">
           <el-main class="form-main" v-if="stepActive === '1'">
             <el-form label-width="10rem" label-position="left" class="register-form required-form">
-              <el-form-item label="处理说明：">
+              <el-form-item label="处理说明：" class="required">
                 <el-input 
                   v-model.trim="ruleForm.describe" 
                   type="textarea" 
@@ -296,7 +296,7 @@
         <transition name="el-zoom-in-bottom">
           <el-main class="form-main" v-if="stepActive === '2'">
             <el-form label-width="8rem" label-position="left" class="register-form required-form">
-              <el-form-item label="处理说明：">
+              <el-form-item label="处理说明：" class="required">
                 <el-input 
                   v-model.trim="ruleForm.describe" 
                   type="textarea" 
@@ -441,7 +441,7 @@
         <transition name="el-zoom-in-bottom">
           <el-main class="form-main tenant-main" v-if="stepActive === '3'">
             <el-form label-width="8rem" label-position="left" class="alarm-form required-form">
-              <el-form-item label="处理说明：">
+              <el-form-item label="处理说明：" class="required">
                 <el-input 
                   v-model.trim="ruleForm.describe" 
                   type="textarea" 
@@ -555,8 +555,8 @@
         </transition>
 
         <el-row class="btn-box">
-          <el-button type="primary">审批</el-button>
-          <el-button type="primary">驳回</el-button>
+          <el-button type="primary" @click.stop="approveNext">审批</el-button>
+          <el-button type="primary" @click.stop="approveBack">驳回</el-button>
         </el-row>
       </el-container>
     </my-dialog>
@@ -574,11 +574,14 @@ import {
   getAreaDim, 
   getNationDic, 
   addTenant, 
-  addTenants
+  addTenants,
+  taskApproval,
+  getRegisterDetail
   } from '@/apis/index'
 
 // utils
 import { doDateTimeShift } from '@/utils/date'
+import { verifyPhoneFormat } from '@/utils/index'
 
 // components
 import layoutTable from '@/components/common/layout/layout-table.vue'
@@ -756,11 +759,13 @@ export default {
         startTime: '',
         endTime: ''
       },
-      nationArray: [], // 民族字典
       sexArray: [ // 性别字典
         { name: '男', id: 0 },
         { name: '女', id: 1 }
-      ]
+      ],
+      ownerId: '', // 房主id
+      houseId: '', // 房屋id
+      nationArray: [] // 民族字典
     }
   },
   components: {
@@ -768,6 +773,12 @@ export default {
     myTooltip,
     myDialog,
     layoutSearch
+  },
+  created () {
+    this.getNationDic() // 获取民族字典
+    this.getProviceData() // 获取省份数据
+    this.getHouseTypeList() // 获取房屋类型字典
+    this.getUseTypeList() // 获取房屋使用类型字典
   },
   methods: {
     /**
@@ -822,16 +833,61 @@ export default {
       })
     },
     /**
-     * @description: 审批通过
-     * @param {*} item
+     * @description: 获取民族字典数据
+     * @param {*} none
      * @returns {*} void
      */    
-    approveSuccess (item) {
-      console.log(item)
-      this.showDialog = true
-      this.dialogTitle = '审批'
-      this.ruleForm.id = item.id
-      this.ruleForm.state = 2
+    getNationDic () {
+      getNationDic({}).then(data => {
+        this.nationArray = data.data
+      })
+    },
+    /**
+     * @description: 获取省级数据
+     * @param {*} none
+     * @returns {*} void
+     */
+    getProviceData () {
+      const params = {
+        level: 1,
+        name: '',
+        pid: 0
+      }
+
+      getAreaDim(params).then(data => {
+        this.province.data = data.data
+      }).catch(err => {
+        console.log(err)
+        this.province.data = []
+      })
+    },
+    /**
+     * @description: 查询房屋使用类型字典
+     * @param {*}
+     * @returns {*}
+     */    
+    getUseTypeList () {
+      const params = {
+        pid: 3
+      }
+
+      getDicList(params).then(data => {
+        this.useTypeList = data.data.data
+      })
+    },
+    /**
+     * @description: 查询房屋类型字典
+     * @param {*}
+     * @returns {*}
+     */    
+    getHouseTypeList () {
+      const params = {
+        pid: 2
+      }
+
+      getDicList(params).then(data => {
+        this.houseTypeList = data.data.data
+      })
     },
     /**
      * @description: 审批驳回
@@ -995,11 +1051,253 @@ export default {
       })
     },
     /**
+     * @description: 处理我的待办
+     * @param {object} item 要修改的出租登记信息
+     * @return {*} void
+     */    
+    approveSuccess (item) {
+      this.dialogTitle = '审批'
+      this.ruleForm.id = item.id
+      // this.ruleForm.state = 2
+
+      const params = {
+        id: item.id,
+        type: 2
+      }
+
+      getRegisterDetail(params).then(data => {
+        console.log(data)
+        if (data.status === 200) {
+          this.showDialog = true
+          const res = data.data.homeowner
+          this.ownerId = item.homeowner
+          this.ownerObject.nation = res.nation
+          this.ownerObject.sex = res.sex
+          this.ownerObject.name = res.name
+          this.ownerObject.idcard = res.idcard
+          this.ownerObject.phone = res.phone
+          this.ownerObject.address = res.address
+          this.ownerObject.owners_type = res.owners_type
+          this.ownerObject.businessLicense = res.businessLicense
+          this.ownerObject.companyName = res.companyName
+
+          this.houseId = item.id
+          this.houseObject.houseType = res.houses[0].housingNature
+          this.houseObject.useType = res.houses[0].planningPurposes
+          this.houseObject.houseArea = res.houses[0].constructionArea
+          this.houseObject.premisesPermitNo = res.houses[0].premisesPermitNo
+          this.houseObject.province = res.houses[0].province
+          this.houseObject.city = res.houses[0].city
+          this.houseObject.area = res.houses[0].area
+          this.houseObject.street = res.houses[0].street
+          this.houseObject.community = res.houses[0].community
+          this.houseObject.address = res.houses[0].address
+
+          if (this.houseObject.province) {
+            this.changeProvice(this.houseObject.province)
+          }
+
+          if (this.houseObject.city) {
+            this.changeCity(this.houseObject.city)
+          }
+
+          if (this.houseObject.area) {
+            this.changeCountry(this.houseObject.area)
+          }
+
+          if (this.houseObject.street) {
+            this.changeStreet(this.houseObject.street)
+          }
+
+          res.houses[0].tenants.length && 
+          (this.tenantArray = []) &&
+          res.houses[0].tenants.map(item => {
+            const object = {}
+            object.id = item.id
+            object.name = item.name
+            object.sex = item.sex
+            object.nation = item.nation
+            object.phone = item.phone
+            object.idcard = item.idcard
+            object.address = item.address
+            object.startTime = item.start_time ? item.start_time.split(' ')[0] : ''
+            object.endTime = item.end_time ? item.end_time.split(' ')[0] : ''
+            this.tenantArray.push(object)
+          })
+
+          this.isEdit = true
+          this.showDialog = true
+          this.dialogTitle = '修改出租登记'
+        } else {
+          this.isEdit = false
+          this.showMessageBox(data.message, 'error')
+        }
+      }).catch(err => {
+        this.isEdit = false
+        this.showMessageBox(err.message, 'error')
+      })
+    },
+    /**
+     * @description: 验证房主参数
+     * @param {*} none
+     * @returns {Boolean} 验证是否通过
+     */    
+    validOwnerParam () {
+      if (this.ownerObject.owners_type === 1) {
+        if (!this.ownerObject.name) {
+          this.showMessageBox('请填写房主姓名！', 'warning')
+          return false
+        } else if (!this.ownerObject.nation) {
+          this.showMessageBox('请选择房主民族！', 'warning')
+          return false
+        } else if (!(this.ownerObject.sex + '')) {
+          this.showMessageBox('请选择房主性别！', 'warning')
+          return false
+        } else if (!this.ownerObject.phone) {
+          this.showMessageBox('请填写房主手机号！', 'warning')
+          return false
+        } else if (!verifyPhoneFormat(this.ownerObject.phone)) {
+          this.showMessageBox('手机号格式错误！', 'warning')
+          return false
+        } else if (!this.ownerObject.idcard) {
+          this.showMessageBox('请填写房主身份证！', 'warning')
+          return false
+        } else if (!this.ownerObject.address) {
+          this.showMessageBox('请填写房主籍贯！', 'warning')
+          return false
+        } else {
+          return true
+        }
+      } else {
+        if (!this.ownerObject.name) {
+          this.showMessageBox('请填写负责人姓名！', 'warning')
+          return false
+        } else if (!this.ownerObject.companyName) {
+          this.showMessageBox('请填写公司名称！', 'warning')
+          return false
+        } else if (!this.ownerObject.businessLicense) {
+          this.showMessageBox('请填写营业执照！', 'warning')
+          return false
+        } else if (!this.ownerObject.phone) {
+          this.showMessageBox('请填写负责人手机号！', 'warning')
+          return false
+        } else if (!verifyPhoneFormat(this.ownerObject.phone)) {
+          this.showMessageBox('手机号格式错误！', 'warning')
+          return false
+        } else if (!this.ownerObject.idcard) {
+          this.showMessageBox('请填写负责人身份证！', 'warning')
+          return false
+        } else if (!this.ownerObject.address) {
+          this.showMessageBox('请填写公司地址！', 'warning')
+          return false
+        } else {
+          return true
+        }
+      }
+    },
+    /**
+     * @description: 验证房屋参数
+     * @param {*} none
+     * @returns {Boolean} 验证是否通过
+     */    
+    validHouseParam () {
+      if (!this.houseObject.houseType) {
+        this.showMessageBox('请选择房屋类型！', 'warning')
+        return false
+      } else if (!this.houseObject.useType) {
+        this.showMessageBox('请选择使用类型！', 'warning')
+        return false
+      } else if (!this.houseObject.houseArea) {
+        this.showMessageBox('请填写房屋面积！', 'warning')
+        return false
+      } else if (!this.houseObject.premisesPermitNo) {
+        this.showMessageBox('请填写房产证编号！', 'warning')
+        return false
+      } else if (!this.houseObject.province) {
+        this.showMessageBox('请选择省！', 'warning')
+        return false
+      } else if (!this.houseObject.city) {
+        this.showMessageBox('请选择市！', 'warning')
+        return false
+      } else if (!this.houseObject.area) {
+        this.showMessageBox('请选择区/县！', 'warning')
+        return false
+      } else if (!this.houseObject.street) {
+        this.showMessageBox('请选择街道！', 'warning')
+        return false
+      } else if (!this.houseObject.community) {
+        this.showMessageBox('请选择社区！', 'warning')
+        return false
+      } else if (!this.houseObject.address) {
+        this.showMessageBox('请填写详细地址！', 'warning')
+        return false
+      } else {
+        return true
+      }
+    },
+    /**
+     * @description: 验证租户参数
+     * @param {*} none
+     * @returns {Boolean} 验证是否通过
+     */ 
+    validTenantParam () {
+      const validParam = []
+      this.tenantArray.map((item, index) => {
+        if (!item.name) {
+          this.showMessageBox(`请填写租户${index + 1}姓名`, 'warning')
+          validParam.push(1)
+          return false
+        } else if (!item.nation) {
+          this.showMessageBox(`请选择租户${index + 1}民族`, 'warning')
+          validParam.push(1)
+          return false
+        } else if (!(item.sex + '')) {
+          this.showMessageBox(`请选择租户${index + 1}性别`, 'warning')
+          validParam.push(1)
+          return false
+        } else if (!item.phone) {
+          this.showMessageBox(`请填写租户${index + 1}手机号`, 'warning')
+          validParam.push(1)
+          return false
+        } else if (!verifyPhoneFormat(item.phone)) {
+          this.showMessageBox(`租户${index + 1}手机号格式错误`, 'warning')
+          validParam.push(1)
+          return false
+        } else if (!item.idcard) {
+          this.showMessageBox(`请填写租户${index + 1}身份证号`, 'warning')
+          validParam.push(1)
+          return false
+        } else if (!item.address) {
+          this.showMessageBox(`请填写租户${index + 1}详细地址`, 'warning')
+          validParam.push(1)
+          return false
+        } else if (!item.startTime) {
+          this.showMessageBox(`请选择租户${index + 1}承租起始时间`, 'warning')
+          validParam.push(1)
+          return false
+        } else if (!item.endTime) {
+          this.showMessageBox(`请选择租户${index + 1}承租结束时间`, 'warning')
+          validParam.push(1)
+          return false
+        }
+      })
+      if (validParam.includes(1)) {
+        return false
+      } else {
+        return true
+      }
+    },
+    /**
      * @description: 通过我的审批
      * @param {*} none
      * @returns {*} void
      */    
     submitRegisterInfo () {
+      if (!this.ruleForm.describe) {
+        return this.showMessageBox('请填写处理说明！', 'warning')
+      }
+      if (!this.validHouseParam()) return
+      if (!this.validOwnerParam()) return
       if (!this.validTenantParam()) return
 
       const tenantParam = []
@@ -1042,87 +1340,61 @@ export default {
         businessLicense: this.ownerObject.owners_type === 2 ? this.ownerObject.businessLicense : ''
       }
 
-      if (this.isEdit) {
-        ownerParam.id = this.ownerId
-        houseParam.id = this.houseId
-        tenantParam.map((item, index) => {
-          item.id = this.tenantArray[index].id
-          item.house_id = this.houseId
-        })
-      }
+      ownerParam.id = this.ownerId
+      houseParam.id = this.houseId
+      tenantParam.map((item, index) => {
+        item.id = this.tenantArray[index].id
+        item.house_id = this.houseId
+      })
       
       houseParam.tenants = tenantParam
       ownerParam.house = houseParam
 
-      if (this.isEdit) {
-        updateRegisterInfo(ownerParam).then(data => {
-          if (data.status === 200) {
-            this.showMessageBox(data.message, 'success')
-          } else {
-            this.showMessageBox(data.message, 'error')
-          }
-          this.showDialog = false
-          this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
-
-          insertLog({
-            menu_name: '出租登记列表',
-            operation_type: 'edit',
-            operation_condition: {
-              ...params
-            },
-            sub_menu_name: '',
-            operation_type_detail: '修改出租登记',
-            source: 0
-          })
-        })
-      } else {
-        if (!this.isAdd) {
-          addTenant(ownerParam).then(data => {
-            if (data.status === 200) {
-              this.showMessageBox(data.message, 'success')
-            } else {
-              this.showMessageBox(data.message, 'error')
-            }
-            this.showDialog = false
-            this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
-
-            insertLog({
-              menu_name: '出租登记列表',
-              operation_type: 'add',
-              operation_condition: {
-                ...params
-              },
-              sub_menu_name: '',
-              operation_type_detail: '补录租户',
-              source: 0
-            })
-          })
-        } else {
-          tenantParam.map(item => {
-            item.house_id = this.house_id
-          })
-          addTenants(tenantParam).then(data => {
-            if (data.status === 200) {
-              this.showMessageBox(data.message, 'success')
-            } else {
-              this.showMessageBox(data.message, 'error')
-            }
-            this.showDialog = false
-            this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
-
-            insertLog({
-              menu_name: '出租登记列表',
-              operation_type: 'add',
-              operation_condition: {
-                ...params
-              },
-              sub_menu_name: '',
-              operation_type_detail: '新增出租登记信息',
-              source: 0
-            })
-          })
-        }
+      const params = {
+        id: this.ruleForm.id,
+        state: this.ruleForm.state,
+        describe: this.ruleForm.describe,
+        homeowner: ownerParam
       }
+
+      taskApproval(params).then(data => {
+        if (data.status === 200) {
+          this.showMessageBox(data.message, 'success')
+        } else {
+          this.showMessageBox(data.message, 'error')
+        }
+        this.showDialog = false
+        this.searchList(this.propsParams, this.pagination.pageIndex, this.size)
+
+        insertLog({
+          menu_name: '我的审批',
+          operation_type: 'edit',
+          operation_condition: {
+            ...params
+          },
+          sub_menu_name: '',
+          operation_type_detail: '处理我的审批',
+          source: 0
+        })
+      })
+    },
+    /**
+     * @description: 点击审核按钮
+     * @param {*} none
+     * @returns {*} void
+     */    
+    approveNext () {
+      this.ruleForm.state = 2
+      this.submitRegisterInfo()
+    },
+    /**
+     * @description: 点击驳回按钮
+     * @param {*} none
+     * @returns {*} void
+     */    
+    approveBack () {
+      this.ruleForm.state = 3
+      this.submitRegisterInfo()
     },
     /**
      * @description: 跳转详情

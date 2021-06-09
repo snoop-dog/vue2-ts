@@ -1058,6 +1058,22 @@ export function processingTask (params: any) {
       })
   })
 }
+
+/**
+ * @api {post} /task/approval  出租登记审批处理
+ * @param {Object} params 出租登记审批处理参数
+ */
+export function taskApproval (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/task/approval', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 // 审批待办 API end
 
 // banner管理 API start
@@ -1068,6 +1084,22 @@ export function processingTask (params: any) {
 export function deleteBanner (params: any) {
   return new Promise((resolve, reject) => {
     httpRequest('delete', '/banner/delete', params)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * @api {post} /banner/updataBannerType  文件设置为bannel图
+ * @param {Object} params 文件设置为bannel图参数
+ */
+ export function setBanner (params: any) {
+  return new Promise((resolve, reject) => {
+    httpRequest('post', '/banner/updataBannerType', params)
       .then(res => {
         resolve(res)
       })

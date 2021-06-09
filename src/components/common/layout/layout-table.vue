@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 22:12:47
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-05-31 00:56:46
+ * @LastEditTime: 2021-06-09 22:04:05
  * @FilePath: \vue2-ts\src\components\common\layout\layout-table.vue
 -->
 <template>
@@ -742,7 +742,7 @@ export default {
     }
   }
 }
-.btnPrimary {
+/deep/.btnPrimary {
   padding: 0 1rem;
   height: 2rem;
   line-height: 2rem;
