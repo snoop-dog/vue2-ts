@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 21:22:27
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-07 23:48:59
+ * @LastEditTime: 2021-06-16 23:46:50
  * @FilePath: \vue2-ts\src\views\system\log.vue
 -->
 
@@ -69,7 +69,7 @@ export default {
       queryLoading: false, // 查询loading
       searchParam: [ // 查询参数
         {
-          label: '操作类型：',
+          label: '类型：',
           type: 'select',
           property: 'operation_type',
           operation_type: '',

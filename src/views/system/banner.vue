@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-05-13 23:14:23
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-09 23:29:23
+ * @LastEditTime: 2021-06-16 00:00:44
  * @FilePath: \vue2-ts\src\views\system\banner.vue
 -->
 <template>
@@ -65,6 +65,14 @@
           <el-col :span="2" class="img-box">
             <el-row :class="['img-container', { 'img' : props.value.type === 1 }]"></el-row>
           </el-col>
+          <el-image 
+            v-if="props.value.type === 1 && !endingLoad"
+            ref="preview"
+            style="width: 0px; height: 0px"
+            :src="prefix + props.value.fileUrl" 
+            :preview-src-list="previewList"
+          >
+          </el-image>
           <el-col @click.native="enterFolder(props.value)" v-if="folderId !== props.value.id" :span="12">{{props.value.fileName}}</el-col>
           <el-col v-else :span="12" class="update-item">
             <el-input
@@ -188,7 +196,9 @@ export default {
       folderId: '', // 修改文件或文件夹id
       editFoldname: '', // 当前文件名
       isEdit: false, // 是否为编辑文件名
-      breadArray: [{ label: '全部文件', pid: 0 }]
+      breadArray: [{ label: '全部文件', pid: 0 }],
+      prefix: 'https://aby.whyjtech.com', // 图片回显前缀
+      previewList: [] // 图片放大src list
     }
   },
   components: {
@@ -219,6 +229,10 @@ export default {
       getBannerPage(params).then(data => {
         const res = data.data
         this.dataList = _.cloneDeep(res.data)
+        this.previewList = this.dataList.length && this.dataList.reduce((prev, cur) => {
+          if (cur.fileUrl) prev.push(this.prefix + cur.fileUrl)
+          return prev
+        }, [])
         this.queryLoading = false
         this.endingLoad = false
         this.pagination.pageCount = data.data.totalPage
@@ -355,13 +369,16 @@ export default {
      * @returns {*} void
      */    
     enterFolder (item) {
-      if (item.type === 1) return
-      this.pid = item.id
-      this.breadArray.push({
-        label: item.fileName,
-        pid: this.pid
-      })
-      this.searchList(this.propsParams, 1, this.size)
+      if (item.type === 1) {
+        this.$refs.preview.clickHandler()
+      } else {
+        this.pid = item.id
+        this.breadArray.push({
+          label: item.fileName,
+          pid: this.pid
+        })
+        this.searchList(this.propsParams, 1, this.size)
+      }
     },
     /**
      * @description: 上传文件

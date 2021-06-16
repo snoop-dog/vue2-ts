@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-06-02 22:25:21
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-09 21:43:49
+ * @LastEditTime: 2021-06-15 23:18:25
  * @FilePath: \vue2-ts\src\views\system\approve.vue
 -->
 
@@ -68,7 +68,11 @@
           <div slot="oprate" slot-scope="props">
             <!-- <el-button @click.stop="approveSuccess(props.value)" class="btnPrimary">通过</el-button>
             <el-button @click.stop="approveFail(props.value)" class="btnPrimary">驳回</el-button> -->
-            <el-button @click.stop="approveSuccess(props.value)" class="btnPrimary">审核</el-button>
+            <transition name="el-fade-in-linear">
+              <template v-if="activeTab !== '2'">
+                <el-button @click.stop="approveSuccess(props.value)" class="btnPrimary">审核</el-button>
+              </template>
+            </transition>
             <el-button v-if="props.value.houses_id" @click.stop="approveDetail(props.value)" class="btnPrimary">详情</el-button>
           </div>
         </layout-table>
@@ -639,7 +643,7 @@ export default {
           value: 'idcard'
         },
         {
-          name: '详细地址',
+          name: '房屋地址',
           prop: 'address',
           value: 'address',
           showRow: true,
@@ -1427,10 +1431,10 @@ export default {
     activeTab (val) {
       console.log(val)
       if (val === '2') {
-        this.$set(this.oprate, 'isShow', false)
+        this.$set(this.oprate, 'width', 160)
         this.tableHead = this.tableHead.concat([
           {
-            name: '用户名',
+            name: '处理人',
             prop: 'user_name',
             value: 'user_name'
           },
@@ -1441,8 +1445,9 @@ export default {
           }
         ])
       } else {
-        this.$set(this.oprate, 'isShow', true)
-        this.tableHead.splice(this.tableHead.length - 2, 2)
+        // this.$set(this.oprate, 'isShow', true)
+        this.$set(this.oprate, 'width', 200)
+        this.tableHead.splice(this.tableHead.length - 3, 3)
       }
       this.propsParams.keyword = ''
       this.pagination.pageIndex = 1

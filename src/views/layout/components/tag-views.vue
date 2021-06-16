@@ -163,7 +163,7 @@ export default Vue.extend({
       console.log(oldVal)
     }
   },
-  created () {
+  mounted () {
     this.initWebsocket()
   },
   methods: {
@@ -561,6 +561,7 @@ export default Vue.extend({
       cursor: pointer;
       &:hover {
         background: #efefef;
+        color: #78e;
       }
       &.text {
         color: #f23335;

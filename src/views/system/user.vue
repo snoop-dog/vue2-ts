@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:05:30
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-09 01:00:14
+ * @LastEditTime: 2021-06-16 22:38:18
  * @FilePath: \vue2-ts\src\views\system\user.vue
 -->
 
@@ -166,9 +166,27 @@
         <transition name="el-zoom-in-center">
           <template>
             <el-form-item label="省：" class="required">
+              <el-tooltip v-if="disabled.province" content="单位默认区划不可修改！" placement="right">
+                <el-select
+                  clearable
+                  :multiple="false"
+                  :disabled="disabled.province"
+                  v-model="ruleForm.province"
+                  @change="changeProvice"
+                >
+                <el-option
+                  v-for="item in province.data"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                >
+                </el-option>
+              </el-select>
+              </el-tooltip>
               <el-select
                 clearable
                 :multiple="false"
+                v-else
                 v-model="ruleForm.province"
                 @change="changeProvice"
               >
@@ -186,8 +204,26 @@
         <transition name="el-zoom-in-center">
           <template>
             <el-form-item label="市：">
+              <el-tooltip v-if="disabled.city" content="单位默认区划不可修改！" placement="right">
+                <el-select
+                  clearable
+                  :disabled="disabled.city"
+                  :multiple="false"
+                  v-model="ruleForm.city"
+                  @change="changeCity"
+                >
+                <el-option
+                  v-for="item in city.data"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                >
+                </el-option>
+              </el-select>
+              </el-tooltip>
               <el-select
                 clearable
+                v-else
                 :disabled="!ruleForm.province"
                 :multiple="false"
                 v-model="ruleForm.city"
@@ -207,8 +243,26 @@
         <transition name="el-zoom-in-center">
           <template>
             <el-form-item label="区/县：">
+              <el-tooltip v-if="disabled.area" content="单位默认区划不可修改！" placement="right">
+                <el-select
+                  clearable
+                  :disabled="disabled.area"
+                  :multiple="false"
+                  v-model="ruleForm.area"
+                  @change="changeCountry"
+                >
+                  <el-option
+                    v-for="item in area.data"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  >
+                  </el-option>
+                </el-select>
+              </el-tooltip>
               <el-select
                 clearable
+                v-else
                 :disabled="!ruleForm.city"
                 :multiple="false"
                 v-model="ruleForm.area"
@@ -228,8 +282,26 @@
         <transition name="el-zoom-in-center">
           <template>
             <el-form-item label="街道：">
+              <el-tooltip v-if="disabled.street" content="单位默认区划不可修改！" placement="right">
+                <el-select
+                  clearable
+                  :disabled="disabled.street"
+                  :multiple="false"
+                  @change="changeStreet"
+                  v-model="ruleForm.street"
+                >
+                  <el-option
+                    v-for="item in street.data"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  >
+                  </el-option>
+                </el-select>
+              </el-tooltip>
               <el-select
                 clearable
+                v-else
                 :disabled="!ruleForm.area"
                 :multiple="false"
                 @change="changeStreet"
@@ -249,8 +321,25 @@
         <transition name="el-zoom-in-center">
           <template>
             <el-form-item label="社区：">
+              <el-tooltip v-if="disabled.community" content="单位默认区划不可修改！" placement="right">
+                <el-select
+                  clearable
+                  :disabled="disabled.community"
+                  :multiple="false"
+                  v-model="ruleForm.community"
+                >
+                  <el-option
+                    v-for="item in community.data"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  >
+                  </el-option>
+                </el-select>
+              </el-tooltip>
               <el-select
                 clearable
+                v-else
                 :disabled="!ruleForm.street"
                 :multiple="false"
                 v-model="ruleForm.community"
@@ -484,7 +573,14 @@ export default {
         id: '',
         creater: ''
       },
-      unitTypeList: [] // 单位类型下拉
+      unitTypeList: [], // 单位类型下拉
+      disabled: {
+        province: false,
+        city: false,
+        area: false,
+        street: false,
+        community: false
+      }
     }
   },
   components: {
@@ -623,18 +719,36 @@ export default {
 
       if (this.ruleForm.province) {
         this.changeProvice(this.ruleForm.province)
+        this.disabled.province = true
+      } else {
+        this.disabled.province = false
       }
 
       if (this.ruleForm.city) {
         this.changeCity(this.ruleForm.city)
+        this.disabled.city = true
+      } else {
+        this.disabled.city = false
       }
 
       if (this.ruleForm.area) {
         this.changeCountry(this.ruleForm.area)
+        this.disabled.area = true
+      } else {
+        this.disabled.area = false
       }
 
       if (this.ruleForm.street) {
         this.changeStreet(this.ruleForm.street)
+        this.disabled.street = true
+      } else {
+        this.disabled.street = false
+      }
+
+      if (this.ruleForm.community) {
+        this.disabled.community = true
+      } else {
+        this.disabled.community = false
       }
       // this.getPositionSimple()
     },
@@ -1029,6 +1143,10 @@ export default {
       if (!val) {
         for (const key in this.ruleForm) {
           this.ruleForm[key] = ''
+        }
+
+        for (const key in this.disabled) {
+          this.disabled[key] = false
         }
 
         this.city.data =

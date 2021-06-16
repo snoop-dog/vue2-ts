@@ -754,6 +754,7 @@ export default {
           width: 32.33rem;
 
           /deep/.timeBox {
+            display: flex;
             margin-top: 0;
             .ivu-date-picker {
               .ivu-input {
@@ -771,7 +772,7 @@ export default {
 
       /deep/.input-item {
         display: flex;
-        min-width: 18.33rem;
+        width: 18.33rem;
         float: left;
         position: relative;
         margin-bottom: 0;

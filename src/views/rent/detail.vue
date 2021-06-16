@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-05-26 01:20:32
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-05 00:25:16
+ * @LastEditTime: 2021-06-15 23:25:36
  * @FilePath: \vue2-ts\src\views\rent\detail.vue
 -->
 <template>
@@ -186,7 +186,13 @@
             prop="address"
             show-overflow-tooltip
             label="详细地址"
-            width="200">
+            width="100">
+          </el-table-column>
+          <el-table-column
+            prop="stateStr"
+            show-overflow-tooltip
+            label="审核状态"
+            width="100">
           </el-table-column>
           <el-table-column
             prop="start_time"

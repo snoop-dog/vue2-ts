@@ -3,13 +3,19 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:00:07
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-05 00:29:36
+ * @LastEditTime: 2021-06-16 23:56:04
  * @FilePath: \vue2-ts\src\views\rent\register.vue
 -->
 <template>
   <el-container class="register-container table-container">
     <el-row class="searchModel">
-      <layout-search :search-param="searchParam" :query-loading='queryLoading' @query="searchList" ></layout-search>
+      <layout-search 
+        :search-param="searchParam" 
+        :query-loading='queryLoading' 
+        @change="changeParam"  
+        @query="searchList"
+      >
+      </layout-search>
     </el-row>
 
     <el-row class="tableModel">
@@ -145,9 +151,9 @@
                     >
                       <el-option
                         v-for="item in province.data"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
                       >
                       </el-option>
                     </el-select>
@@ -530,6 +536,55 @@ export default {
           property: 'keyword',
           keyword: '',
           placeholder: '请输入关键字'
+        },
+        {
+          label: '省：',
+          type: 'select',
+          data: [],
+          property: 'province',
+          province: '',
+          multiple: false,
+          placeholder: '请选择'
+        },
+        {
+          label: '市：',
+          type: 'select',
+          data: [],
+          property: 'city',
+          city: '',
+          multiple: false,
+          disabled: true,
+          placeholder: '请选择'
+        },
+        {
+          label: '区/县：',
+          type: 'select',
+          data: [],
+          property: 'area',
+          area: '',
+          multiple: false,
+          disabled: true,
+          placeholder: '请选择'
+        },
+        {
+          label: '街道：',
+          type: 'select',
+          data: [],
+          property: 'street',
+          street: '',
+          multiple: false,
+          disabled: true,
+          placeholder: '请选择'
+        },
+        {
+          label: '社区：',
+          type: 'select',
+          data: [],
+          property: 'community',
+          community: '',
+          multiple: false,
+          disabled: true,
+          placeholder: '请选择'
         }
       ],
       endingLoad: true,
@@ -641,7 +696,14 @@ export default {
           // }
         ]
       },
-      propsParams: {}, // 初始参数
+      propsParams: {
+        keyword: '',
+        provice: '',
+        city: '',
+        area: '',
+        street: '',
+        community: ''
+      }, // 初始参数
       showDialog: false, // 添加出租登记信息弹框
       dialogTitle: '添加出租登记', // dialog title
       houseObject: { // 房屋信息
@@ -737,8 +799,9 @@ export default {
   },
   created () {
     // this.searchList()
+    this.getRegionSimple()
     this.getNationDic() // 获取民族字典
-    this.getProviceData() // 获取省份数据
+    // this.getProviceData() // 获取省份数据
     this.getHouseTypeList() // 获取房屋类型字典
     this.getUseTypeList() // 获取房屋使用类型字典
   },
@@ -752,6 +815,11 @@ export default {
       this.propsParams = _.cloneDeep(param)
       const params = {
         keyword: param.keyword,
+        province: param.province,
+        city: param.city,
+        community: param.community,
+        area: param.area,
+        street: param.street,
         pageIndex: val,
         pageSize: size
       }
@@ -787,6 +855,121 @@ export default {
         this.pagination.totalCount = 0
         this.pagination.pageIndex = 1
       })
+    },
+    /**
+     * @description: 改变查询参数
+     * @param {Object} param 改变后查询参数
+     * @returns {*}
+     */
+    changeParam (param) {
+      if (this.propsParams.province !== param.province) {
+        this.$set(this.searchParam[2], 'city', '')
+        this.$set(this.searchParam[3], 'area', '')
+        this.$set(this.searchParam[4], 'street', '')
+        this.$set(this.searchParam[5], 'community', '')
+      } else if (this.propsParams.city !== param.city) {
+        this.$set(this.searchParam[3], 'area', '')
+        this.$set(this.searchParam[4], 'street', '')
+        this.$set(this.searchParam[5], 'community', '')
+      } else if (this.propsParams.area !== param.area) {
+        this.$set(this.searchParam[4], 'street', '')
+        this.$set(this.searchParam[5], 'community', '')
+      } else if (this.propsParams.street !== param.street) {
+        this.$set(this.searchParam[5], 'community', '')
+      }
+      
+      this.propsParams = _.cloneDeep(param)
+      this.getRegionSimple()
+    },
+    /**
+     * @description: 获取省市区查询条件精简信息
+     * @param {*} none
+     * @returns {*} void
+     */
+    getRegionSimple () {
+      const params = {
+        level: this.getLevelAndPid(this.propsParams).level,
+        name: '',
+        pid: this.getLevelAndPid(this.propsParams).pid
+      }
+
+      getAreaDim(params)
+        .then(data => {
+          const res = JSON.parse(
+            JSON.stringify(data.data).replace(/name/g, 'label').replace(/id/g, 'value')
+          )
+
+          if (this.getLevelAndPid(this.propsParams).level === 1) {
+            this.$set(this.searchParam[1], 'data', res)
+            this.province.data = res
+          } else if (this.getLevelAndPid(this.propsParams).level === 2) {
+            this.$set(this.searchParam[2], 'data', res)
+          } else if (this.getLevelAndPid(this.propsParams).level === 3) {
+            this.$set(this.searchParam[3], 'data', res)
+          } else if (this.getLevelAndPid(this.propsParams).level === 4) {
+            this.$set(this.searchParam[4], 'data', res)
+          } else if (this.getLevelAndPid(this.propsParams).level === 5) {
+            this.$set(this.searchParam[5], 'data', res)
+          }
+
+          if (this.propsParams.province) {
+            this.$set(this.searchParam[2], 'disabled', false)
+          } else {
+            this.$set(this.searchParam[2], 'disabled', true)
+            this.$set(this.searchParam[2], 'city', '')
+          }
+          if (this.propsParams.city) {
+            this.$set(this.searchParam[3], 'disabled', false)
+          } else {
+            this.$set(this.searchParam[3], 'disabled', true)
+            this.$set(this.searchParam[3], 'area', '')
+          }
+          if (this.propsParams.area) {
+            this.$set(this.searchParam[4], 'disabled', false)
+          } else {
+            this.$set(this.searchParam[4], 'disabled', true)
+            this.$set(this.searchParam[4], 'street', '')
+          }
+
+          if (this.propsParams.street) {
+            this.$set(this.searchParam[5], 'disabled', false)
+          } else {
+            this.$set(this.searchParam[5], 'disabled', true)
+            this.$set(this.searchParam[5], 'community', '')
+          }
+        })
+    },
+    /**
+     * @description: 获取级别和pid
+     * @param {Object} param 参数
+     * @returns {Object} 级别和pid
+     */
+    getLevelAndPid (param) {
+      let level, pid
+      if (param.community) {
+        level = 6
+        pid = param.community
+      } else if (param.street) {
+        level = 5
+        pid = param.street
+      } else if (param.area) {
+        level = 4
+        pid = param.area
+      } else if (param.city) {
+        level = 3
+        pid = param.city
+      } else if (param.province) {
+        level = 2
+        pid = param.province
+      } else {
+        level = 1
+        pid = 0
+      }
+
+      return {
+        level,
+        pid
+      }
     },
     /**
      * @description: 点击表头按钮

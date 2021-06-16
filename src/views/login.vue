@@ -574,8 +574,10 @@ export default Vue.extend({
             console.log(res)
             const user = res.data
             this.$store.commit('addUserInfo', user)
+            setTimeout(() => {
+              this.$router.push('/layout')
+            }, 100)
           })
-          this.$router.push('/layout')
         } else {
           this.showMessageBox('登录失败！', 'error')
         }

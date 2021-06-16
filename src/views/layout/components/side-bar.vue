@@ -211,7 +211,7 @@ export default class Sidebar extends Vue {
               line-height: 2.66rem;
 
               i {
-                font-size: 1.2rem;
+                font-size: 1.4rem;
                 color: #abd;
                 margin-right: 0;
 

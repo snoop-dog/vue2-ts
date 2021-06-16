@@ -3,7 +3,7 @@
  * @Author: snoop-dog
  * @Date: 2021-04-24 15:03:47
  * @LastEditors: snoop-dog
- * @LastEditTime: 2021-06-09 22:40:45
+ * @LastEditTime: 2021-06-16 23:28:12
  * @FilePath: \vue2-ts\src\views\system\region.vue
 -->
 
@@ -129,10 +129,31 @@
                 clearable
                 :disabled="!country.value"
                 :multiple="false"
+                @change="changeStreet"
                 v-model="street.value"
               >
                 <el-option
                   v-for="item in street.data"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </template>
+        </transition>
+        <transition name="el-zoom-in-center">
+          <template v-if="!isEdit">
+            <el-form-item label="社区：">
+              <el-select
+                clearable
+                :disabled="!street.value"
+                :multiple="false"
+                v-model="community.value"
+              >
+                <el-option
+                  v-for="item in community.data"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id"
@@ -257,6 +278,16 @@ export default {
           multiple: false,
           disabled: true,
           placeholder: '请选择'
+        },
+        {
+          label: '社区：',
+          type: 'select',
+          data: [],
+          property: 'community',
+          community: '',
+          multiple: false,
+          disabled: true,
+          placeholder: '请选择'
         }
       ],
       endingLoad: true,
@@ -334,7 +365,8 @@ export default {
         provice: '',
         city: '',
         country: '',
-        street: ''
+        street: '',
+        community: ''
       },
       size: 20, // 分页条数
       ruleForm: { // 新增编辑表单参数
@@ -362,6 +394,10 @@ export default {
         value: ''
       },
       provice: { // 弹框省数据
+        data: [],
+        value: ''
+      },
+      community: { // 社区数据
         data: [],
         value: ''
       }
@@ -439,6 +475,8 @@ export default {
         this.$set(this.searchParam[3], 'street', '')
       } else if (this.propsParams.country !== param.country) {
         this.$set(this.searchParam[3], 'street', '')
+      } else if (this.propsParams.street !== param.street) {
+        this.$set(this.searchParam[4], 'community', '')
       }
       
       this.propsParams = _.cloneDeep(param)
@@ -470,6 +508,8 @@ export default {
             this.$set(this.searchParam[2], 'data', res)
           } else if (this.getLevelAndPid(this.propsParams).level === 4) {
             this.$set(this.searchParam[3], 'data', res)
+          } else if (this.getLevelAndPid(this.propsParams).level === 5) {
+            this.$set(this.searchParam[4], 'data', res)
           }
 
           if (this.propsParams.provice) {
@@ -489,6 +529,13 @@ export default {
           } else {
             this.$set(this.searchParam[3], 'disabled', true)
             this.$set(this.searchParam[3], 'street', '')
+          }
+
+          if (this.propsParams.street) {
+            this.$set(this.searchParam[4], 'disabled', false)
+          } else {
+            this.$set(this.searchParam[4], 'disabled', true)
+            this.$set(this.searchParam[4], 'community', '')
           }
         })
     },
@@ -524,6 +571,8 @@ export default {
         this.country.value = ''
         this.street.data = []
         this.street.value = ''
+        this.community.data = []
+        this.community.value = ''
         return
       }
       const params = {
@@ -549,6 +598,8 @@ export default {
         this.country.value = ''
         this.street.data = []
         this.street.value = ''
+        this.community.data = []
+        this.community.value = ''
         return
       }
       const params = {
@@ -572,6 +623,8 @@ export default {
       if (!val) {
         this.street.data = []
         this.street.value = ''
+        this.community.data = []
+        this.community.value = ''
         return
       }
       const params = {
@@ -587,13 +640,39 @@ export default {
       })
     },
     /**
+     * @description: 改变街道数据
+     * @param {Number} val 改变后数据
+     * @returns {*} void
+     */
+    changeStreet (val) {
+      if (!val) {
+        this.community.data = []
+        this.community.value = ''
+        return
+      }
+      const params = {
+        level: 5,
+        pid: val
+      }
+
+      getAreaDim(params).then(data => {
+        this.community.data = data.data
+      }).catch(err => {
+        console.log(err)
+        this.community.data = []
+      })
+    },
+    /**
      * @description: 获取级别和pid
      * @param {Object} param 参数
      * @returns {Object} 级别和pid
      */
     getLevelAndPid (param) {
       let level, pid
-      if (param.street) {
+      if (param.community) {
+        level = 6
+        pid = param.community
+      } else if (param.street) {
         level = 5
         pid = param.street
       } else if (param.country) {
